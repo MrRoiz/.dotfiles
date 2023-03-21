@@ -8,6 +8,7 @@ dotfiles_config_directory=./config_files
 real_kitty_config_directory=${config_directory}/kitty
 dotfiles_kitty_config=${dotfiles_config_directory}/kitty.conf
 fonts_directory=~/.fonts
+zshrc_file=~/.zshrc
 
 
 if [ -z "$name" ] && [ -z "$email" ]
@@ -73,6 +74,14 @@ install_node_and_yarn(){
 install_zsh_and_ohmyszh(){
 	sudo apt install zsh -y
 	sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+	git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+
+	sed -i 's/ZSH_THEME=".*"/ZSH_THEME="powerlevel10k\/powerlevel10k"/g' $zshrc_file
+
+	clear
+	echo "When this process finishes you can reopen the terminal and the theme cutomization will start"
+	echo "This message will be skipped in 5 seconds"
+	sleep 5
 }
 
 install_and_configure_kitty_terminal(){
