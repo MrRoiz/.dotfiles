@@ -61,8 +61,8 @@ install_and_configure_nvim(){
 	fi
 	git clone git@github.com:MrRoiz/rnvim.git ${config_directory}/nvim
 
-	# This compiler is required for treesitter
-	sudo apt install g++
+	# Dependencies required for treesitter live_grep
+	sudo apt install g++ ripgrep -y
 }
 
 install_node_and_yarn(){
@@ -75,6 +75,7 @@ install_zsh_and_ohmyszh(){
 	sudo apt install zsh -y
 	sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 	git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+	chsh -s $(which zsh)
 
 	sed -i 's/ZSH_THEME=".*"/ZSH_THEME="powerlevel10k\/powerlevel10k"/g' $zshrc_file
 
@@ -100,6 +101,9 @@ install_and_configure_kitty_terminal(){
 
 	mkdir -p $real_kitty_config_directory
 	ln $dotfiles_kitty_config $real_kitty_config_directory
+
+	# Set kitty as default terminal
+	sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator $(which kitty) 50
 }
 
 install_jetbrains_font(){
