@@ -71,8 +71,7 @@ install_node_and_yarn(){
 	npm i -g yarn -y
 }
 
-install_zsh_and_ohmyszh(){
-	sudo apt install zsh -y
+install_ohmyszh(){
 	sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 	git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
 	chsh -s $(which zsh)
@@ -84,7 +83,7 @@ install_zsh_and_ohmyszh(){
 	git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 	git clone https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-history-substring-search
 	git clone https://github.com/MichaelAquilina/zsh-you-should-use.git $ZSH_CUSTOM/plugins/you-should-use
-	sed -i 's/plugins=(git)/plugins=(\n\tgit\n\tzsh-syntax-highlighting\n\tzsh-autosuggestions\n\tzsh-history-substring-search\n\tyou-should-use\n\tweb-search\n/g)' $zshrc_file
+	sed -i 's/plugins=(git)/plugins=(\n\tgit\n\tzsh-syntax-highlighting\n\tzsh-autosuggestions\n\tzsh-history-substring-search\n\tyou-should-use\n\tweb-search\n)/g' $zshrc_file
 
 	echo "bindkey '^[[A' history-substring-search-up\nbindkey '^[[B' history-substring-search-down" >> $zshrc_file
 
@@ -164,14 +163,15 @@ install_and_configure_tmux(){
 }
 
 sudo apt update
+sudo apt install zsh -y
 sudo apt upgrade -y
 
 install_jetbrains_font
 install_and_configure_git_and_github
 install_docker
-install_zsh_and_ohmyszh
 install_node_and_yarn
 add_some_custom_aliases
 install_and_configure_nvim
 install_and_configure_kitty_terminal
 install_and_configure_tmux
+install_ohmyszh
