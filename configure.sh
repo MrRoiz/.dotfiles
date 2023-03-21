@@ -83,6 +83,7 @@ install_zsh_and_ohmyszh(){
 	echo "When this process finishes you can reopen the terminal and the theme cutomization will start"
 	echo "This message will be skipped in 5 seconds"
 	sleep 5
+    clear
 }
 
 install_and_configure_kitty_terminal(){
@@ -121,6 +122,38 @@ install_jetbrains_font(){
 	rm -fr $font_zip_file font_directory
 }
 
+install_docker(){
+	sudo apt-get remove docker docker-engine docker.io containerd runc -y
+
+	sudo apt-get update
+	sudo apt-get install \
+		ca-certificates \
+		curl \
+		gnupg \
+		lsb-release
+
+	sudo mkdir -m 0755 -p /etc/apt/keyrings
+	curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+	echo \
+	  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+	  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+	sudo apt update
+	sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+}
+
+add_some_custom_aliases(){
+	echo "\n\nalias v=nvim" >> $zshrc_file
+}
+
+install_and_configure_tmux(){
+	sudo apt install tmux -y
+	temp_zshrc=~/.deleteme
+
+	# Open tmux when zsh opens
+	sudo echo 'if [ "$TMUX" = "" ]; then tmux; fi' | cat - $zshrc_file > $temp_zshrc && mv $temp_zshrc $zshrc_file
+}
+
 sudo apt update
 sudo apt upgrade -y
 
@@ -130,4 +163,6 @@ install_and_configure_kitty_terminal
 install_node_and_yarn
 install_and_configure_git_and_github
 install_and_configure_nvim
-
+install_docker
+install_and_configure_tmux
+add_some_custom_aliases
