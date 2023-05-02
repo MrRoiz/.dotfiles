@@ -154,14 +154,6 @@ add_some_custom_aliases(){
 	echo "\n\nalias v=nvim" >> $zshrc_file
 }
 
-install_and_configure_tmux(){
-	sudo apt install tmux -y
-	temp_zshrc=~/.deleteme
-
-	# Open tmux when zsh opens
-	sudo echo 'if [ "$TMUX" = "" ]; then tmux; fi' | cat - $zshrc_file > $temp_zshrc && mv $temp_zshrc $zshrc_file
-}
-
 sudo apt update
 sudo apt install zsh -y
 sudo apt upgrade -y
@@ -173,5 +165,4 @@ install_node_and_yarn
 add_some_custom_aliases
 install_and_configure_nvim
 install_and_configure_kitty_terminal
-install_and_configure_tmux
 install_ohmyszh
