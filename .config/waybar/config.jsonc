@@ -1,0 +1,157 @@
+{
+  "layer": "top",
+  "position": "top",
+  "mod": "dock",
+  "exclusive": true,
+  "passthrough": false,
+  "gtk-layer-shell": true,
+  "height": 30,
+  "modules-left": [
+    "hyprland/workspaces"
+  ],
+  "modules-center": [
+    "clock"
+  ],
+  "modules-right": [
+    "tray",
+    "temperature",
+    "custom/power_profile",
+    "battery",
+    "backlight",
+    "pulseaudio",
+    "pulseaudio#microphone",
+    "custom/notifications",
+    "custom/power"
+  ],
+  "hyprland/workspaces": {
+    "disable-scroll": true,
+    "all-outputs": true,
+    "on-click": "activate"
+  },
+  "tray": {
+    "icon-size": 15,
+    "spacing": 10
+  },
+  "clock": {
+    "interval": 1,
+    "format": " {0:%I:%M%p}  {0:%a %b %d, %Y}",
+    "tooltip-format": "<big>{calendar}</big>"
+  },
+  "backlight": {
+    "device": "intel_backlight",
+    "format": "{icon} {percent}%",
+    "format-icons": [
+      "󰃞",
+      "󰃟",
+      "󰃠"
+    ],
+    "on-scroll-up": "brightnessctl set 1%+",
+    "on-scroll-down": "brightnessctl set 1%-",
+    "min-length": 6
+  },
+  "battery": {
+    "states": {
+      "good": 95,
+      "warning": 30,
+      "critical": 20
+    },
+    "format": "{icon} {capacity}%",
+    "format-charging": " {capacity}%",
+    "format-plugged": " {capacity}%",
+    "format-alt": "{time} {icon}",
+    "format-icons": [
+      "󰂎",
+      "󰁺",
+      "󰁻",
+      "󰁼",
+      "󰁽",
+      "󰁾",
+      "󰁿",
+      "󰂀",
+      "󰂁",
+      "󰂂",
+      "󰁹"
+    ]
+  },
+  "pulseaudio": {
+    "format": "{icon} : {volume}%",
+    "tooltip": false,
+    "format-muted": " Muted",
+    "on-click": "pavucontrol --tab 3",
+    "scroll-step": 5,
+    "format-icons": {
+      "headphone": "",
+      "hands-free": "",
+      "headset": "",
+      "phone": "",
+      "portable": "",
+      "car": "",
+      "default": [
+        "",
+        "",
+        ""
+      ]
+    }
+  },
+  "pulseaudio#microphone": {
+    "format": "{format_source}",
+    "format-source": ": {volume}%",
+    "format-source-muted": "  Muted",
+    "on-click": "pavucontrol --tab 4",
+    "scroll-step": 5
+  },
+  "temperature": {
+    "format": "{temperatureC}°C ",
+    "critical-threshold": 80,
+    "format-critical": "{temperatureC}°C "
+  },
+  "network": {
+    // "interface": "wlp2*", // (Optional) To force the use of this interface
+    "format-wifi": "  {signalStrength}%",
+    "format-ethernet": "{ipaddr}/{cidr} ",
+    "tooltip-format": "{essid} - {ifname} via {gwaddr} ",
+    "format-linked": "{ifname} (No IP) ",
+    "format-disconnected": "Disconnected ⚠",
+    "format-alt": "{ifname}:{essid} {ipaddr}/{cidr}"
+  },
+  "bluetooth": {
+    "format": " {status}",
+    "format-disabled": "", // an empty format will hide the module
+    "format-connected": " {num_connections}",
+    "tooltip-format": "{device_alias}",
+    "tooltip-format-connected": " {device_enumerate}",
+    "tooltip-format-enumerate-connected": "{device_alias}"
+  },
+  "custom/notifications": {
+    "tooltip": false,
+    "format": "{icon}",
+    "format-icons": {
+      "notification": " <span foreground='red'><sup></sup></span>",
+      "none": " ",
+      "dnd-notification": " <span foreground='red'><sup></sup></span>",
+      "dnd-none": " ",
+      "inhibited-notification": " <span foreground='red'><sup></sup></span>",
+      "inhibited-none": " ",
+      "dnd-inhibited-notification": " <span foreground='red'><sup></sup></span>",
+      "dnd-inhibited-none": " "
+    },
+    "return-type": "json",
+    "exec-if": "which swaync-client",
+    "exec": "swaync-client -swb",
+    "on-click": "swaync-client -t -sw",
+    "on-click-right": "swaync-client -d -sw",
+    "escape": true
+  },
+  "custom/power": {
+    "format": "⏻ ",
+    "tooltip": false,
+    "menu": "on-click",
+    "menu-file": "~/.config/waybar/power-menu.xml", // Menu file in resources folder
+    "menu-actions": {
+      "shutdown": "shutdown now",
+      "reboot": "reboot",
+      "suspend": "systemctl suspend",
+      "hibernate": "systemctl hibernate"
+    }
+  }
+}
