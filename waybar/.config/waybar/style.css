@@ -23,7 +23,6 @@ tooltip {
 #custom-power_profile,
 #custom-weather,
 #window,
-#clock,
 #battery,
 #pulseaudio,
 #network,
@@ -108,7 +107,6 @@ tooltip {
 
 
 #clock {
-  color: #fab387;
   border-radius: 20px;
   margin-left: 5px;
   margin-right: 10px;
