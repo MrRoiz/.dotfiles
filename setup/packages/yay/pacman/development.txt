@@ -1,0 +1,11 @@
+neovim
+ripgrep
+fzf
+imagemagick
+
+aws-cli-v2
+sops
+
+uv
+rust
+
