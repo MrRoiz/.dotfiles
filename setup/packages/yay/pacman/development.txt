@@ -9,3 +9,7 @@ sops
 uv
 rust
 
+docker
+docker-compose
+
+nvm
