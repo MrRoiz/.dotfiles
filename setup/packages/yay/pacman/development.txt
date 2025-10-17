@@ -11,5 +11,8 @@ rust
 
 docker
 docker-compose
+docker-buildx
 
 nvm
+
+eza
