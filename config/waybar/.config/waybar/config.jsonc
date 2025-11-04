@@ -15,12 +15,10 @@
   "modules-right": [
     "tray",
     "temperature",
-    "battery",
-    "backlight",
     "pulseaudio",
     "pulseaudio#microphone",
-    "custom/notifications",
-    "custom/power"
+    "battery",
+    "custom/notifications"
   ],
   "hyprland/workspaces": {
     "disable-scroll": true,
@@ -32,21 +30,27 @@
     "spacing": 10
   },
   "clock": {
-    "interval": 1,
-    "format": " {0:%I:%M%p}  {0:%a %b %d, %Y}",
-    "tooltip-format": "<big>{calendar}</big>"
-  },
-  "backlight": {
-    "device": "intel_backlight",
-    "format": "{icon} {percent}%",
-    "format-icons": [
-      "󰃞",
-      "󰃟",
-      "󰃠"
-    ],
-    "on-scroll-up": "brightnessctl set 1%+",
-    "on-scroll-down": "brightnessctl set 1%-",
-    "min-length": 6
+    // "format": " {0:%I:%M%p}  {0:%a %b %d, %Y}",
+    "format": "{0:%b %d} {0:%I:%M%p}",
+    "tooltip-format": "{calendar}",
+    "calendar": {
+      "mode": "month",
+      "mode-mon-col": 3,
+      "on-click-right": "mode",
+      "format": {
+        "months": "<span color='#ffead3'><b>{}</b></span>",
+        "days": "<span color='#ecc6d9'><b>{}</b></span>",
+        "weekdays": "<span color='#ffcc66'><b>{}</b></span>",
+        "today": "<span color='#ff6699'><b><u>{}</u></b></span>"
+      }
+    },
+    "actions": {
+      "on-click-right": "mode",
+      "on-click-forward": "tz_up",
+      "on-click-backward": "tz_down",
+      "on-scroll-up": "shift_up",
+      "on-scroll-down": "shift_down"
+    }
   },
   "battery": {
     "states": {
@@ -123,10 +127,5 @@
     "on-click": "swaync-client -t -sw",
     "on-click-right": "swaync-client -d -sw",
     "escape": true
-  },
-  "custom/power": {
-    "format": "⏻ ",
-    "tooltip": false,
-    "on-click": "wlogout"
   }
 }
