@@ -15,6 +15,7 @@
   "modules-right": [
     "tray",
     "temperature",
+    "network",
     "pulseaudio",
     "pulseaudio#microphone",
     "battery",
@@ -77,10 +78,10 @@
     ]
   },
   "pulseaudio": {
-    "format": "{icon} : {volume}%",
-    "tooltip": false,
-    "format-muted": " Muted",
-    "on-click": "pavucontrol --tab 3",
+    "format": "{icon}",
+    "tooltip-format": "Volume: {volume}%",
+    "format-muted": "!",
+    "on-click": "better-control -v",
     "scroll-step": 5,
     "format-icons": {
       "headphone": "",
@@ -98,10 +99,10 @@
   },
   "pulseaudio#microphone": {
     "format": "{format_source}",
-    "format-source": ": {volume}%",
-    "format-source-muted": "  Muted",
-    "on-click": "pavucontrol --tab 4",
-    "scroll-step": 5
+    "tooltip-format": "Microphone: {source} ({volume}%)",
+    "format-source": "",
+    "format-source-muted": "",
+    "on-click": "better-control -v"
   },
   "temperature": {
     "format": "{temperatureC}°C ",
@@ -127,5 +128,15 @@
     "on-click": "swaync-client -t -sw",
     "on-click-right": "swaync-client -d -sw",
     "escape": true
+  },
+  "network": {
+    "format-wifi": "",
+    "format-disconnected": " !",
+    "format-ethernet": "󰊗",
+    "tooltip-format-wifi": "{essid} {frequency}GHz ({signalStrength}%) ",
+    "tooltip-format-ethernet": "{ifname} ",
+    "tooltip-format-disconnected": "Disconnected",
+    "max-length": 50,
+    "on-click": "better-control -w"
   }
 }

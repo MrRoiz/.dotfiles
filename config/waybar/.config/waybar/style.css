@@ -67,12 +67,15 @@ tooltip {
 #tray,
 #custom-power,
 #custom-notifications,
+#network,
 #backlight {
   padding: 0px 10px;
 }
 
 #custom-power:hover,
-#custom-notifications:hover {
+#custom-notifications:hover,
+#network:hover,
+#pulseaudio:hover {
   background: #181825;
 }
 
@@ -111,20 +114,3 @@ tooltip {
   margin-right: 5px;
   border-left: 0px;
 }
-
-/* #pulseaudio { */
-/*   color: #89b4fa; */
-/* } */
-
-#pulseaudio:hover {
-  background: #181825;
-}
-
-/* #pulseaudio.microphone { */
-/*   color: #cba6f7; */
-/*   border-left: 0px; */
-/*   border-right: 0px; */
-/*   border-radius: 0px 20px 20px 0px; */
-/*   margin-right: 5px; */
-/*   padding-right: 8px; */
-/* } */
