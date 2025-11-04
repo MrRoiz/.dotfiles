@@ -14,11 +14,11 @@
   ],
   "modules-right": [
     "tray",
-    "temperature",
     "network",
     "bluetooth",
     "pulseaudio",
     "pulseaudio#microphone",
+    "temperature",
     "battery",
     "custom/notifications"
   ],
