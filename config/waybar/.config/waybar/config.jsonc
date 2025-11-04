@@ -16,6 +16,7 @@
     "tray",
     "temperature",
     "network",
+    "bluetooth",
     "pulseaudio",
     "pulseaudio#microphone",
     "battery",
@@ -55,9 +56,8 @@
   },
   "battery": {
     "states": {
-      "good": 95,
       "warning": 30,
-      "critical": 20
+      "critical": 15
     },
     "format": "{icon} {capacity}%",
     "format-charging": " {capacity}%",
@@ -138,5 +138,14 @@
     "tooltip-format-disconnected": "Disconnected",
     "max-length": 50,
     "on-click": "better-control -w"
+  },
+  "bluetooth": {
+    "format": "󰂲",
+    "format-connected": "",
+    "tooltip-format": "{controller_alias}\t{controller_address}\n\n{num_connections} connected",
+    "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}",
+    "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
+    "tooltip-format-enumerate-connected-battery": "{device_alias}\t{device_address}\t{device_battery_percentage}%",
+    "on-click": "better-control -b"
   }
 }

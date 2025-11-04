@@ -67,20 +67,21 @@ tooltip {
 #tray,
 #custom-power,
 #custom-notifications,
-#network,
 #backlight {
   padding: 0px 10px;
+}
+
+#bluetooth {
+  font-size: 15px;
+  padding: 0px 5px 0px 10px;
 }
 
 #custom-power:hover,
 #custom-notifications:hover,
 #network:hover,
-#pulseaudio:hover {
+#pulseaudio:hover,
+#bluetooth:hover {
   background: #181825;
-}
-
-#temperature {
-  border-radius: 20px 0px 0px 20px;
 }
 
 #temperature.critical {
@@ -98,19 +99,14 @@ tooltip {
   padding: 0px 4px;
 }
 
-
-#clock {
-  border-radius: 20px;
-  margin-left: 5px;
-  margin-right: 10px;
-  border-right: 0px;
-  transition: 0.3s;
-  padding-left: 7px;
-}
-
 #battery {
   color: #a6e3a1;
-  border-radius: 0 20px 20px 0;
-  margin-right: 5px;
-  border-left: 0px;
+}
+
+#battery.warning {
+  color: #ffcc66;
+}
+
+#battery.critical {
+  color: #eba0ac;
 }
