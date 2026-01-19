@@ -4,11 +4,17 @@
 
 Personal dotfiles for my Hyprland setup on Linux.
 
+## Quick Install
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/MrRoiz/.dotfiles/main/setup.sh | bash
+```
+
 ## Components
 
 - **hyprland** - Hyprland window manager configuration
 - **waybar** - Status bar configuration
-- **rofi** - Application launcher and menu system
+- **vicinae** - Application launcher
 - **kitty** - Terminal emulator configuration
 - **swaync** - Notification daemon configuration
 - **wlogout** - Logout menu configuration
@@ -16,11 +22,11 @@ Personal dotfiles for my Hyprland setup on Linux.
 - **zsh** - Shell configuration
 - **fastfetch** - System information tool configuration
 - **satty** - Screenshot annotation tool configuration
+- **opencode** - OpenCode AI assistant configuration
 - **wallpapers** - Wallpaper collection
 - and more
 
 
 ## Credits
 
-- Rofi themes by [newmanls/rofi-themes-collection](https://github.com/newmanls/rofi-themes-collection)
 - GTK4 theme by [vinceliuice/Colloid-gtk-theme](https://github.com/vinceliuice/Colloid-gtk-theme)
