@@ -130,7 +130,30 @@ install_docker() {
 setup_sddm() {
   print_step "Setting up SDDM"
   install_package sddm # Display manager
-  systemctl enable sddm
+  print_substep "Enabling SDDM service..."
+  sudo systemctl enable sddm
+
+  install_package sddm-silent-theme
+
+  print_substep "Configuring SDDM..."
+  local sddm_conf="/etc/sddm.conf"
+  local expected_config="[General]
+InputMethod=qtvirtualkeyboard
+GreeterEnvironment=QML2_IMPORT_PATH=/usr/share/sddm/themes/silent/components/,QT_IM_MODULE=qtvirtualkeyboard
+
+[Theme]
+Current=silent"
+
+  if [[ -f "$sddm_conf" ]] && [[ "$(sudo cat "$sddm_conf")" == "$expected_config" ]]; then
+    print_substep "SDDM already configured"
+  else
+    sudo tee "$sddm_conf" >/dev/null <<EOF
+$expected_config
+EOF
+    print_substep "SDDM configuration applied"
+  fi
+
+  # TODO: Configure a custom config using the actual background
 }
 
 install_ohmyzsh() {
@@ -285,8 +308,7 @@ stow_dotfiles
 setup_zshrc
 
 print_step "Setting up wallpaper"
-# Setup wallpaper
-sudo bash $DOTFILES_DIR/scripts/change-wallpaper.sh $DOTFILES_DIR/wallpapers
+sudo bash $DOTFILES_DIR/scripts/change-wallpaper.sh
 
 install_ohmyzsh # Oh My Zsh framework
 
