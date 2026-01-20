@@ -135,7 +135,11 @@ install_ohmyzsh() {
 # Main Script Execution
 # -----------------------------------------------------------------------------
 
-check_or_install_yay
+if ! check_or_install_yay; then
+  echo "Failed to install yay. Exiting."
+  exit 1
+fi
+
 enable_multilib
 
 # -- Install Packages --
