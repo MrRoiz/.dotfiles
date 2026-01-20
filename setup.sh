@@ -136,7 +136,7 @@ install_ohmyzsh() {
 # -----------------------------------------------------------------------------
 
 if ! check_or_install_yay; then
-  echo "Failed to install yay. Exiting."
+  echo "Failed to install yay. Please check your internet connection and try running the script again."
   exit 1
 fi
 
