@@ -127,22 +127,10 @@ install_docker() {
   sudo usermod -aG docker $USER
 }
 
-setup_sddm_autologin() {
-  print_step "Setting up SDDM autologin"
-  local config_file="/etc/sddm.conf.d/autologin.conf"
-  local expected_content="[Autologin]
-User=$USER
-Session=hyprland"
-
-  if [[ -f "$config_file" ]] && [[ "$(cat "$config_file")" == "$expected_content" ]]; then
-    print_substep "SDDM autologin already configured"
-    return
-  fi
-
-  print_substep "Configuring autologin for $USER with hyprland session..."
-  sudo mkdir -p /etc/sddm.conf.d
-  echo "$expected_content" | sudo tee "$config_file" >/dev/null
-  print_substep "SDDM autologin configured"
+setup_sddm() {
+  print_step "Setting up SDDM"
+  install_package sddm # Display manager
+  systemctl enable sddm
 }
 
 install_ohmyzsh() {
@@ -228,8 +216,8 @@ install_package "wl-clipboard"                # Clipboard
 print_header "INSTALLING PACKAGES - SYSTEM"
 # System
 install_package "gnome-keyring seahorse" # Keyring manager, some apps need it to store keys/passwords
-install_package sddm                     # Display manager
-install_package "satty slurp grim"       # Screenshots. NOTE: Does it need wl-copy?
+setup_sddm
+install_package "satty slurp grim" # Screenshots. NOTE: Does it need wl-copy?
 install_package swayosd
 setup_theme
 
@@ -295,7 +283,6 @@ setup_git
 check_or_clone_dotfiles
 stow_dotfiles
 setup_zshrc
-setup_sddm_autologin
 
 print_step "Setting up wallpaper"
 # Setup wallpaper
