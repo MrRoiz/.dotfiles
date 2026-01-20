@@ -72,6 +72,7 @@ install_utility_packages() {
   install_package obsidian                             # Note-taking
   install_package libreoffice-fresh                    # Office suite
   install_package gnome-calculator                     # Calculator
+  install_package localsend-bin
 }
 
 install_devtools_packages() {
@@ -93,6 +94,17 @@ install_devtools_packages() {
   install_docker
 }
 
+install_rnvim() {
+  print_header "Installing Rnvim"
+  if [ -d "$HOME/.config/nvim" ]; then
+    print_substep "rnvim already installed, pulling latest changes..."
+    git -C "$HOME/.config/nvim" pull
+  else
+    git clone https://github.com/MrRoiz/rnvim.git "$HOME/.config/nvim"
+    print_substep "rnvim installed!"
+  fi
+}
+
 install_all_packages() {
   install_compositor_packages
   install_hyprland_essentials
@@ -103,4 +115,5 @@ install_all_packages() {
   install_terminal_packages
   install_utility_packages
   install_devtools_packages
+  install_rnvim
 }
