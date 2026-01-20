@@ -25,17 +25,18 @@ check_or_install_yay() {
   fi
 
   sudo pacman -S --needed git base-devel
-  git clone https://aur.archlinux.org/yay.git
-  cd yay
-  makepkg -si
+
+  # Build yay in a temporary directory
+  local tmp_dir=$(mktemp -d)
+  git clone https://aur.archlinux.org/yay.git "$tmp_dir/yay"
+  cd "$tmp_dir/yay"
+  makepkg -si --noconfirm
 
   # Remove installed yay build files
-  cd ..
-  rm -rf yay
+  cd "$HOME"
+  rm -rf "$tmp_dir"
 
   yay # Upgrade system
-
-  cd $HOME
 }
 
 enable_multilib() {
