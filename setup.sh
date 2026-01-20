@@ -24,18 +24,30 @@ check_or_install_yay() {
     return
   fi
 
+  echo "Installing yay AUR helper..."
   sudo pacman -S --needed git base-devel
 
   # Build yay in a temporary directory
   local tmp_dir=$(mktemp -d)
-  git clone https://aur.archlinux.org/yay.git "$tmp_dir/yay"
+  if ! git clone https://aur.archlinux.org/yay.git "$tmp_dir/yay"; then
+    echo "Error: Failed to clone yay repository"
+    rm -rf "$tmp_dir"
+    return 1
+  fi
+
   cd "$tmp_dir/yay"
-  makepkg -si --noconfirm
+  if ! makepkg -si --noconfirm; then
+    echo "Error: Failed to build and install yay"
+    cd "$HOME"
+    rm -rf "$tmp_dir"
+    return 1
+  fi
 
   # Remove installed yay build files
   cd "$HOME"
   rm -rf "$tmp_dir"
 
+  echo "yay installed successfully"
   yay # Upgrade system
 }
 
