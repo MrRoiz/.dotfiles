@@ -80,7 +80,7 @@ check_or_clone_dotfiles() {
 stow_dotfiles() {
   install_package stow
   cd ~/.dotfiles/config
-  stow --restow -t $HOME *
+  stow --restow -t "$HOME" *
   cd ~
 }
 
@@ -102,7 +102,7 @@ install_docker() {
   install_package "docker docker-compose docker-buildx"
   sudo systemctl enable --now docker
   getent group docker || sudo groupadd docker
-  sudo usermod -aG docker $USER
+  sudo usermod -aG docker "$USER"
 }
 
 setup_sddm_autologin() {
