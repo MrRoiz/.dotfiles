@@ -178,6 +178,28 @@ setup_theme() {
   gsettings set org.gnome.desktop.interface gtk-theme "Adwaita-dark"
 }
 
+setup_git() {
+  print_step "Setting up Git configuration"
+  local current_name=$(git config --global user.name 2>/dev/null)
+  local current_email=$(git config --global user.email 2>/dev/null)
+
+  if [[ -n "$current_name" && -n "$current_email" ]]; then
+    print_substep "Git already configured: $current_name <$current_email>"
+    read -p "    → Do you want to reconfigure? [y/N] " -n 1 -r
+    echo
+    [[ ! $REPLY =~ ^[Yy]$ ]] && return
+  fi
+
+  print_substep "Enter your Git user name:"
+  read -p "    → " git_name
+  print_substep "Enter your Git email:"
+  read -p "    → " git_email
+
+  git config --global user.name "$git_name"
+  git config --global user.email "$git_email"
+  print_substep "Git configured: $git_name <$git_email>"
+}
+
 # -----------------------------------------------------------------------------
 # Main Script Execution
 # -----------------------------------------------------------------------------
@@ -252,6 +274,7 @@ install_package gnome-calculator                     # Calculator
 print_header "INSTALLING PACKAGES - DEVTOOLS"
 # Devtools
 install_package opencode-bin
+install_package unzip
 install_package dbeaver-ce-bin
 install_package just
 install_package tenv-bin        # Terraform version manager
@@ -268,6 +291,7 @@ install_docker
 
 print_header "CONFIGURATION"
 # -- Config --
+setup_git
 check_or_clone_dotfiles
 stow_dotfiles
 setup_zshrc
