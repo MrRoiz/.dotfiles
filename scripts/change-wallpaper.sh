@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if [ "$EUID" -ne 0 ]; then
   echo "In order to execute the script you need to run it using sudo."

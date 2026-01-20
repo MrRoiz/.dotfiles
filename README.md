@@ -7,7 +7,7 @@ Personal dotfiles for my Hyprland setup on Linux.
 ## Quick Install
 
 ```bash
-curl -s https://raw.githubusercontent.com/MrRoiz/.dotfiles/main/setup.sh | bash
+curl -s https://raw.githubusercontent.com/MrRoiz/.dotfiles/main/install.sh > /tmp/install.sh && bash /tmp/install.sh
 ```
 
 ## Components
