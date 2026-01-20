@@ -14,7 +14,7 @@
 # -----------------------------------------------------------------------------
 
 install_package() {
-  yay -S $1 --needed
+  yay -S "$1" --needed
 }
 
 check_or_install_yay() {
@@ -28,23 +28,29 @@ check_or_install_yay() {
   sudo pacman -S --needed git base-devel
 
   # Build yay in a temporary directory
-  local tmp_dir=$(mktemp -d)
+  local tmp_dir
+  tmp_dir=$(mktemp -d)
   if ! git clone https://aur.archlinux.org/yay.git "$tmp_dir/yay"; then
     echo "Error: Failed to clone yay repository"
     rm -rf "$tmp_dir"
     return 1
   fi
 
-  cd "$tmp_dir/yay"
+  cd "$tmp_dir/yay" || {
+    echo "Error: Failed to change directory to $tmp_dir/yay"
+    rm -rf "$tmp_dir"
+    return 1
+  }
+
   if ! makepkg -si --noconfirm; then
     echo "Error: Failed to build and install yay"
-    cd "$HOME"
+    cd "$HOME" || return 1
     rm -rf "$tmp_dir"
     return 1
   fi
 
   # Remove installed yay build files
-  cd "$HOME"
+  cd "$HOME" || return 1
   rm -rf "$tmp_dir"
 
   echo "yay installed successfully"
