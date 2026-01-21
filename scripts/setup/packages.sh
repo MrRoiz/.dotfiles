@@ -75,6 +75,7 @@ install_utility_packages() {
   install_package libreoffice-fresh                    # Office suite
   install_package gnome-calculator                     # Calculator
   install_package localsend-bin                        # File sharing
+  install_package veracrypt                            # Volume encryption
 }
 
 install_devtools_packages() {
