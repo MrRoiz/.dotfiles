@@ -55,6 +55,8 @@ setup_sddm() {
 
   print_substep "Configuring SDDM..."
   sudo cp "$DOTFILES_DIR/config-templates/sddm/sddm.conf" "/etc/sddm.conf"
+  sudo cp "$DOTFILES_DIR/config-templates/sddm/config.conf" "/usr/share/sddm/themes/silent/configs/custom.conf"
+  sudo cp "$DOTFILES_DIR/config-templates/sddm/metadata.desktop" "/usr/share/sddm/themes/silent"
 
   print_substep "Enabling SDDM service..."
   sudo systemctl enable sddm

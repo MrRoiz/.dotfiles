@@ -12,8 +12,8 @@ install_compositor_packages() {
 }
 
 install_hyprland_essentials() {
-  print_header "INSTALLING PACKAGES - HYPRLAND ESSENTIALS"
   # See: https://wiki.hypr.land/Useful-Utilities/Must-have
+  print_header "INSTALLING PACKAGES - HYPRLAND ESSENTIALS"
   install_package "qt5-wayland qt6-wayland"     # QT Support for Wayland
   install_package "pipewire wireplumber"        # Screen sharing support
   install_package "polkit-gnome"                # Polkit
@@ -74,15 +74,15 @@ install_utility_packages() {
   install_package obsidian                             # Note-taking
   install_package libreoffice-fresh                    # Office suite
   install_package gnome-calculator                     # Calculator
-  install_package localsend-bin
+  install_package localsend-bin                        # File sharing
 }
 
 install_devtools_packages() {
   print_header "INSTALLING PACKAGES - DEVTOOLS"
-  install_package opencode-bin
-  install_package unzip
-  install_package dbeaver
-  install_package just
+  install_package opencode-bin    # AI Code agent
+  install_package unzip           # Unzip tool
+  install_package dbeaver         # Database manager
+  install_package just            # Command runner
   install_package tenv-bin        # Terraform version manager
   install_package fzf             # Fuzzy finder
   install_package neovim          # Text editor
