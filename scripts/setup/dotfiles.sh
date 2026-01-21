@@ -45,28 +45,28 @@ install_ohmyzsh() {
     return
   fi
 
+  print_substep "Installing Oh My Zsh framework..."
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
   print_substep "Installing zsh-syntax-highlighting plugin..."
   git clone https://github.com/zsh-users/zsh-syntax-highlighting.git \
-    "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting"
+    "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting"
 
   print_substep "Installing zsh-autosuggestions plugin..."
   git clone https://github.com/zsh-users/zsh-autosuggestions \
-    "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
+    "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
 
   print_substep "Installing zsh-history-substring-search plugin..."
   git clone https://github.com/zsh-users/zsh-history-substring-search \
-    "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-history-substring-search"
+    "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-history-substring-search"
 
   print_substep "Installing you-should-use plugin..."
   git clone https://github.com/MichaelAquilina/zsh-you-should-use.git \
-    "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/you-should-use"
+    "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/you-should-use"
 
   print_substep "Installing powerlevel10k theme..."
   git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \
     "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
-
-  print_substep "Installing Oh My Zsh framework..."
-  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 }
 
 setup_wallpaper() {

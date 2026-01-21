@@ -25,6 +25,6 @@ print_substep() {
 }
 
 install_package() {
-  print_substep "Installing: $1"
+  print_step "Installing: $1"
   yay -S $1 --needed
 }

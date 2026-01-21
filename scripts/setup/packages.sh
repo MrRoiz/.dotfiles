@@ -97,7 +97,7 @@ install_devtools_packages() {
 }
 
 install_rnvim() {
-  print_header "Installing Rnvim"
+  print_header "INSTALLING PACKAGES - RNVIM CONFIGURATION"
   if [ -d "$HOME/.config/nvim" ]; then
     print_substep "rnvim already installed, pulling latest changes..."
     git -C "$HOME/.config/nvim" pull
@@ -105,6 +105,16 @@ install_rnvim() {
     git clone https://github.com/MrRoiz/rnvim.git "$HOME/.config/nvim"
     print_substep "rnvim installed!"
   fi
+}
+
+install_job_packages() {
+  print_header "INSTALLING PACKAGES - JOB APPS"
+  read -p "Do you want to install job apps? [y/N] " -n 1 -r
+  echo
+  [[ ! $REPLY =~ ^[Yy]$ ]] && return
+
+  print_step "Installing Job Apps..."
+  install_package "slack-desktop"
 }
 
 install_all_packages() {
@@ -118,4 +128,5 @@ install_all_packages() {
   install_utility_packages
   install_devtools_packages
   install_rnvim
+  install_job_packages
 }
