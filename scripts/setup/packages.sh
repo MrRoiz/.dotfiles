@@ -29,6 +29,7 @@ install_system_packages() {
   install_package "satty slurp grim" # Screenshots
   install_package swayosd
   setup_theme
+  install_package man-db
 }
 
 install_multimedia_packages() {

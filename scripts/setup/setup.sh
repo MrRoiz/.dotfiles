@@ -35,6 +35,7 @@ enable_multilib
 
 # -- Install Packages --
 install_all_packages
+add_1password_trusted_browsers
 
 # -- Configuration --
 print_header "CONFIGURATION"

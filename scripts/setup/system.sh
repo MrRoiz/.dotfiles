@@ -103,3 +103,18 @@ setup_git() {
   git config --global user.email "$git_email"
   print_substep "Git configured: $git_name <$git_email>"
 }
+
+add_1password_trusted_browsers() {
+  print_step "Add custom trusted browser in 1password"
+
+  sudo mkdir -p /etc/1password
+
+  if ! [ -e /etc/1password/custom_allowed_browsers ]; then
+    sudo touch /etc/1password/custom_allowed_browsers
+  fi
+
+  echo "zen-bin" | echo "zen-bin" | sudo tee /etc/1password/custom_allowed_browsers
+
+  sudo chown root:root /etc/1password/custom_allowed_browsers
+  sudo chmod 755 /etc/1password/custom_allowed_browsers
+}
