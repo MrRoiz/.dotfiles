@@ -80,7 +80,7 @@ install_devtools_packages() {
   print_header "INSTALLING PACKAGES - DEVTOOLS"
   install_package opencode-bin
   install_package unzip
-  install_package dbeaver-ce-bin
+  install_package dbeaver
   install_package just
   install_package tenv-bin        # Terraform version manager
   install_package fzf             # Fuzzy finder
