@@ -93,6 +93,7 @@ install_devtools_packages() {
   install_package aws-cli-v2      # AWS CLI
   install_package sops            # Secrets management
   install_package rust            # Rust programming language
+  install_package wget            # Download tool
   install_docker
 }
 
@@ -105,6 +106,38 @@ install_rnvim() {
     git clone https://github.com/MrRoiz/rnvim.git "$HOME/.config/nvim"
     print_substep "rnvim installed!"
   fi
+}
+
+install_and_setup_mega() {
+  print_header "INSTALLING PACKAGES - MEGA"
+
+  if command -v mega-cmd &>/dev/null; then
+    print_substep "Mega cmd is already installed"
+    return
+  fi
+
+  read -p "Do you want to install and setup Mega? [y/N] " -n 1 -r
+  echo
+  [[ ! $REPLY =~ ^[Yy]$ ]] && return
+
+  wget https://mega.nz/linux/repo/Arch_Extra/x86_64/megacmd-x86_64.pkg.tar.zst -P /tmp && sudo pacman -U "/tmp/megacmd-x86_64.pkg.tar.zst"
+
+  # Sync folder
+  MEGA_SYNC_FOLDER="$HOME/Mega"
+  mkdir -p $MEGA_SYNC_FOLDER
+
+  sudo cp "$DOTFILES_DIR/config-templates/mega/mega-cmd.service" /etc/systemd/system
+  sudo sed -i "s/<your-username>/$USER/" /etc/systemd/system/mega-cmd.service
+
+  echo ""
+  read -p "Enter your Mega email: " -r mega_email
+  read -s -p "Enter your Mega password: " -r mega_password
+  echo ""
+
+  mega-login "$mega_email" --password "$mega_password"
+  mega-sync $MEGA_SYNC_FOLDER /
+
+  sudo systemctl enable --now mega-cmd
 }
 
 install_job_packages() {
@@ -129,4 +162,5 @@ install_all_packages() {
   install_devtools_packages
   install_rnvim
   install_job_packages
+  install_and_setup_mega
 }
