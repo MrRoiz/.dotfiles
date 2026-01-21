@@ -32,12 +32,13 @@ print_header "ARCH LINUX SETUP SCRIPT"
 
 # -- System Preparation --
 print_header "SYSTEM PREPARATION"
-check_or_install_yay
 enable_multilib
+check_or_install_yay
 
 # -- Install Packages --
 install_all_packages
 add_1password_trusted_browsers
+enable_services
 
 # -- Configuration --
 print_header "CONFIGURATION"

@@ -30,6 +30,7 @@ install_system_packages() {
   install_package swayosd
   setup_theme
   install_package man-db
+  install_package bluez
 }
 
 install_multimedia_packages() {

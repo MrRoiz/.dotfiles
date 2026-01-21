@@ -35,14 +35,15 @@ enable_multilib() {
 
   print_substep "Uncommenting [multilib] section in pacman.conf..."
   sudo sed -i '/^#\[multilib\]/,/^#Include/ s/^#//' /etc/pacman.conf
-  sudo yay -Sy
 }
 
 install_docker() {
   print_step "Installing Docker"
   install_package "docker docker-compose docker-buildx"
+
   print_substep "Enabling docker service..."
   sudo systemctl enable --now docker
+
   print_substep "Setting up docker group..."
   getent group docker || sudo groupadd docker
   sudo usermod -aG docker "$USER"
@@ -50,29 +51,13 @@ install_docker() {
 
 setup_sddm() {
   print_step "Setting up SDDM"
-  install_package sddm
-  print_substep "Enabling SDDM service..."
-  sudo systemctl enable sddm
-
-  install_package sddm-silent-theme
+  install_package "sddm sddm-silent-theme"
 
   print_substep "Configuring SDDM..."
-  local sddm_conf="/etc/sddm.conf"
-  local expected_config="[General]
-InputMethod=qtvirtualkeyboard
-GreeterEnvironment=QML2_IMPORT_PATH=/usr/share/sddm/themes/silent/components/,QT_IM_MODULE=qtvirtualkeyboard
+  sudo cp "$DOTFILES_DIR/config-templates/sddm/sddm.conf" "/etc/sddm.conf"
 
-[Theme]
-Current=silent"
-
-  if [[ -f "$sddm_conf" ]] && [[ "$(sudo cat "$sddm_conf")" == "$expected_config" ]]; then
-    print_substep "SDDM already configured"
-  else
-    sudo tee "$sddm_conf" >/dev/null <<EOF
-$expected_config
-EOF
-    print_substep "SDDM configuration applied"
-  fi
+  print_substep "Enabling SDDM service..."
+  sudo systemctl enable sddm
 }
 
 setup_theme() {
@@ -117,4 +102,9 @@ add_1password_trusted_browsers() {
 
   sudo chown root:root /etc/1password/custom_allowed_browsers
   sudo chmod 755 /etc/1password/custom_allowed_browsers
+}
+
+enable_services() {
+  print_step "Enabling services..."
+  systemctl enable --now bluetooth
 }
