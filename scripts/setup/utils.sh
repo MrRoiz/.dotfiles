@@ -6,10 +6,6 @@
 # Common helper functions for setup scripts
 # =============================================================================
 
-# Constants
-export DOTFILES_REPO="https://github.com/MrRoiz/.dotfiles.git"
-export DOTFILES_DIR="$HOME/.dotfiles"
-
 print_header() {
   echo ""
   echo "╔══════════════════════════════════════════════════════════════════════════════╗"

@@ -13,8 +13,10 @@
 
 set -e
 
-# Get the directory where this script is located
-SCRIPT_DIR="$HOME/.dotfiles/scripts"
+# Constants
+DOTFILES_REPO="https://github.com/MrRoiz/.dotfiles.git"
+DOTFILES_DIR="$HOME/.dotfiles"
+SCRIPT_DIR="$DOTFILES_DIR/scripts"
 
 # Source all setup modules
 source "$SCRIPT_DIR/setup/utils.sh"

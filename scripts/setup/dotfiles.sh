@@ -29,14 +29,12 @@ stow_dotfiles() {
 setup_zshrc() {
   print_step "Setting up .zshrc"
   local zshrc="$HOME/.zshrc"
-  local dotfiles_export='export DOTFILES_PATH="$HOME/.dotfiles"'
-  local source_line='source "$DOTFILES_PATH/zsh/setup.sh"'
 
-  if ! grep -qF "$dotfiles_export" "$zshrc" 2>/dev/null; then
-    echo -e "$dotfiles_export\n$source_line\n$(cat "$zshrc" 2>/dev/null)" >"$zshrc"
-    print_substep "Added dotfiles setup to .zshrc"
+  if ! [ -e $zshrc ]; then
+    print_substep ".zshrc does not exist, creating a new one..."
+    cp "$DOTFILES_DIR/config-templates/zsh/.zshrc" $HOME
   else
-    print_substep ".zshrc already configured"
+    print_substep ".zshrc already present"
   fi
 }
 
