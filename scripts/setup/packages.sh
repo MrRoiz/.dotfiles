@@ -86,7 +86,7 @@ install_devtools_packages() {
   install_package just            # Command runner
   install_package tenv-bin        # Terraform version manager
   install_package fzf             # Fuzzy finder
-  install_package neovim          # Text editor
+  install_package "neovim zed"    # Text editors
   install_package ripgrep         # Search tool
   install_package imagemagick     # Image manipulation
   install_package "nvm yarn pnpm" # Node version manager
