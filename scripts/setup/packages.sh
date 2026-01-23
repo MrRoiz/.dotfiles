@@ -95,6 +95,7 @@ install_devtools_packages() {
   install_package sops            # Secrets management
   install_package rust            # Rust programming language
   install_package wget            # Download tool
+  install_package bind            # Tool for DNS lookups
   install_docker
 }
 
