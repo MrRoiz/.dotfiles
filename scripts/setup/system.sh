@@ -39,7 +39,7 @@ enable_multilib() {
 
 install_docker() {
   print_step "Installing Docker"
-  install_package "docker docker-compose docker-buildx"
+  install_package "docker docker-compose docker-buildx lazydocker"
 
   print_substep "Enabling docker service..."
   sudo systemctl enable --now docker
