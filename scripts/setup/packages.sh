@@ -81,7 +81,7 @@ install_utility_packages() {
 install_devtools_packages() {
   print_header "INSTALLING PACKAGES - DEVTOOLS"
   install_package github-cli
-  install_package opencode-bin      # AI Code agent
+  install_package opencode          # AI Code agent
   install_package unzip             # Unzip tool
   install_package dbeaver           # Database manager
   install_package just              # Command runner
