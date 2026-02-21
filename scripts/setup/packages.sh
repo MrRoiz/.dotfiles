@@ -69,7 +69,7 @@ install_utility_packages() {
   install_package steam                                # Gaming platform
   install_package proton-vpn-gtk-app                   # Proton VPN
   install_package vicinae-bin                          # App launcher
-  install_package 1password                            # Password manager
+  install_package "1password 1password-cli"            # Password manager
   install_package "zen-browser-bin helium-browser-bin" # Browsers
   install_package obsidian                             # Note-taking
   install_package libreoffice-fresh                    # Office suite
