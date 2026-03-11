@@ -1,3 +1,5 @@
+/* Ayu Dark theme for Waybar */
+
 * {
   border: none;
   border-radius: 0px;
@@ -7,17 +9,17 @@
 }
 
 window#waybar {
-  background: #15121B;
-  color: #cdd6f4;
+  background: #0D1017;
+  color: #BFBDB6;
 }
 
 tooltip {
-  background: #1e1e2e;
+  background: #131721;
   border-radius: 10px;
   border-width: 1.5px;
   border-style: solid;
-  border-color: #11111b;
-  transition: 0.3s;
+  border-color: #1B2028;
+  color: #BFBDB6;
 }
 
 #workspaces {
@@ -25,33 +27,32 @@ tooltip {
 }
 
 #workspaces button {
-  color: #a6adc8;
-  /* border-radius: 20px; */
+  color: #565B66;
 }
 
 #workspaces button.active {
-  background: #181825;
-  color: #eba0ac;
+  background: #1A1F29;
+  color: #E6B450;
 }
 
 #workspaces button.focused {
-  color: #a6adc8;
-  background: #eba0ac;
+  color: #0D1017;
+  background: #E6B450;
 }
 
 #workspaces button.urgent {
-  color: #11111b;
-  background: #a6e3a1;
+  color: #0D1017;
+  background: #F07178;
 }
 
 #workspaces button:hover {
-  background: #11111b;
-  color: #cdd6f4;
+  background: #131721;
+  color: #BFBDB6;
 }
 
 /* Right module */
 .modules-right {
-  border: 1px solid #181825;
+  border: 1px solid #1B2028;
   border-radius: 20px;
 }
 
@@ -81,11 +82,15 @@ tooltip {
 #network:hover,
 #pulseaudio:hover,
 #bluetooth:hover {
-  background: #181825;
+  background: #1A1F29;
+}
+
+#temperature {
+  color: #BFBDB6;
 }
 
 #temperature.critical {
-  color: #eba0ac;
+  color: #F07178;
 }
 
 #backlight {
@@ -99,14 +104,43 @@ tooltip {
   padding: 0px 4px;
 }
 
+#network {
+  color: #565B66;
+}
+
+#network.wifi {
+  color: #39BAE6;
+}
+
+#network.ethernet {
+  color: #39BAE6;
+}
+
+#network.disconnected {
+  color: #565B66;
+}
+
+#bluetooth {
+  color: #565B66;
+}
+
+#bluetooth.connected {
+  color: #39BAE6;
+}
+
+#pulseaudio {
+  color: #BFBDB6;
+}
+
+
 #battery {
-  color: #a6e3a1;
+  color: #7FD962;
 }
 
 #battery.warning {
-  color: #ffcc66;
+  color: #FFB454;
 }
 
 #battery.critical {
-  color: #eba0ac;
+  color: #F07178;
 }
