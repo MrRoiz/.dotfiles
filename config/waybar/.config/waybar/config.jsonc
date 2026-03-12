@@ -130,11 +130,13 @@
   },
   "network": {
     "format-wifi": "",
-    "format-disconnected": " !",
-    "format-ethernet": "󰊗",
     "tooltip-format-wifi": "{essid} {frequency}GHz ({signalStrength}%) ",
-    "tooltip-format-ethernet": "{ifname} ",
+    "format-disconnected": "",
     "tooltip-format-disconnected": "Disconnected",
+    "format-ethernet": " ",
+    "tooltip-format-ethernet": "{ifname} ",
+    "format-linked": "󱇱",
+    "tooltip-format-linked": "VPN {ifname} ",
     "max-length": 50,
     "on-click": "better-control -w -m"
   },

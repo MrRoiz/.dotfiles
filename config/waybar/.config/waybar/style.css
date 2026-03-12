@@ -108,11 +108,9 @@ tooltip {
   color: #565B66;
 }
 
-#network.wifi {
-  color: #39BAE6;
-}
-
-#network.ethernet {
+#network.wifi,
+#network.ethernet,
+#network.linked {
   color: #39BAE6;
 }
 
