@@ -72,6 +72,7 @@ install_utility_packages() {
   install_package "1password 1password-cli"            # Password manager
   install_package "zen-browser-bin helium-browser-bin" # Browsers
   install_package obsidian                             # Note-taking
+  install_package typora                               # Typora markdown editor
   install_package libreoffice-fresh                    # Office suite
   install_package gnome-calculator                     # Calculator
   install_package localsend-bin                        # File sharing
