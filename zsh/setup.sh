@@ -4,5 +4,4 @@ source "$ZSH_PATH/omzsh.sh"
 source "$ZSH_PATH/aliases.sh"
 source "$ZSH_PATH/public-env-vars.sh"
 source "$ZSH_PATH/functions.sh"
-
-source /usr/share/nvm/init-nvm.sh
+source "$ZSH_PATH/nvm.sh"
