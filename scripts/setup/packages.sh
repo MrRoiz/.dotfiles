@@ -93,7 +93,7 @@ install_devtools_packages() {
   install_package ripgrep           # Search tool
   install_package imagemagick       # Image manipulation
   install_package "nvm runjs-bin"   # Node version manager
-  install_package uv                # Python package manager
+  install_package "uv python-pipx"  # Python version manager and package installer
   install_package aws-cli-v2        # AWS CLI
   install_package sops              # Secrets management
   install_package rust              # Rust programming language
