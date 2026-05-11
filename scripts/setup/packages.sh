@@ -85,6 +85,7 @@ install_devtools_packages() {
   install_package opencode-bin      # AI Code agent
   install_package "zip unzip"       # Zip tools
   install_package dbeaver           # Database manager
+  install_package yaak-bin          # API client
   install_package just              # Command runner
   install_package "tenv-bin packer" # Terraform version manager and formatter
   install_package "jq"              # JSON processor
