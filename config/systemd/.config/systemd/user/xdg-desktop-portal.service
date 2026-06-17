@@ -1,0 +1,18 @@
+[Unit]
+Description=Portal service
+PartOf=graphical-session.target
+# Requisite=graphical-session.target intentionally removed.
+# Hyprland does not activate graphical-session.target on its own (unlike full DEs
+# like GNOME/KDE/COSMIC). This causes xdg-desktop-portal.service to fail on startup
+# with "Current graphical user session is inactive" because Requisite= requires the
+# target to already be active. The Requisite was added in xdg-desktop-portal 1.21+ and
+# breaks screen sharing, file dialogs, and other portal functionality in Hyprland.
+# See: https://github.com/flatpak/xdg-desktop-portal/issues/1983
+# See: https://bbs.archlinux.org/viewtopic.php?id=313883
+After=graphical-session-pre.target
+
+[Service]
+Type=dbus
+BusName=org.freedesktop.portal.Desktop
+ExecStart=/usr/lib/xdg-desktop-portal
+Slice=session.slice
