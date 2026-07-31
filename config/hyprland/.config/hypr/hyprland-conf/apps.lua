@@ -1,0 +1,18 @@
+-- MY PROGRAMS
+-- See https://wiki.hypr.land/Configuring/Keywords/
+
+return {
+    terminal = "kitty",
+    fileManager = "nautilus",
+    -- menu = "rofi -show drun"
+    menu = "vicinae toggle",
+    browser = "zen-browser",
+    passwordManager = "1password",
+
+    aux_screenshot = "slurp | grim -g - - | wl-copy",
+    screenshot = "grim -g \"$(slurp -o -r -c '##ff0000ff')\" -t ppm - | satty --filename -",
+
+    calculator = "gnome-calculator",
+
+    mainMonitor = "eDP-1",
+}
