@@ -40,9 +40,9 @@
       "on-click-right": "mode",
       "format": {
         "months": "<span color='#E6B450'><b>{}</b></span>",
-        "weeks": "<span color='#565B66'>{}</span>",
-        "weekdays": "<span color='#39BAE6'><b>{}</b></span>",
-        "today": "<span color='#0D1017' background='#E6B450'><b>{}</b></span>"
+        "weeks": "<span color='#565B66'>W{}</span>",
+        "weekdays": "<span color='#565B66'><b>{}</b></span>",
+        "today": "<span color='#E6B450'><b>{}</b></span>"
       }
     },
     "actions": {

@@ -27,27 +27,38 @@ tooltip {
 }
 
 #workspaces button {
-  color: #565B66;
-}
-
-#workspaces button.active {
-  background: #1A1F29;
-  color: #E6B450;
-}
-
-#workspaces button.focused {
-  color: #0D1017;
-  background: #E6B450;
-}
-
-#workspaces button.urgent {
-  color: #0D1017;
-  background: #F07178;
+  color: #565b66;
+  padding: 0 8px;
+  margin: 0 2px;
+  border-radius: 12px;
+  transition: all 0.15s ease;
 }
 
 #workspaces button:hover {
-  background: #131721;
-  color: #BFBDB6;
+  background: #1a1f29;
+  color: #bfbdb6;
+}
+
+#workspaces button.urgent {
+  background: rgba(240, 113, 120, 0.16);
+  color: #f07178;
+}
+
+#workspaces button.urgent:hover {
+  background: rgba(240, 113, 120, 0.24);
+  color: #f07178;
+}
+
+#workspaces button.active,
+#workspaces button.focused {
+  background: #1a1f29;
+  color: #e6b450;
+}
+
+#workspaces button.active:hover,
+#workspaces button.focused:hover {
+  background: #1a1f29;
+  color: #e6b450;
 }
 
 /* Right module */
@@ -74,7 +85,10 @@ tooltip {
 
 #bluetooth {
   font-size: 15px;
-  padding: 0px 5px 0px 10px;
+}
+
+#custom-notifications {
+  padding: 0px 6px;
 }
 
 #custom-power:hover,
@@ -105,13 +119,7 @@ tooltip {
 }
 
 #network {
-  color: #565B66;
-}
-
-#network.wifi,
-#network.ethernet,
-#network.linked {
-  color: #39BAE6;
+  color: #BFBDB6;
 }
 
 #network.disconnected {
@@ -123,7 +131,7 @@ tooltip {
 }
 
 #bluetooth.connected {
-  color: #39BAE6;
+  color: #BFBDB6;
 }
 
 #pulseaudio {
