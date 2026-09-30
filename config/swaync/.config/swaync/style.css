@@ -5,7 +5,7 @@
 
   --noti-border-color: #1b2028;
   --noti-bg: 19, 23, 33;
-  --noti-bg-alpha: 0.92;
+  --noti-bg-alpha: 0.96;
   --noti-bg-darker: rgb(13, 16, 23);
   --noti-bg-hover: rgb(26, 31, 41);
   --noti-bg-focus: transparent;
@@ -31,7 +31,7 @@
 }
 
 * {
-  font-family: "JetBrainsMono Nerd Font";
+  font-family: "Noto Sans", "JetBrainsMono Nerd Font";
 }
 
 /* ---- Control center (drawer) ---- */
@@ -53,7 +53,7 @@
 }
 
 .control-center .control-center-list .notification-background .notification {
-  background: rgba(19, 23, 33, 0.96);
+  background: rgba(19, 23, 33, 0.98);
   border: 1px solid rgba(191, 189, 182, 0.06);
   border-radius: 12px;
   box-shadow: none;
@@ -107,16 +107,16 @@
 }
 
 .summary {
-  color: #bfbdb6;
+  color: #e8e6df;
   font-weight: 600;
 }
 
 .body {
-  color: #b8b6af;
+  color: #cfcdc6;
 }
 
 .time {
-  color: #565b66;
+  color: #7c8089;
 }
 
 .close-button {
