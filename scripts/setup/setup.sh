@@ -45,6 +45,7 @@ print_header "CONFIGURATION"
 setup_git
 check_or_clone_dotfiles
 stow_dotfiles
+enable_battery_warning
 setup_zshrc
 setup_wallpaper
 install_ohmyzsh

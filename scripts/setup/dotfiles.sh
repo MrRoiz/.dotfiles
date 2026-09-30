@@ -73,3 +73,15 @@ setup_wallpaper() {
   print_step "Setting up wallpaper"
   sudo bash "$DOTFILES_DIR/scripts/change-wallpaper.sh"
 }
+
+enable_battery_warning() {
+  print_step "Enabling battery low warning"
+  systemctl --user daemon-reload 2>/dev/null || true
+
+  if systemctl --user enable --now battery-warning.timer 2>/dev/null; then
+    print_substep "battery-warning.timer enabled"
+  else
+    print_substep "Could not enable now (no user session?). Run later:"
+    print_substep "systemctl --user enable --now battery-warning.timer"
+  fi
+}

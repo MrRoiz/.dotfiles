@@ -1,0 +1,6 @@
+[Unit]
+Description=Warn on low battery (notification + sound)
+
+[Service]
+Type=oneshot
+ExecStart=%h/.dotfiles/scripts/battery-warning.sh
