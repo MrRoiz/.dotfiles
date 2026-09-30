@@ -1,0 +1,196 @@
+/* Ayu Dark theme for swaync — modern drawer, popups unchanged */
+
+:root {
+  --cc-bg: rgba(13, 16, 23, 0.92);
+
+  --noti-border-color: #1b2028;
+  --noti-bg: 19, 23, 33;
+  --noti-bg-alpha: 0.92;
+  --noti-bg-darker: rgb(13, 16, 23);
+  --noti-bg-hover: rgb(26, 31, 41);
+  --noti-bg-focus: transparent;
+  --noti-close-bg: rgba(191, 189, 182, 0.1);
+  --noti-close-bg-hover: rgba(240, 113, 120, 0.15);
+
+  --text-color: #bfbdb6;
+  --text-color-disabled: #565b66;
+  --bg-selected: #39bae6;
+
+  --notification-icon-size: 48px;
+  --notification-app-icon-size: calc(var(--notification-icon-size) / 3);
+  --notification-group-icon-size: 28px;
+
+  --border: 1px solid var(--noti-border-color);
+  --border-radius: 14px;
+  --notification-shadow: none;
+
+  --group-collapse-tranistion: opacity 130ms ease-out;
+
+  --font-size-body: 13px;
+  --font-size-summary: 14px;
+}
+
+* {
+  font-family: "JetBrainsMono Nerd Font";
+}
+
+/* ---- Control center (drawer) ---- */
+
+.control-center {
+  background: var(--cc-bg);
+  color: var(--text-color);
+  border: 1px solid rgba(191, 189, 182, 0.06);
+  border-radius: 18px;
+  padding: 8px;
+}
+
+.control-center .control-center-list {
+  background: transparent;
+}
+
+.control-center .control-center-list .notification-background .notification {
+  background: rgba(19, 23, 33, 0.85);
+  border: 1px solid rgba(191, 189, 182, 0.06);
+  border-radius: 12px;
+  box-shadow: none;
+}
+
+.control-center .control-center-list .notification-background .notification .notification-default-action:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.control-center scrollbar {
+  background: transparent;
+  border: none;
+}
+
+.control-center scrollbar slider {
+  background: #1b2028;
+  border-radius: 8px;
+  min-width: 5px;
+  min-height: 5px;
+}
+
+.control-center scrollbar slider:hover {
+  background: #39bae6;
+}
+
+/* ---- Notifications ---- */
+
+.notification-row,
+.notification-row:focus,
+.notification-row:hover,
+.notification-row:focus .notification-background,
+.notification-row:hover .notification-background {
+  background: transparent;
+  outline: none;
+  box-shadow: none;
+}
+
+.notification-row .notification-background .notification,
+.notification-row .notification-background .notification:hover,
+.notification-row .notification-background .notification:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+.notification-row .notification-background .notification.critical {
+  border-left: 2px solid #f07178;
+}
+
+.notification-row .notification-background .notification.low {
+  opacity: 0.75;
+}
+
+.summary {
+  color: #bfbdb6;
+  font-weight: 600;
+}
+
+.body {
+  color: #8f9298;
+}
+
+.time {
+  color: #565b66;
+}
+
+.close-button {
+  color: #565b66;
+  background: var(--noti-close-bg);
+}
+
+.close-button:hover {
+  color: #f07178;
+  background: var(--noti-close-bg-hover);
+}
+
+/* ---- Widgets (drawer header + dnd) ---- */
+
+.widget-title > label {
+  color: #8f9298;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+
+.widget-title > button,
+.widget-inhibitors > button {
+  background: transparent;
+  color: #565b66;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 2px 8px;
+  font-weight: 600;
+  transition: var(--hover-transition);
+}
+
+.widget-title > button:hover,
+.widget-inhibitors > button:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #bfbdb6;
+}
+
+.widget-dnd label {
+  color: #8f9298;
+}
+
+.widget-dnd switch {
+  background: #1b2028;
+  border: 1px solid rgba(191, 189, 182, 0.08);
+  border-radius: 14px;
+  min-width: 44px;
+  min-height: 22px;
+}
+
+.widget-dnd switch:checked {
+  background: #39bae6;
+  border-color: #39bae6;
+}
+
+.widget-dnd switch slider {
+  background: #bfbdb6;
+  border-radius: 12px;
+  min-width: 18px;
+  min-height: 18px;
+  margin: 2px;
+}
+
+.widget-dnd switch:checked slider {
+  background: #0d1017;
+}
+
+/* ---- Grouping ---- */
+
+.notification-group {
+  transition: opacity 110ms ease-out;
+}
+
+.notification-group .notification-group-header {
+  color: #8f9298;
+  font-weight: 600;
+}
+
+.notification-group .notification-group-close-button .close-button {
+  color: #565b66;
+}
