@@ -1,3 +1,4 @@
+[ -s /usr/share/nvm/init-nvm.sh ] || return
 source /usr/share/nvm/init-nvm.sh
 
 autoload -U add-zsh-hook

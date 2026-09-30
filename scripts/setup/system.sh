@@ -108,5 +108,5 @@ add_1password_trusted_browsers() {
 
 enable_services() {
   print_step "Enabling services..."
-  systemctl enable --now bluetooth
+  sudo systemctl enable --now bluetooth
 }
