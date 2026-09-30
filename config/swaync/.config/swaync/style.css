@@ -48,6 +48,10 @@
   background: transparent;
 }
 
+.control-center .notification-row .notification-background {
+  padding: 4px 0px;
+}
+
 .control-center .control-center-list .notification-background .notification {
   background: rgba(19, 23, 33, 0.85);
   border: 1px solid rgba(191, 189, 182, 0.06);
