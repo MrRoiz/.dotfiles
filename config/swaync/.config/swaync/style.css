@@ -53,7 +53,7 @@
 }
 
 .control-center .control-center-list .notification-background .notification {
-  background: rgba(19, 23, 33, 0.85);
+  background: rgba(19, 23, 33, 0.96);
   border: 1px solid rgba(191, 189, 182, 0.06);
   border-radius: 12px;
   box-shadow: none;
@@ -103,7 +103,7 @@
 }
 
 .notification-row .notification-background .notification.low {
-  opacity: 0.75;
+  opacity: 0.92;
 }
 
 .summary {
@@ -112,7 +112,7 @@
 }
 
 .body {
-  color: #8f9298;
+  color: #b8b6af;
 }
 
 .time {
