@@ -47,6 +47,27 @@ hl.layer_rule({
     no_anim = true,
 })
 
+-- blur the swaync control center and notification popups
+hl.layer_rule({
+    name = "swaync-blur",
+    match = {
+        namespace = "swaync-control-center",
+    },
+
+    blur         = true,
+    ignore_alpha = 0.4,
+})
+
+hl.layer_rule({
+    name = "swaync-blur-popup",
+    match = {
+        namespace = "swaync-notification-window",
+    },
+
+    blur         = true,
+    ignore_alpha = 0.4,
+})
+
 -- Custom rules
 -- Privacy sharescreen protection
 hl.window_rule({
