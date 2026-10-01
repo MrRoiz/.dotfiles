@@ -9,8 +9,9 @@
 }
 
 window#waybar {
-  background: #0D1017;
-  color: #BFBDB6;
+  background: #0d1017;
+  color: #bfbdb6;
+  border-bottom: 1px solid #1b2028;
 }
 
 tooltip {
@@ -18,8 +19,8 @@ tooltip {
   border-radius: 10px;
   border-width: 1.5px;
   border-style: solid;
-  border-color: #1B2028;
-  color: #BFBDB6;
+  border-color: #1b2028;
+  color: #bfbdb6;
 }
 
 #workspaces {
@@ -30,12 +31,11 @@ tooltip {
   color: #565b66;
   padding: 0 8px;
   margin: 0 2px;
-  border-radius: 12px;
+  border-radius: 10px;
   transition: all 0.15s ease;
 }
 
 #workspaces button:hover {
-  background: #1a1f29;
   color: #bfbdb6;
 }
 
@@ -61,92 +61,75 @@ tooltip {
   color: #e6b450;
 }
 
-/* Right module */
-.modules-right {
-  border: 1px solid #1B2028;
-  border-radius: 20px;
-}
-
-#custom-power_profile,
-#custom-weather,
-#window,
+#tray,
 #battery,
 #pulseaudio,
 #network,
 #bluetooth,
 #temperature,
-#workspaces,
-#tray,
-#custom-power,
-#custom-notifications,
-#backlight {
-  padding: 0px 10px;
+#custom-notifications {
+  padding: 0px 9px;
+}
+
+#custom-notifications {
+  padding: 0px 8px;
 }
 
 #bluetooth {
   font-size: 15px;
 }
 
-#custom-notifications {
-  padding: 0px 6px;
-}
-
-#custom-power:hover,
-#custom-notifications:hover,
-#network:hover,
-#pulseaudio:hover,
-#bluetooth:hover {
-  background: #1A1F29;
+/* wifi glyph (U+F05A9) sits ~2px right of its advance box; shift left to center */
+#network {
+  padding: 0px 11px 0px 7px;
 }
 
 #temperature {
-  color: #BFBDB6;
+  color: #bfbdb6;
 }
 
 #temperature.critical {
-  color: #F07178;
-}
-
-#backlight {
-  border-radius: 20px 0px 0px 20px;
-  padding-left: 7px;
+  color: #f07178;
 }
 
 #tray {
-  border-radius: 20px;
-  margin-right: 5px;
-  padding: 0px 4px;
+  margin-right: 4px;
+  padding: 0px 6px;
 }
 
 #network {
-  color: #BFBDB6;
+  color: #bfbdb6;
 }
 
 #network.disconnected {
-  color: #565B66;
+  color: #565b66;
 }
 
 #bluetooth {
-  color: #565B66;
+  color: #565b66;
 }
 
 #bluetooth.connected {
-  color: #BFBDB6;
+  color: #bfbdb6;
 }
 
 #pulseaudio {
-  color: #BFBDB6;
+  color: #bfbdb6;
 }
 
-
 #battery {
-  color: #7FD962;
+  color: #bfbdb6;
+}
+
+#battery.charging,
+#battery.plugged {
+  color: #7fd962;
 }
 
 #battery.warning {
-  color: #FFB454;
+  color: #ffb454;
 }
 
 #battery.critical {
-  color: #F07178;
+  color: #f07178;
 }

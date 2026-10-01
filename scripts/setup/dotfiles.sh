@@ -74,6 +74,30 @@ setup_wallpaper() {
   sudo bash "$DOTFILES_DIR/scripts/change-wallpaper.sh"
 }
 
+setup_swaync_profile_css() {
+  print_step "Setting up swaync profile highlight"
+  local dest="$HOME/.config/swaync/profile-active.css"
+
+  if [ -e "$dest" ]; then
+    print_substep "profile-active.css already present"
+    return
+  fi
+
+  local profile="balanced"
+  command -v powerprofilesctl >/dev/null 2>&1 && \
+    profile="$(powerprofilesctl get 2>/dev/null || echo balanced)"
+
+  local idx=2
+  case "$profile" in
+    power-saver) idx=1 ;;
+    performance) idx=3 ;;
+  esac
+
+  print_substep "Generating profile-active.css for '$profile'"
+  sed "s/@PROFILE_INDEX@/$idx/" \
+    "$DOTFILES_DIR/config-templates/swaync/profile-active.css.tmpl" > "$dest"
+}
+
 enable_battery_warning() {
   print_step "Enabling battery low warning"
   systemctl --user daemon-reload 2>/dev/null || true

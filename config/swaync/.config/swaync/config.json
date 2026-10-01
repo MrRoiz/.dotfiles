@@ -36,6 +36,9 @@
     "inhibitors",
     "title",
     "dnd",
+    "buttons-grid#system",
+    "title#profiles",
+    "buttons-grid#profiles",
     "notifications"
   ],
   "widget-config": {
@@ -51,6 +54,62 @@
     },
     "dnd": {
       "text": "Do Not Disturb"
+    },
+    "buttons-grid#system": {
+      "buttons-per-row": 6,
+      "actions": [
+        {
+          "label": "󰖩",
+          "type": "toggle",
+          "command": "sh -c '$HOME/.config/swaync/toggles.sh toggle wifi'",
+          "update-command": "sh -c '$HOME/.config/swaync/toggles.sh state wifi'"
+        },
+        {
+          "label": "󰅂",
+          "command": "sh -c 'swaync-client -cp; better-control -w -m'"
+        },
+        {
+          "label": "",
+          "type": "toggle",
+          "command": "sh -c '$HOME/.config/swaync/toggles.sh toggle bt'",
+          "update-command": "sh -c '$HOME/.config/swaync/toggles.sh state bt'"
+        },
+        {
+          "label": "󰅂",
+          "command": "sh -c 'swaync-client -cp; better-control -b -m'"
+        },
+        {
+          "label": "󰍬",
+          "type": "toggle",
+          "command": "sh -c '$HOME/.config/swaync/toggles.sh toggle mic'",
+          "update-command": "sh -c '$HOME/.config/swaync/toggles.sh state mic'"
+        },
+        {
+          "label": "󰅂",
+          "command": "sh -c 'swaync-client -cp; pavucontrol --tab 4'"
+        }
+      ]
+    },
+    "title#profiles": {
+      "text": "Power Profiles",
+      "clear-all-button": false
+    },
+    "buttons-grid#profiles": {
+      "buttons-per-row": 3,
+      "actions": [
+        {
+          "label": "",
+          "command": "sh -c '$HOME/.config/swaync/toggles.sh set-profile power-saver'"
+        },
+        {
+          "label": "",
+          "command": "sh -c '$HOME/.config/swaync/toggles.sh set-profile balanced'"
+        },
+        {
+          "label": "",
+          "command": "sh -c '$HOME/.config/swaync/toggles.sh set-profile performance'"
+        }
+      ]
     }
   }
 }

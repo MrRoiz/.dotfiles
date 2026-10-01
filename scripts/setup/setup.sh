@@ -45,6 +45,7 @@ print_header "CONFIGURATION"
 setup_git
 check_or_clone_dotfiles
 stow_dotfiles
+setup_swaync_profile_css
 enable_battery_warning
 setup_zshrc
 setup_wallpaper

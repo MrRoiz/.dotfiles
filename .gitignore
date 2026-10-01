@@ -6,3 +6,6 @@ wallpapers/actual
 **/opencode/package.json
 **/opencode/package-lock.json
 **/opencode/bun.lock
+
+# swaync: generated active-profile highlight (written by toggles.sh)
+config/swaync/.config/swaync/profile-active.css

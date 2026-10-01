@@ -1,3 +1,5 @@
+@import url("profile-active.css");
+
 /* Ayu Dark theme for swaync — modern drawer, popups unchanged */
 
 :root {
@@ -197,4 +199,85 @@
 
 .notification-group .notification-group-close-button .close-button {
   color: #565b66;
+}
+
+/* ---- Control-center quick toggles (buttons-grid) ---- */
+
+.widget-buttons-grid {
+  margin: 4px 2px 2px 2px;
+}
+
+.widget-buttons-grid flowbox {
+  padding: 0;
+}
+
+.widget-buttons-grid flowboxchild {
+  padding: 0;
+}
+
+.widget-buttons-grid flowboxchild > button {
+  background: #131721;
+  color: var(--text-color);
+  border: none;
+  border-radius: 10px;
+  min-height: 40px;
+  font-size: 1.15rem;
+  outline: none;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.widget-buttons-grid flowboxchild > button:hover {
+  background: var(--noti-bg-hover);
+  color: #e8e6df;
+}
+
+.widget-buttons-grid flowboxchild > button.toggle:checked {
+  background: #2b271f;
+  color: #e6b450;
+}
+
+/* #system: toggle + chevron sit flush as one segmented control */
+.widget-buttons-grid.system flowboxchild:nth-child(even) {
+  margin-left: -6px;
+}
+
+/* breathing room between the three groups */
+.widget-buttons-grid.system flowboxchild:nth-child(3),
+.widget-buttons-grid.system flowboxchild:nth-child(5) {
+  margin-left: 10px;
+}
+
+.widget-buttons-grid.system flowboxchild:nth-child(odd) > button {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.widget-buttons-grid.system flowboxchild:nth-child(even) > button {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  color: #565b66;
+}
+
+.widget-buttons-grid.system flowboxchild:nth-child(even) > button:hover {
+  color: #bfbdb6;
+}
+
+/* #profiles: three segmented power-profile buttons */
+.widget-buttons-grid.profiles flowboxchild:nth-child(1) > button {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.widget-buttons-grid.profiles flowboxchild:nth-child(2) > button {
+  border-radius: 0;
+}
+
+.widget-buttons-grid.profiles flowboxchild:nth-child(3) > button {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.widget-buttons-grid.profiles flowboxchild:nth-child(2),
+.widget-buttons-grid.profiles flowboxchild:nth-child(3) {
+  margin-left: -6px;
 }
