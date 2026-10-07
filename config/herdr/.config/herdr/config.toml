@@ -1,14 +1,43 @@
 onboarding = false
 
 [theme]
+# Base only: every token below is overridden with the Ayu Dark palette.
 name = "catppuccin"
 auto_switch = false
+
+# Ayu Dark (same palette as waybar / swaync).
+[theme.custom]
+# Surfaces
+panel_bg = "#0D1017"      # tab bar, panels, overlays, modals
+sidebar_bg = "#0D1017"    # keep the sidebar on the Ayu background
+surface_dim = "#131721"   # separators, scrollbar track
+surface0 = "#1A1F29"      # selected/focused items
+surface1 = "#1B2028"      # hover / drag
+active_row_bg = "#1A1F29" # active workspace + focused agent row
+selection_bg = "#1B2028"  # navigate-mode cursor row
+
+# Text
+text = "#BFBDB6"
+subtext0 = "#8A9199"      # subdued labels (workspace numbers)
+overlay1 = "#6C7380"      # brighter overlay text
+overlay0 = "#565B66"      # muted text, separators
+
+# Accent + semantic roles
+accent = "#39BAE6"  # Ayu blue — active tab, focused pane border, highlights
+mauve = "#D2A6FF"   # branch labels
+green = "#7FD962"   # idle
+yellow = "#E6B450"  # working
+red = "#F07178"     # blocked / needs attention
+blue = "#39BAE6"    # unseen / finished
+teal = "#95E6CB"    # done
+peach = "#FFB454"   # interrupted / warning
 
 [ui.sound]
 enabled = true
 
 [ui]
 status_indicators = "dots"
+tab_bar_position = "bottom"
 
 [ui.toast]
-delivery = "system"
+delivery = "terminal"
