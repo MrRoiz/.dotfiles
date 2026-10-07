@@ -7,5 +7,8 @@ wallpapers/actual
 **/opencode/package-lock.json
 **/opencode/bun.lock
 
+# OpenCode V2 service registration (auto-generated, contains a secret)
+**/opencode/service.json
+
 # swaync: generated active-profile highlight (written by toggles.sh)
 config/swaync/.config/swaync/profile-active.css
