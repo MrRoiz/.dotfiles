@@ -2,6 +2,10 @@
 
 Personal Arch Linux + Hyprland dotfiles for `MrRoiz`. Managed with **GNU Stow**, pushed to `github.com:MrRoiz/.dotfiles` (`main`). No test/lint/CI tooling exists in this repo.
 
+## Project-wide look and feel (rule)
+
+**The whole system must look like one thing: the Ayu Dark palette.** Every component that draws color — bar, notifications, terminal, launcher, lock screen, session menu, GTK, window borders, herdr, … — uses the Ayu Dark tokens defined under [Colors](#colors). Do **not** introduce a new palette, and do **not** settle for a vendored/app-provided named theme that does not match (e.g. Catppuccin, off-the-shelf `ayu` variants): if an app only offers named themes, add explicit color overrides so it lands on the Ayu Dark tokens. When you touch any config, bring its colors closer to Ayu Dark; if a gap is too large to fix in the moment, leave a clear note rather than copying the off-palette value forward. Consistency across apps beats per-app cleverness.
+
 ## How it is wired
 
 - `install.sh` — curl entrypoint. Ensures `git`, clones/pulls to `~/.dotfiles`, then runs `scripts/setup/setup.sh`.
@@ -18,6 +22,7 @@ Personal Arch Linux + Hyprland dotfiles for `MrRoiz`. Managed with **GNU Stow**,
 - Hyprland reload (Lua config + window/layer rules): `hyprctl reload`
 - Waybar: config `killall -SIGUSR2 waybar`, CSS `killall -SIGUSR1 waybar`; full restart `pkill waybar; hyprctl dispatch exec waybar`. Keybind: `SUPER+R`.
 - swaync: CSS `swaync-client -rs`, config `swaync-client -R`; **restart** (`pkill swaync; swaync`) to pick up layer/namespace changes (e.g. blur rules).
+- herdr: `herdr server reload-config` applies `config.toml` (theme/UI) to the running server; `herdr config check` validates it.
 - Validate JSON/JSONC: `python3 -c "import json;json.load(open('<file>'))"` — `waybar/config.jsonc` contains **no comments**, so it must stay valid JSON.
 
 ## Gotchas
@@ -32,9 +37,9 @@ Personal Arch Linux + Hyprland dotfiles for `MrRoiz`. Managed with **GNU Stow**,
 
 ## Colors
 
-**There is no single theme source.** Only **waybar** and **swaync** follow the intended **Ayu Dark** palette; other configs diverge (see below). Changing "the theme" means touching several files.
+**There is no single theme source.** Only **waybar**, **swaync** and **herdr** follow the intended **Ayu Dark** palette; other configs diverge (see below) and must be converged per the [rule above](#project-wide-look-and-feel-rule). Changing "the theme" means touching several files.
 
-### Ayu Dark palette (reference: waybar + swaync)
+### Ayu Dark palette (reference: waybar + swaync + herdr)
 
 | Role | Hex |
 |---|---|
@@ -50,14 +55,14 @@ Personal Arch Linux + Hyprland dotfiles for `MrRoiz`. Managed with **GNU Stow**,
 | Orange | `#FFB454` |
 | Red | `#F07178` |
 
-Additional Ayu hues available but currently unused: cyan `#95E6CB`, purple `#D2A6FF`, bright blue `#59C2FF`.
+Additional Ayu hues: cyan `#95E6CB` and purple `#D2A6FF` are used by herdr (agent "done" + branch labels); bright blue `#59C2FF` is still unused.
 
 ### Color roles (deliberate — do not overuse)
 
-- **Gold `#E6B450` = active/current only**: active/focused workspace number (on `#1A1F29` chip), calendar month header + "today". Used sparingly.
-- **Blue `#39BAE6` = swaync drawer interactive only** (DND-on switch, scrollbar hover). Do **not** spread blue across the bar — "blue everywhere" was explicitly rejected.
+- **Gold `#E6B450` = active/current only** (waybar): active/focused workspace number (on `#1A1F29` chip), calendar month header + "today". In herdr gold is the "working" agent state. Used sparingly.
+- **Blue `#39BAE6` = interactive / attention accents only**: swaync drawer interactive (DND-on switch, scrollbar hover); in herdr it is the accent — active tab, focused pane border, mode bar/overlay highlights, and unseen/finished notifications. Do **not** spread blue across the bar — "blue everywhere" was explicitly rejected.
 - **Red `#F07178` = critical/urgent only**: battery/temperature critical, urgent workspace (soft tint `rgba(240,113,120,0.16)` + red number), notification dot. In waybar the active/focused rules are ordered *after* `.urgent`, so an active+urgent workspace stays gold.
-- **Green `#7FD962`** only for healthy battery; **orange `#FFB454`** only for battery warning; everything else is foreground `#BFBDB6` / muted `#565B66`.
+- **Green `#7FD962`** = healthy/idle (waybar battery; herdr idle agent); **orange `#FFB454`** = warning (waybar battery; herdr interrupted); **red `#F07178`** also marks a blocked agent. Everything else is foreground `#BFBDB6` / muted `#565B66`.
 - Design constraints enforced by the owner: color is a signal, not decoration. Prefer **subtle backgrounds + accent text** over saturated fills (the filled workspace pill was rejected). One accent per role.
 
 ### Where colors live
@@ -65,8 +70,9 @@ Additional Ayu hues available but currently unused: cyan `#95E6CB`, purple `#D2A
 - `config/waybar/.config/waybar/style.css` — bar styling + the roles above.
 - `config/waybar/.config/waybar/config.jsonc` — calendar `<span color=…>` for months/weeks/weekdays/today, and the notification icon spans.
 - `config/swaync/.config/swaync/style.css` — drawer/popup theme; `--cc-bg` panel, `--noti-bg*` cards, `--noti-bg-focus: transparent` (removes the focus halo), `--group-collapse-tranistion` (expand speed).
+- `config/herdr/.config/herdr/config.toml` — `[theme.custom]` sets every Ayu Dark token (surfaces, text, accent, semantic roles); `theme.name` is only a base and is fully overridden. `accent = #39BAE6` (Ayu blue) drives the active tab *and* the focused pane border/highlights — herdr has a single accent token, so it can't be scoped to tabs alone. Reload with `herdr server reload-config`, validate with `herdr config check`.
 
-### Divergences (an agent will get burned assuming one palette)
+### Divergences (known debt — converge these to Ayu Dark; do not extend them)
 
 - **kitty** (`config/kitty/.config/kitty/current-theme.conf`) is a *separate* palette: bg `#0e1419`, fg `#e5e1cf`, cursor `#f19618`, plus 16 ANSI colors. Editing waybar does **not** change kitty.
 - **vicinae** uses named themes, not hex: `ayu-dark` / `vicinae-light` (`settings.json`).
