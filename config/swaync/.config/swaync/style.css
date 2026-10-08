@@ -3,7 +3,7 @@
 /* Ayu Dark theme for swaync — modern drawer, popups unchanged */
 
 :root {
-  --cc-bg: rgba(13, 16, 23, 0.92);
+  --cc-bg: rgb(13, 16, 23);
 
   --noti-border-color: #1b2028;
   --noti-bg: 19, 23, 33;
@@ -48,6 +48,8 @@
 
 .control-center .control-center-list {
   background: transparent;
+  /* Symmetric inset: centers the cards and reserves room for the overlay scrollbar */
+  padding: 0 8px;
 }
 
 .control-center .notification-row .notification-background {
@@ -55,7 +57,7 @@
 }
 
 .control-center .control-center-list .notification-background .notification {
-  background: rgba(19, 23, 33, 0.98);
+  background: rgb(19, 23, 33);
   border: 1px solid rgba(191, 189, 182, 0.06);
   border-radius: 12px;
   box-shadow: none;
@@ -65,20 +67,31 @@
   background-color: rgba(255, 255, 255, 0.05);
 }
 
-.control-center scrollbar {
+.control-center scrollbar,
+.control-center scrollbar.overlay-indicator.hovering,
+.control-center scrollbar.overlay-indicator.dragging {
   background: transparent;
   border: none;
+  transition: none;
 }
 
-.control-center scrollbar slider {
-  background: #1b2028;
+.control-center scrollbar slider,
+.control-center scrollbar.overlay-indicator.hovering > range > trough > slider,
+.control-center scrollbar.overlay-indicator.dragging > range > trough > slider,
+.control-center scrollbar.overlay-indicator:not(.dragging):not(.hovering) > range > trough > slider {
+  background-color: #2a303a;
+  background-clip: padding-box;
+  border: 1px solid transparent;
   border-radius: 8px;
-  min-width: 5px;
-  min-height: 5px;
+  margin: -1px;
+  min-width: 4px;
+  min-height: 4px;
+  transition: none;
 }
 
-.control-center scrollbar slider:hover {
-  background: #39bae6;
+.control-center scrollbar slider:hover,
+.control-center scrollbar.overlay-indicator.hovering > range > trough > slider {
+  background-color: #3a424f;
 }
 
 /* ---- Notifications ---- */
@@ -119,11 +132,18 @@
 
 .time {
   color: #7c8089;
+  margin-right: 40px;
 }
 
 .close-button {
   color: #565b66;
   background: var(--noti-close-bg);
+  min-width: 24px;
+  min-height: 24px;
+  margin-top: 8px;
+  margin-right: 8px;
+  padding: 0;
+  border-radius: 100%;
 }
 
 .close-button:hover {
@@ -199,6 +219,12 @@
 
 .notification-group .notification-group-close-button .close-button {
   color: #565b66;
+}
+
+/* Match the lone-notification ✕ hover (turn red + red-tinted background) */
+.notification-group .notification-group-close-button .close-button:hover {
+  color: #f07178;
+  background: var(--noti-close-bg-hover);
 }
 
 /* ---- Control-center quick toggles (buttons-grid) ---- */
