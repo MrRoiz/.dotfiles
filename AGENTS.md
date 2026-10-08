@@ -6,6 +6,10 @@ Personal Arch Linux + Hyprland dotfiles for `MrRoiz`. Managed with **GNU Stow**,
 
 **The whole system must look like one thing: the Ayu Dark palette.** Every component that draws color — bar, notifications, terminal, launcher, lock screen, session menu, GTK, window borders, herdr, … — uses the Ayu Dark tokens defined under [Colors](#colors). Do **not** introduce a new palette, and do **not** settle for a vendored/app-provided named theme that does not match (e.g. Catppuccin, off-the-shelf `ayu` variants): if an app only offers named themes, add explicit color overrides so it lands on the Ayu Dark tokens. When you touch any config, bring its colors closer to Ayu Dark; if a gap is too large to fix in the moment, leave a clear note rather than copying the off-palette value forward. Consistency across apps beats per-app cleverness.
 
+## Minimal diffs (rule)
+
+**NEVER modify something there is no need to modify — it only adds noise to the diff.** Change only the lines the task actually requires. Do **not** reformat, re-align, re-indent, re-wrap, or re-order unrelated code, comments, or whitespace, and never commit whitespace-only churn (e.g. collapsing comment padding, sorting keys, "tidying" a block you did not need to touch). If you spot unrelated drift, leave it as-is and mention it — do not fold it into the change. A diff should contain only the intended edits so review stays focused.
+
 ## How it is wired
 
 - `install.sh` — curl entrypoint. Ensures `git`, clones/pulls to `~/.dotfiles`, then runs `scripts/setup/setup.sh`.
