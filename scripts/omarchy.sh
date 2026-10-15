@@ -268,6 +268,7 @@ install_omarchy_packages() {
   # omarchy-install-service-1password, which omarchy-launch-1password runs
   # automatically on first launch.
   omarchy_pkg_add "typora"             # Omarchy package repo
+  omarchy_pkg_add "slack-desktop"      # Omarchy package repo
   omarchy_pkg_add "veracrypt"
 
   # Devtools
