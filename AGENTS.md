@@ -15,9 +15,6 @@ test/lint/CI tooling exists in this repo.
 
 ## How it is wired
 
-- `install.sh` — curl entrypoint. Ensures `git`, clones/pulls the
-  `feat/omarchy-setup` branch into `~/.dotfiles`, then runs
-  `scripts/omarchy.sh`.
 - `scripts/omarchy.sh` — the only installer. Self-contained: it does
   not source other scripts/setup files (those were the non-omarchy
   installer modules, now removed).
@@ -32,7 +29,7 @@ test/lint/CI tooling exists in this repo.
 
 ## Commands
 
-- Install / re-run: `bash ~/.dotfiles/install.sh`
+- Install / re-run: `~/.dotfiles/scripts/omarchy.sh`
 - Re-stow after adding/removing files: `cd ~/.dotfiles/config && stow --restow -t "$HOME" <pkg>` (use the `STOW_PACKAGES` list from `omarchy.sh`, not `*`)
 - Omarchy bar clock format: `omarchy-bar set omarchy.clock format "<Qt format>"`
 - herdr: `herdr server reload-config` applies `config.toml` (theme/UI) to the running server; `herdr config check` validates it.

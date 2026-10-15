@@ -3,7 +3,7 @@
 Personal dotfiles for the
 [Omarchy](https://github.com/omacom/omarchy) `quattro` channel. The repo is
 trimmed to the Omarchy-only setup — stow packages, the shell stack, and
-the `install.sh` entrypoint all target Omarchy's stack.
+the entrypoint all target Omarchy's stack.
 
 ## TODO: move AUR packages to OPR
 
@@ -17,15 +17,19 @@ have not landed there yet).
 - [x] `yaak-bin` — API client (PR open: [omacom/omarchy-pkgs#1147](https://github.com/omacom/omarchy-pkgs/pull/1147))
 - [x] `ngrok` — Tunneling / reverse proxy (PR open: [omacom/omarchy-pkgs#1145](https://github.com/omacom/omarchy-pkgs/pull/1145))
 - [ ] `helium-browser-bin` — Browser (currently commented out in the
-      script; would need a PR before this is usable from `install.sh`)
+      script; would need a PR before this is usable).
 
 ## Quick Install
 
+The setup is invoked directly from the omarchy-zsh package-managed shell
+on an existing Omarchy install. Clone the repo, then run the script:
+
 ```bash
-curl -s https://raw.githubusercontent.com/MrRoiz/.dotfiles/feat/omarchy-setup/install.sh > /tmp/install.sh && bash /tmp/install.sh
+git clone -b feat/omarchy-setup https://github.com/MrRoiz/.dotfiles.git ~/.dotfiles
+~/.dotfiles/scripts/omarchy.sh
 ```
 
-`install.sh` clones the `feat/omarchy-setup` branch into `~/.dotfiles`
+The script clones the `feat/omarchy-setup` branch into `~/.dotfiles`
 and runs `scripts/omarchy.sh`. The script is idempotent (each step
 short-circuits when its work is already done) and prints a sectioned
 output (boxed headers, ruled steps, status glyphs).
@@ -77,7 +81,6 @@ bash ~/.dotfiles/scripts/omarchy.sh
 
 ## Layout
 
-- `install.sh` — curl entrypoint.
 - `scripts/omarchy.sh` — the only installer; self-contained
   (does not source other scripts/setup files).
 - `config/<app>/.config/<app>/…` — Stow packages. Only the ones whose
