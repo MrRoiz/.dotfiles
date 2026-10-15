@@ -36,4 +36,4 @@ fi
 
 # Run the Omarchy setup
 echo ">>> Running Omarchy setup..."
-bash "$DOTFILES_DIR/scripts/omarchy.sh"
+"$DOTFILES_DIR/scripts/omarchy.sh"
