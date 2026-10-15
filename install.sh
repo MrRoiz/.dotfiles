@@ -1,22 +1,24 @@
 #!/usr/bin/env bash
 
 # =============================================================================
-# Dotfiles Installation Script (Entry Point)
+# Omarchy Dotfiles Installer (Entry Point)
 # =============================================================================
-# This script is designed to be run via curl:
-#   curl -s https://raw.githubusercontent.com/MrRoiz/.dotfiles/main/install.sh > /tmp/install.sh && bash /tmp/install.sh
+# Run via curl on an Omarchy install:
 #
-# It clones the dotfiles repository and executes the full setup.
+#   curl -s https://raw.githubusercontent.com/MrRoiz/.dotfiles/feat/omarchy-setup/install.sh > /tmp/install.sh && bash /tmp/install.sh
+#
+# Clones the dotfiles repository and runs the Omarchy setup script.
 # =============================================================================
 
 set -e
 
 DOTFILES_REPO="https://github.com/MrRoiz/.dotfiles.git"
+DOTFILES_BRANCH="${DOTFILES_BRANCH:-feat/omarchy-setup}"
 DOTFILES_DIR="$HOME/.dotfiles"
 
 echo ""
 echo "╔══════════════════════════════════════════════════════════════════════════════╗"
-echo "║  DOTFILES INSTALLER"
+echo "║  OMARCHY DOTFILES INSTALLER"
 echo "╚══════════════════════════════════════════════════════════════════════════════╝"
 echo ""
 
@@ -29,13 +31,15 @@ fi
 # Clone or update dotfiles repository
 if [ -d "$DOTFILES_DIR" ]; then
   echo ">>> Dotfiles already exist at $DOTFILES_DIR"
-  echo "    → Pulling latest changes..."
-  git -C "$DOTFILES_DIR" pull
+  echo "    → Fetching and checking out $DOTFILES_BRANCH..."
+  git -C "$DOTFILES_DIR" fetch origin "$DOTFILES_BRANCH"
+  git -C "$DOTFILES_DIR" checkout "$DOTFILES_BRANCH"
+  git -C "$DOTFILES_DIR" pull --ff-only origin "$DOTFILES_BRANCH"
 else
-  echo ">>> Cloning dotfiles repository..."
-  git clone "$DOTFILES_REPO" "$DOTFILES_DIR"
+  echo ">>> Cloning dotfiles repository (branch: $DOTFILES_BRANCH)..."
+  git clone -b "$DOTFILES_BRANCH" "$DOTFILES_REPO" "$DOTFILES_DIR"
 fi
 
-# Execute the main setup script
-echo ">>> Running setup script..."
-bash "$DOTFILES_DIR/scripts/setup/setup.sh"
+# Run the Omarchy setup
+echo ">>> Running Omarchy setup..."
+bash "$DOTFILES_DIR/scripts/omarchy.sh"

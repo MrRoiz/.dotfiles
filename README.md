@@ -1,32 +1,91 @@
 # dotfiles
 
-> **Note:** This is still a work in progress.
-
-Personal dotfiles for my Hyprland setup on Linux.
+Personal dotfiles for the
+[Omarchy](https://github.com/omacom/omarchy) `quattro` channel. The repo is
+trimmed to the Omarchy-only setup — stow packages, the shell stack, and
+the `install.sh` entrypoint all target Omarchy's stack.
 
 ## Quick Install
 
 ```bash
-curl -s https://raw.githubusercontent.com/MrRoiz/.dotfiles/main/install.sh > /tmp/install.sh && bash /tmp/install.sh
+curl -s https://raw.githubusercontent.com/MrRoiz/.dotfiles/feat/omarchy-setup/install.sh > /tmp/install.sh && bash /tmp/install.sh
 ```
 
-## Components
+`install.sh` clones the `feat/omarchy-setup` branch into `~/.dotfiles`
+and runs `scripts/omarchy.sh`. The script is idempotent (each step
+short-circuits when its work is already done) and prints a sectioned
+output (boxed headers, ruled steps, status glyphs).
 
-- **hyprland** - Hyprland window manager configuration
-- **waybar** - Status bar configuration
-- **vicinae** - Application launcher
-- **kitty** - Terminal emulator configuration
-- **swaync** - Notification daemon configuration
-- **wlogout** - Logout menu configuration
-- **gtk** - GTK theme settings
-- **zsh** - Shell configuration
-- **fastfetch** - System information tool configuration
-- **satty** - Screenshot annotation tool configuration
-- **opencode** - OpenCode AI assistant configuration
-- **wallpapers** - Wallpaper collection
-- and more
+If you already have the repo checked out:
 
+```bash
+bash ~/.dotfiles/scripts/omarchy.sh
+```
 
-## Credits
+## What `omarchy.sh` does
 
-- GTK4 theme by [vinceliuice/Colloid-gtk-theme](https://github.com/vinceliuice/Colloid-gtk-theme)
+1. **Personal cleaner** — runs `omarchy-webapp-remove-all` (drops every
+   bundled web app), then `omarchy-pkg-drop cliamp moonlight-qt`. TUI
+   desktop apps and the mise stubs (claude, opencode, gh, ...) are
+   kept on purpose, the opposite of the upstream
+   [`omarchy-remove-preinstalls`](https://github.com/omacom/omarchy/blob/quattro/bin/omarchy-remove-preinstalls).
+2. **Installs** the personal package set through omarchy commands:
+   - `omarchy-pkg-add` for repo + OPR packages
+   - `omarchy-install-browser zen` / `omarchy-install-terminal kitty` /
+     `omarchy-install-dev-env rust` for the apps with dedicated installers
+     (Steam, Spotify and Zed are **not** installed here — the Omarchy
+     launcher pulls them in on first open via `omarchy-install-and-launch`)
+   - `omarchy-zsh` (+ `omarchy-setup-zsh`) for the shell — installs the
+     omarchy-zsh template, makes bash exec zsh, and brings Omarchy's
+     starship-based shell config. omarchy-zsh's `zoptions` already
+     covers history-search (up/down arrow), zsh-syntax-highlighting and
+     fzf file/git/variable widgets, and its `shell/all` ships the
+     omadots aliases (ls/cd/git/d/t/n/open). The git aliases in
+     `zsh/aliases.sh` fill the gap left by dropping omz's `git`
+     plugin; oh-my-zsh and p10k are intentionally not used.
+   - `yay` for AUR-only packages (`proton-vpn-gtk-app`, `yaak-bin`,
+     with `helium-browser-bin` commented out as a TODO to PR into OPR)
+3. **Configures**:
+   - Stows only the packages whose apps are installed on Omarchy
+     (`kitty`, `herdr`, `opencode`, `mega`) and removes
+     `~/.config/<pkg>` for them and for the dropped apps
+     (`hyprland`, `swaync`, `vicinae`, `waybar`, `wlogout`, `satty`,
+     `sherlock`) so `stow` does not conflict.
+   - Sets `omarchy-default-browser zen` and `omarchy-default-terminal
+     kitty` (the same commands the Omarchy launcher's defaults menu uses).
+   - `omarchy bar set omarchy.clock format "MMM dd hh:mmAP"` — matches
+     the clock text format the dotfiles used to print under waybar
+     (`{0:%b %d} {0:%I:%M%p}`).
+   - 1Password trusts `zen` (the OPR zen-browser-bin binary,
+     `/usr/bin/zen`).
+   - rnvim drops `omarchy-nvim` (the prebuilt LazyVim config Omarchy
+     ships) and replaces `~/.config/nvim` with the user's rnvim setup.
+
+## Layout
+
+- `install.sh` — curl entrypoint.
+- `scripts/omarchy.sh` — the only installer; self-contained
+  (does not source other scripts/setup files).
+- `config/<app>/.config/<app>/…` — Stow packages. Only the ones whose
+  apps are installed on Omarchy are stowed (see `STOW_PACKAGES` in
+  `omarchy.sh`). The `mega` package ships the user systemd unit that
+  `omarchy.sh` enables after stow.
+- `zsh/{aliases,functions,setup}.sh` — sourced by `omarchy.sh` after the
+  omarchy-zsh template. The git aliases in `aliases.sh` fill the gap
+  left by dropping omz's `git` plugin.
+
+## Notes
+
+- p10k and oh-my-zsh are not used. The prompt is `omarchy-zsh`'s
+  starship; history-search, syntax-highlighting and the omadots
+  aliases come from the omarchy-zsh package; nothing extra is layered on top.
+- On Omarchy the login shell stays bash and zsh launches through the
+  bash exec-zsh drop-in that `omarchy-setup-zsh` writes. Do not `chsh`
+  to zsh — see
+  [discussion #2495](https://github.com/omacom/omarchy/discussions/2495).
+- The repo branches off the prior plain-Arch installer; the
+  `feat/omarchy-setup` branch removes everything that does not serve
+  Omarchy (`scripts/setup/{setup,system,packages,dotfiles,utils}.sh`,
+  `wallpapers/`, `scripts/change-wallpaper.sh`, and the unused stow
+  packages). The `config-templates/` directory was emptied (the mega
+  systemd unit moved to the `config/mega/` stow package).

@@ -1,4 +1,3 @@
-wallpapers/actual
 **/opencode/skills/**
 
 # OpenCode plugin install artifacts (auto-generated)
@@ -9,6 +8,3 @@ wallpapers/actual
 
 # OpenCode V2 service registration (auto-generated, contains a secret)
 **/opencode/service.json
-
-# swaync: generated active-profile highlight (written by toggles.sh)
-config/swaync/.config/swaync/profile-active.css
