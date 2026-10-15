@@ -1,9 +1,29 @@
-alias ls="eza --icons --group-directories-first"
-alias ll="eza --icons --group-directories-first --long --git"
-alias la="eza --icons --group-directories-first --long --git --all"
-alias lt="eza --icons --group-directories-first --tree --level=2"
-
 alias tf="terraform"
 alias tg="terragrunt"
 
 alias dot="cd ~/.dotfiles"
+
+# Git aliases. omarchy-zsh's omadots provides `g`, `gcm`, `gcam`, `gcad`; the
+# rest below are the oh-my-zsh `git` plugin's aliases (minus what omadots
+# already covers), so the muscle memory transfers after dropping omz.
+alias gst="git status"
+alias gd="git diff"
+alias gds="git diff --staged"
+alias ga="git add"
+alias gaa="git add --all"
+alias gc="git commit"
+alias gca="git commit --amend"
+alias gcan="git commit --amend --no-edit"
+alias gco="git checkout"
+alias gcb="git checkout -b"
+alias gb="git branch"
+alias gba="git branch --all"
+alias gbd="git branch --delete"
+alias gp="git push"
+alias gpf="git push --force-with-lease"
+alias gpl="git pull"
+alias glog="git log --oneline --decorate --graph"
+alias gstp="git stash pop"
+alias gsta="git stash apply"
+alias gclean="git clean --force --directories -d"
+alias gcp="git cherry-pick"
