@@ -22,12 +22,6 @@ echo "║  OMARCHY DOTFILES INSTALLER"
 echo "╚══════════════════════════════════════════════════════════════════════════════╝"
 echo ""
 
-# Ensure git is installed
-if ! command -v git &>/dev/null; then
-  echo ">>> Installing git..."
-  sudo pacman -S --needed git
-fi
-
 # Clone or update dotfiles repository
 if [ -d "$DOTFILES_DIR" ]; then
   echo ">>> Dotfiles already exist at $DOTFILES_DIR"
