@@ -252,6 +252,11 @@ install_omarchy_packages() {
   # preinstalled image viewer; omarchy records through gpu-screen-recorder)
   omarchy_pkg_add "obs-studio"
 
+  # Fonts — omarchy ships ttf-jetbrains-mono-nerd-basic (smaller icon set);
+  # the full Nerd Font adds the rest of the Material Design / FA / etc.
+  # glyphs the basic variant strips. kitty config uses "JetBrainsMono NF".
+  omarchy_pkg_add "ttf-jetbrains-mono-nerd"
+
   # Steam, Spotify and Zed are not pre-installed here. The Omarchy launcher
   # installs them lazily on first open via omarchy-install-and-launch (which
   # runs the install halves — lib32 GPU drivers for Steam, the package, and
