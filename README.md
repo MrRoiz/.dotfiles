@@ -1,13 +1,5 @@
 # dotfiles
 
-```
-    ╔══════════════════════════════════════════════════╗
-    ║                                                  ║
-    ║         O M A R C H Y   S E T U P              ║
-    ║                                                  ║
-    ╚══════════════════════════════════════════════════╝
-```
-
 Personal dotfiles for the
 [Omarchy](https://github.com/omacom/omarchy) `quattro` channel. The repo is
 trimmed to the Omarchy-only setup — stow packages, the shell stack, and
