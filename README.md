@@ -1,9 +1,32 @@
 # dotfiles
 
+```
+    ╔══════════════════════════════════════════════════╗
+    ║                                                  ║
+    ║         O M A R C H Y   S E T U P              ║
+    ║                                                  ║
+    ╚══════════════════════════════════════════════════╝
+```
+
 Personal dotfiles for the
 [Omarchy](https://github.com/omacom/omarchy) `quattro` channel. The repo is
 trimmed to the Omarchy-only setup — stow packages, the shell stack, and
 the `install.sh` entrypoint all target Omarchy's stack.
+
+## TODO: move AUR packages to OPR
+
+These packages are still installed via `yay` in `scripts/omarchy.sh`.
+The end goal is to package each one into
+[`omacom/omarchy-pkgs`](https://github.com/omacom/omarchy-pkgs) so
+`omarchy-pkg-add` can pick them up (the OPR is the canonical install
+path on Omarchy; the script falls back to `yay` only because these
+have not landed there yet).
+
+- [ ] `proton-vpn-gtk-app` — VPN client (no PR open)
+- [x] `yaak-bin` — API client (PR open: `omacom/omarchy-pkgs#1147`)
+- [x] `ngrok` — Tunneling / reverse proxy (PR open: `omacom/omarchy-pkgs#1145`)
+- [ ] `helium-browser-bin` — Browser (currently commented out in the
+      script; would need a PR before this is usable from `install.sh`)
 
 ## Quick Install
 

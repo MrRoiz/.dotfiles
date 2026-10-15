@@ -48,7 +48,7 @@ STOW_PACKAGES=(kitty herdr opencode mega)
 # helpers the flow still needs are inlined below.
 
 # AUR install: omarchy-pkg-aur-install is an interactive fzf picker, so go
-# straight through yay. Omarchy preinstalls yay.
+# straight through yay.
 install_package() {
   print_step "Installing (yay): $1"
   yay -S $1 --needed
@@ -292,13 +292,14 @@ install_omarchy_aur_packages() {
   # to AUR. omarchy-pkg-aur-install is the dedicated AUR path but it runs
   # `yay -Slqa | fzf` as a picker (args are ignored), so it's interactive-
   # only. We run `yay -S` directly (the same invocation omarchy-pkg-aur-
-  # install uses after the picker) — Omarchy preinstalls yay.
+  # install uses after the picker).
   print_header "INSTALLING PACKAGES - AUR"
 
   install_package "proton-vpn-gtk-app"
   # install_package "helium-browser-bin"   # skipped: AUR-only; TODO is to PR it into
                                          # omacom/omarchy-pkgs first, then switch to
                                          # omarchy-pkg-add (mirrors the yaak-bin#1147 path)
+  install_package "ngrok"                   # pending in omarchy-pkgs#1145
   install_package "yaak-bin"                # pending in omarchy-pkgs#1147
 }
 
