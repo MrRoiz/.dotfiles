@@ -25,12 +25,12 @@ The setup is invoked directly from the omarchy-zsh package-managed shell
 on an existing Omarchy install. Clone the repo, then run the script:
 
 ```bash
-git clone -b feat/omarchy-setup https://github.com/MrRoiz/.dotfiles.git ~/.dotfiles
+git clone https://github.com/MrRoiz/.dotfiles.git ~/.dotfiles
 ~/.dotfiles/scripts/omarchy.sh
 ```
 
-The script clones the `feat/omarchy-setup` branch into `~/.dotfiles`
-and runs `scripts/omarchy.sh`. The script is idempotent (each step
+The script clones the dotfiles into `~/.dotfiles` and runs
+`scripts/omarchy.sh`. The script is idempotent (each step
 short-circuits when its work is already done) and prints a sectioned
 output (boxed headers, ruled steps, status glyphs).
 
@@ -100,9 +100,6 @@ bash ~/.dotfiles/scripts/omarchy.sh
   bash exec-zsh drop-in that `omarchy-setup-zsh` writes. Do not `chsh`
   to zsh — see
   [discussion #2495](https://github.com/omacom/omarchy/discussions/2495).
-- The repo branches off the prior plain-Arch installer; the
-  `feat/omarchy-setup` branch removes everything that does not serve
-  Omarchy (`scripts/setup/{setup,system,packages,dotfiles,utils}.sh`,
-  `wallpapers/`, `scripts/change-wallpaper.sh`, and the unused stow
-  packages). The `config-templates/` directory was emptied (the mega
-  systemd unit moved to the `config/mega/` stow package).
+- The non-omarchy installer's `scripts/setup/{setup,system,packages,
+  dotfiles,utils}.sh` and the unused stow packages / config-templates
+  are not part of this repo.
