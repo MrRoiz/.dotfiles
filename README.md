@@ -22,7 +22,6 @@ The end goal is to package each one into
 path on Omarchy; the script falls back to `yay` only because these
 have not landed there yet).
 
-- [ ] `proton-vpn-gtk-app` — VPN client (no PR open)
 - [x] `yaak-bin` — API client (PR open: `omacom/omarchy-pkgs#1147`)
 - [x] `ngrok` — Tunneling / reverse proxy (PR open: `omacom/omarchy-pkgs#1145`)
 - [ ] `helium-browser-bin` — Browser (currently commented out in the

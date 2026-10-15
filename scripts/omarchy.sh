@@ -271,13 +271,13 @@ install_omarchy_packages() {
   omarchy_pkg_add "veracrypt"
 
   # Devtools
-  # terraform/terragrunt/aws-cli-v2 straight from the Arch repos
+  # terraform/terragrunt/aws-cli-v2/proton-vpn-gtk-app/nvm straight from the Arch repos
   # (aws-cli-v2 is the official [extra] v2 package). mise is preinstalled
   # on Omarchy (omarchy-base.packages: mise-bin) and is reserved for
   # node / Claude / opencode / gh stubs — we don't pin terraform or
   # terragrunt through it.
   omarchy_pkg_add "github-cli dbeaver just packer"
-  omarchy_pkg_add "terraform terragrunt aws-cli-v2 nvm"
+  omarchy_pkg_add "terraform terragrunt aws-cli-v2 nvm proton-vpn-gtk-app"
   omarchy_pkg_add "sops wget bind"
   omarchy_pkg_add "uv lazydocker"
 
@@ -295,7 +295,6 @@ install_omarchy_aur_packages() {
   # install uses after the picker).
   print_header "INSTALLING PACKAGES - AUR"
 
-  install_package "proton-vpn-gtk-app"
   # install_package "helium-browser-bin"   # skipped: AUR-only; TODO is to PR it into
                                          # omacom/omarchy-pkgs first, then switch to
                                          # omarchy-pkg-add (mirrors the yaak-bin#1147 path)
