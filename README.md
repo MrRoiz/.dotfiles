@@ -57,7 +57,7 @@ bash ~/.dotfiles/scripts/omarchy.sh
      omadots aliases (ls/cd/git/d/t/n/open). The git aliases in
      `zsh/aliases.sh` fill the gap left by dropping omz's `git`
      plugin; oh-my-zsh and p10k are intentionally not used.
-   - `yay` for AUR-only packages (`proton-vpn-gtk-app`, `yaak-bin`,
+   - `yay` for AUR-only packages (`ngrok`, `yaak-bin`,
      with `helium-browser-bin` commented out as a TODO to PR into OPR)
 3. **Configures**:
    - Stows only the packages whose apps are installed on Omarchy
