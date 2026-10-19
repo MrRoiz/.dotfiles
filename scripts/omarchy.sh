@@ -4,14 +4,16 @@
 # Omarchy Setup Script
 # =============================================================================
 # Runs on top of an Omarchy installation:
-#   1. Removes preinstalled Omarchy apps we don't use (personal cleaner).
-#   2. Installs the personal package set, always through omarchy commands.
-#   3. Ports dotfiles (stow), zsh, defaults, and the status bar clock.
+#   1. Updates Omarchy so its checkout and package repos are current.
+#   2. Removes preinstalled Omarchy apps we don't use (personal cleaner).
+#   3. Installs the personal package set, always through omarchy commands.
+#   4. Ports dotfiles (stow), zsh, defaults, and the status bar clock.
 #
 # Usage:
 #   Direct:  bash ~/.dotfiles/scripts/omarchy.sh
 #
 # Omarchy commands used:
+#   - omarchy-update                  update Omarchy and system packages
 #   - omarchy-pkg-add <pkgs...>      non-interactive install (Arch repos +
 #                                    the Omarchy package repo)
 #   - omarchy-pkg-drop <pkgs...>     non-interactive remove
@@ -276,7 +278,7 @@ install_omarchy_packages() {
   # install_mise_toolchains.
   omarchy_pkg_add "github-cli dbeaver just packer"
   omarchy_pkg_add "aws-cli-v2 proton-vpn-gtk-app"
-  omarchy_pkg_add "sops wget bind"
+  omarchy_pkg_add "sops wget bind stow"
   omarchy_pkg_add "lazydocker"
 
   # Apps installed through their dedicated Omarchy app installer. Zen
@@ -428,6 +430,12 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
 
   print_header "OMARCHY PERSONAL SETUP"
   show_banner
+
+  # -- Update Omarchy --
+  # Refresh the Omarchy checkout and package repos before installing anything:
+  # a stale sync DB makes omarchy-pkg-add fail to find current packages.
+  print_header "UPDATING OMARCHY"
+  omarchy-update
 
   # multilib is enabled by Omarchy's base install (default/pacman/pacman-*.conf
   # ships it; install/post-install/pacman.sh copies the file in place).
