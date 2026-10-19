@@ -47,13 +47,6 @@ STOW_PACKAGES=(kitty herdr opencode mega)
 # in functions irrelevant here, like stow_dotfiles / setup_sddm). The few
 # helpers the flow still needs are inlined below.
 
-# AUR install: omarchy-pkg-aur-install is an interactive fzf picker, so go
-# straight through yay.
-install_package() {
-  print_step "Installing (yay): $1"
-  yay -S $1 --needed
-}
-
 # rnvim: drop Omarchy's prebuilt LazyVim config (omarchy-nvim) and replace it
 # with the user's rnvim setup. omarchy-nvim ships ~/.config/nvim as part of
 # its PKGBUILD, so removing the package also removes the dir; we defensively
@@ -324,21 +317,6 @@ install_mise_toolchains() {
   mise use --global terraform@latest terragrunt@latest
 }
 
-install_omarchy_aur_packages() {
-  # omarchy-pkg-add / omarchy-install-app use pacman and do not fall back
-  # to AUR. omarchy-pkg-aur-install is the dedicated AUR path but it runs
-  # `yay -Slqa | fzf` as a picker (args are ignored), so it's interactive-
-  # only. We run `yay -S` directly (the same invocation omarchy-pkg-aur-
-  # install uses after the picker).
-  print_header "INSTALLING PACKAGES - AUR"
-
-  # install_package "helium-browser-bin"   # skipped: AUR-only; TODO is to PR it into
-                                         # omacom/omarchy-pkgs first, then switch to
-                                         # omarchy-pkg-add (mirrors the yaak-bin#1147 path)
-  install_package "ngrok"                   # pending in omarchy-pkgs#1145
-  install_package "yaak-bin"                # pending in omarchy-pkgs#1147
-}
-
 setup_omarchy_docker() {
   print_header "SETTING UP DOCKER (OMARCHY)"
 
@@ -460,7 +438,6 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   # -- Install Packages --
   install_omarchy_packages
   install_mise_toolchains
-  install_omarchy_aur_packages
   install_and_setup_mega
   setup_omarchy_docker
 

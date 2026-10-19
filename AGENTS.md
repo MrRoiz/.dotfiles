@@ -42,7 +42,7 @@ test/lint/CI tooling exists in this repo.
   — see https://github.com/omacom/omarchy/discussions/2495.
 - `config/opencode/.config/opencode/` — only `opencode.json` + `tui.json` are tracked. `package.json`, `package-lock.json`, `node_modules/`, `bun.lock` are **OpenCode-generated artifacts** (gitignored). Never commit them.
 - `~/.config/<app>` is usually a **symlink into the repo** (Stow). Tools that copy into `~/.config` write *through* the symlink into the repo, so re-sourcing the affected tool picks the change up.
-- `omarchy.sh: install_package` calls `yay -S … --needed` for AUR-only packages; the Arch repos and the Omarchy package repo are reached through `omarchy-pkg-add`.
+- `omarchy.sh`: the Arch repos and the Omarchy package repo are reached through `omarchy-pkg-add`; AUR packages are not installed by the script.
 - Commit style is Conventional Commits (`feat:`, `fix:`, `chore:`, `refactor:`), as seen in `git log`.
 
 ## Colors
