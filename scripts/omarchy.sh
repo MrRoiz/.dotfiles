@@ -277,20 +277,51 @@ install_omarchy_packages() {
   omarchy_pkg_add "veracrypt"
 
   # Devtools
-  # terraform/terragrunt/aws-cli-v2/proton-vpn-gtk-app/nvm straight from the Arch repos
-  # (aws-cli-v2 is the official [extra] v2 package). mise is preinstalled
-  # on Omarchy (omarchy-base.packages: mise-bin) and is reserved for
-  # node / Claude / opencode / gh stubs — we don't pin terraform or
-  # terragrunt through it.
+  # aws-cli-v2/proton-vpn-gtk-app straight from the Arch repos (aws-cli-v2
+  # is the official [extra] v2 package). The language toolchains — node,
+  # python (+uv), terraform, terragrunt — are mise-managed instead; see
+  # install_mise_toolchains.
   omarchy_pkg_add "github-cli dbeaver just packer"
-  omarchy_pkg_add "terraform terragrunt aws-cli-v2 nvm proton-vpn-gtk-app"
+  omarchy_pkg_add "aws-cli-v2 proton-vpn-gtk-app"
   omarchy_pkg_add "sops wget bind"
-  omarchy_pkg_add "uv lazydocker"
+  omarchy_pkg_add "lazydocker"
 
   # Apps installed through their dedicated Omarchy app installer. Zen
-  # stays because it doesn't auto-launch; rust goes through mise.
+  # stays because it doesn't auto-launch.
   omarchy-install-browser zen         # installs zen-browser-bin + chromium policies
-  omarchy-install-dev-env rust
+  omarchy-install-dev-env rust        # rustup toolchain
+}
+
+# =============================================================================
+# Mise Toolchains
+# =============================================================================
+# mise is preinstalled on Omarchy (omarchy-base.packages: mise-bin) and its
+# shims dir is on PATH from the Omarchy shell bootstrap, so zsh picks the
+# tools up without nvm or an activation line in the dotfiles.
+#
+# node and python go through Omarchy's own dev-env installer (a thin wrapper
+# over `mise use --global`; the python recipe also brings uv). terraform and
+# terragrunt have no dev-env recipe, so they are declared through mise
+# directly.
+# =============================================================================
+
+install_mise_toolchains() {
+  print_header "INSTALLING TOOLCHAINS (MISE)"
+
+  omarchy-install-dev-env node
+
+  # nvm-style version files: mise only reads .nvmrc / .node-version for the
+  # tools enabled in the global config. The global node version stays the
+  # default; a project file overrides it and the version installs on first
+  # use (auto_install defaults to true).
+  if ! mise settings get idiomatic_version_file_enable_tools 2>/dev/null | grep -qw node; then
+    mise settings add idiomatic_version_file_enable_tools node
+  fi
+
+  omarchy-install-dev-env python
+
+  print_step "Installing via mise: terraform terragrunt"
+  mise use --global terraform@latest terragrunt@latest
 }
 
 install_omarchy_aur_packages() {
@@ -326,9 +357,8 @@ setup_omarchy_docker() {
 # backs up the rc files, installs Omarchy's template ~/.zshrc (zoptions +
 # shared shell config loading the starship prompt) and appends the bash
 # exec-zsh drop-in, so the login shell stays bash. The dotfiles' own
-# aliases/functions are appended after the template via zsh/setup.sh
-# (which also sources nvm and the .nvmrc autoload). omz is intentionally
-# NOT installed: its features overlap with omarchy-zsh's zoptions
+# aliases/functions are appended after the template via zsh/setup.sh. omz
+# is intentionally NOT installed: its features overlap with omarchy-zsh's zoptions
 # (history search, syntax highlighting, fzf widgets, omadots aliases) and
 # the missing pieces are kept minimal in the dotfiles' own aliases.
 # =============================================================================
@@ -343,7 +373,7 @@ setup_omarchy_zsh() {
   if ! grep -q "dotfiles/zsh/setup.sh" "$zshrc"; then
     cat >> "$zshrc" <<'EOF'
 
-# Dotfiles zsh: nvm + .nvmrc autoload, aliases, functions.
+# Dotfiles zsh: aliases, functions.
 source "$HOME/.dotfiles/zsh/setup.sh"
 EOF
   fi
@@ -429,6 +459,7 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
 
   # -- Install Packages --
   install_omarchy_packages
+  install_mise_toolchains
   install_omarchy_aur_packages
   install_and_setup_mega
   setup_omarchy_docker
