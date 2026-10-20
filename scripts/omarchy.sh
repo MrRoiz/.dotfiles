@@ -381,10 +381,11 @@ setup_omarchy_bar_clock() {
 setup_omarchy_1password_browsers() {
   print_header "TRUSTING BROWSERS IN 1PASSWORD"
 
-  # OPR zen-browser-bin installs /usr/bin/zen (zen-bin is the old AUR name).
+  # 1Password matches the browser executable/process name. Zen's browser
+  # process runs as zen-bin; trust only that name.
   sudo mkdir -p /etc/1password
   sudo touch /etc/1password/custom_allowed_browsers
-  echo "zen" | sudo tee /etc/1password/custom_allowed_browsers >/dev/null
+  printf 'zen-bin\n' | sudo tee /etc/1password/custom_allowed_browsers >/dev/null
   sudo chown root:root /etc/1password/custom_allowed_browsers
   sudo chmod 755 /etc/1password/custom_allowed_browsers
 }

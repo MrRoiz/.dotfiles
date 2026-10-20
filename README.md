@@ -82,8 +82,7 @@ bash ~/.dotfiles/scripts/omarchy.sh
    - `omarchy bar set omarchy.clock format "MMM dd hh:mmAP"` — matches
      the clock text format the dotfiles used to print under waybar
      (`{0:%b %d} {0:%I:%M%p}`).
-   - 1Password trusts `zen` (the OPR zen-browser-bin binary,
-     `/usr/bin/zen`).
+   - 1Password trusts `zen-bin` (the Zen browser process name).
    - rnvim drops `omarchy-nvim` (the prebuilt LazyVim config Omarchy
      ships) and replaces `~/.config/nvim` with the user's rnvim setup.
 
