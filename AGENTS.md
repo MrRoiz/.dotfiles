@@ -7,7 +7,7 @@ test/lint/CI tooling exists in this repo.
 
 ## Project-wide look and feel (rule)
 
-**The whole system must look like one thing: the Ayu Dark palette.** Every component that draws color — bar, notifications, terminal, launcher, lock screen, session menu, GTK, window borders, herdr, … — uses the Ayu Dark tokens defined under [Colors](#colors). Do **not** introduce a new palette, and do **not** settle for a vendored/app-provided named theme that does not match (e.g. Catppuccin, off-the-shelf `ayu` variants): if an app only offers named themes, add explicit color overrides so it lands on the Ayu Dark tokens. When you touch any config, bring its colors closer to Ayu Dark; if a gap is too large to fix in the moment, leave a clear note rather than copying the off-palette value forward. Consistency across apps beats per-app cleverness.
+**The whole system follows the Omarchy theme selected on the machine** — bar, notifications, terminal, launcher, lock screen, session menu, GTK, window borders, prompt, … Do **not** hardcode a palette in these dotfiles and do **not** vendor an off-theme named theme (e.g. Catppuccin): configs that draw color must reference the active theme's colors (ANSI names for terminal output, theme variables where an app offers them) so `omarchy theme set` re-themes everything with no dotfiles change. If an app only offers named themes, map it to the active theme; if a gap cannot be closed now, leave a clear note rather than pinning fixed values. Consistency with the selected Omarchy theme beats per-app cleverness.
 
 ## Minimal diffs (rule)
 
@@ -81,62 +81,18 @@ package. Use
 
 ## Colors
 
-**There is no single theme source.** Only **herdr** (and parts of the
-Omarchy bar that inherit from omarchy's own theme) follow the intended
-**Ayu Dark** palette. The remaining dotfiles configs that ship color
-(kitty, GTK) diverge, see [Divergences](#divergences-known-debt--converge-these-to-ayu-dark-do-not-extend-them).
-Changing the theme means touching herdr + the Omarchy bar selector +
-optionally the divergent configs.
+**Single source of truth: the Omarchy theme selected on the machine.** No
+palette is defined in this repo; configs reference the active theme's colors.
 
-### Ayu Dark palette (reference: herdr + omarchy bar)
-
-| Role | Hex |
-|---|---|
-| Background | `#0D1017` |
-| Surface (tooltip/card darker) | `#131721` |
-| Border / hairline | `#1B2028` |
-| Hover / raised | `#1A1F29` |
-| Foreground | `#BFBDB6` |
-| Muted / inactive | `#565B66` |
-| Gold (accent) | `#E6B450` |
-| Blue | `#39BAE6` |
-| Green | `#7FD962` |
-| Orange | `#FFB454` |
-| Red | `#F07178` |
-
-Additional Ayu hues: cyan `#95E6CB` and purple `#D2A6FF` are used by herdr
-(agent "done" + branch labels); bright blue `#59C2FF` is still unused.
-
-### Color roles (deliberate — do not overuse)
-
-- **Gold `#E6B450` = active/current only**: Omarchy bar's focused clock /
-  today highlight; in herdr it is the "working" agent state.
-- **Blue `#39BAE6` = interactive / attention accents only**: in herdr it
-  is the accent — active tab, focused pane border, mode bar/overlay
-  highlights, and unseen/finished notifications. Do not spread blue.
-- **Green `#7FD962`** = healthy/idle (herdr idle agent); **orange
-  `#FFB454`** = warning (herdr interrupted); **red `#F07178`** = critical
-  / blocked. Everything else is foreground `#BFBDB6` / muted `#565B66`.
-- Design constraints enforced by the owner: color is a signal, not
-  decoration. One accent per role.
-
-### Where colors live
-
-- `config/herdr/.config/herdr/config.toml` — `[theme.custom]` sets every
-  Ayu Dark token (surfaces, text, accent, semantic roles); `theme.name`
-  is only a base and is fully overridden. `accent = #39BAE6` (Ayu blue)
-  drives the active tab *and* the focused pane border/highlights — herdr
-  has a single accent token, so it can't be scoped to tabs alone. Reload
-  with `herdr server reload-config`, validate with `herdr config check`.
-- `omarchy-bar set omarchy.clock format "..."` — the bar's clock widget
-  and its calendar pop-up colors are themed by Omarchy itself; the
-  setup script only sets the clock format string to match the text
-  format the dotfiles used to print under waybar
-  (`{0:%b %d} {0:%I:%M%p}` -> `MMM dd hh:mmAP`).
-
-### Divergences (known debt — converge these to Ayu Dark; do not extend them)
-
-- **kitty** (`config/kitty/.config/kitty/current-theme.conf`) is a *separate* palette: bg `#0e1419`, fg `#e5e1cf`, cursor `#f19618`, plus 16 ANSI colors. Editing herdr does **not** change kitty.
-- **GTK** is a generated theme whose accent is `#5b9bf8`; the Omarchy ISO
-  already sets `Adwaita-dark` via `gsettings` during its first-boot
-  provisioning, so the generated CSS is not re-applied by this setup.
+- Terminal and prompt (kitty, starship) — kitty includes
+  `~/.local/state/omarchy/current/theme/kitty.conf`, the palette Omarchy
+  regenerates from the theme's `colors.toml`; starship uses ANSI color names
+  only (`red`, `green`, `yellow`, `cyan`, `bright-black`, …), so both follow
+  `omarchy theme set` with no dotfiles change.
+- Bar, notifications, launcher, lock screen, GTK — themed by Omarchy itself;
+  this setup only sets text/format options (e.g. the bar clock format), never
+  colors.
+- Known gap: `config/herdr/.config/herdr/config.toml` still pins fixed values
+  under `[theme.custom]` because herdr has no Omarchy theme integration. Treat
+  it as debt: do not extend fixed values to other configs, and converge herdr
+  when a supported mapping exists.
