@@ -124,10 +124,28 @@ of capture gain plus +30 dB of analog boost and clips; lower the input once in
 the Omarchy audio panel. Around 40% is the highest level without the analog
 boost, and WirePlumber remembers it per port.
 
+## Window focus with HJKL
+
+`SUPER + H/J/K/L` focuses windows and `SUPER + SHIFT + H/J/K/L` swaps them.
+The three Omarchy defaults that used J/K/L moved:
+
+| Old | New |
+| --- | --- |
+| `Super + J` toggle split | `Super + Alt + J` |
+| `Super + K` keybindings | `Super + Ctrl + Shift + K` |
+| `Super + L` workspace layout | `Super + Alt + L` |
+
+`bindings.lua` in the `hypr` package unbinds the original `SUPER + J/K/L`,
+rebinds the displaced actions above, then adds the HJKL keys. No Fn layer
+needed.
+
 ## Layout
 
 - `scripts/omarchy.sh` — the only installer; self-contained
   (does not source other scripts/setup files).
+- `config/hypr/.config/hypr/{looknfeel,input,bindings}.lua` — personal
+  Hyprland overrides. The `hypr` package is stowed file-by-file so the rest
+  of Omarchy's Hyprland config stays managed by Omarchy.
 - `config/<app>/.config/<app>/…` — Stow packages. Only the ones whose
   apps are installed on Omarchy are stowed (see `STOW_PACKAGES` in
   `omarchy.sh`). The `mega` package ships the user systemd unit that

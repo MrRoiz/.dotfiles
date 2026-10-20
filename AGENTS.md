@@ -27,6 +27,12 @@ test/lint/CI tooling exists in this repo.
   come from omarchy-zsh's zoptions; p10k and oh-my-zsh are
   intentionally not used.
 
+## Development checkout vs installed setup
+
+This checkout is the editing copy. The live setup runs from `~/.dotfiles`:
+stow from `~/.dotfiles/config` (or run `~/.dotfiles/scripts/omarchy.sh`).
+After changing files here, push and pull in `~/.dotfiles` before re-stowing.
+
 ## Commands
 
 - Install / re-run: `~/.dotfiles/scripts/omarchy.sh`
@@ -34,6 +40,15 @@ test/lint/CI tooling exists in this repo.
 - Omarchy bar clock format: `omarchy-bar set omarchy.clock format "<Qt format>"`
 - herdr: `herdr server reload-config` applies `config.toml` (theme/UI) to the running server; `herdr config check` validates it.
 - Validate JSON/JSONC: `python3 -c "import json;json.load(open('<file>'))"`
+
+## Keymaps
+
+- Window focus: `SUPER + H/J/K/L`; swap: `SUPER + SHIFT + H/J/K/L`.
+- Remapped to free those keys:
+  - `SUPER + J` toggle split -> `SUPER + ALT + J`
+  - `SUPER + K` keybindings -> `SUPER + CTRL + SHIFT + K`
+  - `SUPER + L` workspace layout -> `SUPER + ALT + L`
+- Config: `config/hypr/.config/hypr/bindings.lua` (`hypr` stow package).
 
 ## Gotchas
 

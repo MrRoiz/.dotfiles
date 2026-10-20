@@ -422,12 +422,13 @@ stow_personal_dotfiles() {
   print_ok "Stowed: ${STOW_PACKAGES[*]}"
 }
 
-# The `hypr` package only carries personal overrides (looknfeel + input), so
-# stow it without wiping ~/.config/hypr: Omarchy's other Hyprland files stay
-# managed by Omarchy.
+# The `hypr` package only carries personal overrides (looknfeel + input +
+# bindings), so stow it without wiping ~/.config/hypr: Omarchy's other
+# Hyprland files stay managed by Omarchy.
 stow_hypr_overrides() {
   print_substep "Stowing Hyprland overrides"
-  rm -f "$HOME/.config/hypr/input.lua" "$HOME/.config/hypr/looknfeel.lua"
+  rm -f "$HOME/.config/hypr/input.lua" "$HOME/.config/hypr/looknfeel.lua" \
+    "$HOME/.config/hypr/bindings.lua"
   cd "$DOTFILES_DIR/config"
   stow --restow -t "$HOME" hypr
   cd "$HOME"
