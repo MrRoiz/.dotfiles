@@ -56,6 +56,7 @@ package. Use
 ## Keymaps
 
 - Window focus: `SUPER + H/J/K/L`; swap: `SUPER + SHIFT + H/J/K/L`.
+- Screenshots: `SUPER + SHIFT + C` (the 60% keyboard has no PRINT key).
 - Remapped to free those keys:
   - `SUPER + J` toggle split -> `SUPER + ALT + J`
   - `SUPER + K` keybindings -> `SUPER + CTRL + SHIFT + K`
