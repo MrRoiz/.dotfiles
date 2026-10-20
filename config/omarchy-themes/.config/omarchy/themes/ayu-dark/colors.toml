@@ -1,0 +1,36 @@
+# Ayu Dark palette (dempfi/ayu: editor #10141c, panels #0d1017, accent #e6b450).
+# Omarchy ships no Ayu theme, so this is a standalone user theme rather than an
+# overlay. It carries no backgrounds/; Omarchy keeps the current wallpaper and
+# notices none was found. Add images to ~/.config/omarchy/backgrounds/ayu-dark/
+# if you want the theme to own one.
+mode = "dark"
+
+accent = "#e6b450"
+selection = "#193155"
+muted = "#5a6673"
+
+background = "#10141c"
+dark_background = "#0d1017"
+darker_background = "#010102"
+lighter_background = "#161a24"
+
+foreground = "#bfbdb6"
+dark_foreground = "#5a6673"
+light_foreground = "#c9c7c0"
+bright_foreground = "#d9d7cf"
+
+red = "#f07178"
+yellow = "#ffb454"
+orange = "#ff8f40"
+green = "#aad94c"
+cyan = "#95e6cb"
+blue = "#59c2ff"
+magenta = "#d2a6ff"
+brown = "#f29668"
+
+bright_red = "#ff7a85"
+bright_yellow = "#ffd173"
+bright_green = "#c2e97b"
+bright_cyan = "#b8f2e0"
+bright_blue = "#7cc9ff"
+bright_magenta = "#e0bfff"

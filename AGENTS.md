@@ -86,7 +86,7 @@ partial `hypr` and `wireplumber` packages, the single-file `starship` and
 ## Colors
 
 **Single source of truth: the Omarchy theme selected on the machine.** No
-palette is defined in this repo, except the theme overlay below; configs
+palette is defined in this repo, except the custom Ayu Dark theme below; configs
 reference the active theme's colors.
 
 - Terminal and prompt (kitty, starship) — kitty includes
@@ -97,12 +97,13 @@ reference the active theme's colors.
 - Bar, notifications, launcher, lock screen, GTK — themed by Omarchy itself;
   this setup only sets text/format options (e.g. the bar clock format), never
   colors.
-- Theme tweak: the `omarchy-themes` Stow package overlays the stock Tokyo Night
-  theme at `~/.config/omarchy/themes/tokyo-night/` with a `colors.toml` that
-  changes only `background` (`#1a1b26` -> `#16171f`), darkening the bar and
-  terminal, which both derive from that key. Omarchy copies the stock theme
-  first and the user dir wins on top, so the rest of the palette stays stock;
-  remove the dir and re-apply the theme for the original look.
+- `omarchy-themes` (Stow package) installs a custom **Ayu Dark** theme at
+  `~/.config/omarchy/themes/ayu-dark/`, because Omarchy ships none. Its
+  `colors.toml` defines the palette (editor bg `#10141c`, accent `#e6b450`,
+  from `dempfi/ayu`), and Omarchy generates every app's colors from it, so it
+  remains the single source of truth. The theme ships no `backgrounds/`:
+  applying it keeps the current wallpaper and warns none was found; add images
+  under `~/.config/omarchy/backgrounds/ayu-dark/` for a theme-owned one.
 - Known gap: `config/herdr/.config/herdr/config.toml` still pins fixed values
   under `[theme.custom]` because herdr has no Omarchy theme integration. Treat
   it as debt: do not extend fixed values to other configs, and converge herdr
