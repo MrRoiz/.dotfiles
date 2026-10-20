@@ -7,7 +7,7 @@
 #   1. Updates Omarchy so its checkout and package repos are current.
 #   2. Removes preinstalled Omarchy apps we don't use (personal cleaner).
 #   3. Installs the personal package set, always through omarchy commands.
-#   4. Ports dotfiles (stow), zsh, defaults, and the status bar clock.
+#   4. Ports dotfiles (stow), Hyprland overrides, zsh, defaults, and the status bar clock.
 #   5. Installs the wired headset microphone helper.
 #
 # Usage:
@@ -413,11 +413,25 @@ stow_personal_dotfiles() {
   for pkg in hyprland swaync vicinae waybar wlogout satty sherlock; do
     rm -rf "$HOME/.config/$pkg"
   done
+  # Drop the old Omarchy XCompose overrides; compose sequences are not used here.
+  rm -f "$HOME/.XCompose"
 
   cd "$DOTFILES_DIR/config"
   stow --restow -t "$HOME" "${STOW_PACKAGES[@]}"
   cd "$HOME"
   print_ok "Stowed: ${STOW_PACKAGES[*]}"
+}
+
+# The `hypr` package only carries personal overrides (looknfeel + input), so
+# stow it without wiping ~/.config/hypr: Omarchy's other Hyprland files stay
+# managed by Omarchy.
+stow_hypr_overrides() {
+  print_substep "Stowing Hyprland overrides"
+  rm -f "$HOME/.config/hypr/input.lua" "$HOME/.config/hypr/looknfeel.lua"
+  cd "$DOTFILES_DIR/config"
+  stow --restow -t "$HOME" hypr
+  cd "$HOME"
+  command -v hyprctl >/dev/null && hyprctl reload >/dev/null 2>&1 || true
 }
 
 # The analog card exposes the internal and headset mics as ports of one source,
@@ -476,6 +490,7 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   # also removes the old .config entries Omarchy shipped so stow does not
   # conflict, plus the dirs for apps we no longer install here.
   stow_personal_dotfiles
+  stow_hypr_overrides
   setup_headset_mic
   # Mega's user systemd unit was just stowed into ~/.config/systemd/user;
   # enable + start it now that the file is in place.
