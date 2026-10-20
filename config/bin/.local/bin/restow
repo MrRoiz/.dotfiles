@@ -61,6 +61,10 @@ if $want_spotify; then
   rm -f "$HOME/.config/spotify-flags.conf"
 fi
 
+# The omarchy-themes package lives under ~/.config/omarchy, which Omarchy owns.
+# Keep the parent a real directory so Stow cannot fold it into a repo symlink.
+mkdir -p "$HOME/.config/omarchy/themes"
+
 cd "$DOTFILES_DIR/config"
 stow --restow -t "$HOME" "${packages[@]}"
 cd "$HOME"

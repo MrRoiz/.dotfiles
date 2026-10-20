@@ -423,6 +423,11 @@ stow_personal_dotfiles() {
   # Drop the old Omarchy XCompose overrides; compose sequences are not used here.
   rm -f "$HOME/.XCompose"
 
+  # The omarchy-themes package lives under ~/.config/omarchy, which Omarchy owns
+  # and populates. Ensure the parent is a real directory, or Stow folds it into
+  # a symlink pointing at the repo and Omarchy then writes its configs in here.
+  mkdir -p "$HOME/.config/omarchy/themes"
+
   cd "$DOTFILES_DIR/config"
   stow --restow -t "$HOME" "${STOW_PACKAGES[@]}"
   cd "$HOME"

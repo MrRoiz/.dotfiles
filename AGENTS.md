@@ -82,6 +82,7 @@ partial `hypr` and `wireplumber` packages, the single-file `starship` and
   a fixed build (a native Wayland window also changes the class to `spotify`).
 - `config/opencode/.config/opencode/` — only `opencode.json` + `tui.json` are tracked. `package.json`, `package-lock.json`, `node_modules/`, `bun.lock` are **OpenCode-generated artifacts** (gitignored). Never commit them.
 - `~/.config/<app>` is usually a **symlink into the repo** (Stow). Tools that copy into `~/.config` write *through* the symlink into the repo, so re-sourcing the affected tool picks the change up.
+- The `omarchy-themes` package stows into `~/.config/omarchy`, which Omarchy owns. `omarchy.sh` and `restow` create `~/.config/omarchy/themes` first so Stow descends into it instead of folding the whole directory into a repo symlink (which would make Omarchy write its own configs into the repo).
 - `omarchy.sh`: the Arch repos and the Omarchy package repo are reached through `omarchy-pkg-add`; AUR packages are not installed by the script.
 - Commit style is Conventional Commits (`feat:`, `fix:`, `chore:`, `refactor:`), as seen in `git log`.
 
@@ -104,9 +105,10 @@ reference the active theme's colors.
   `colors.toml` defines the palette (bg `#0b0e14`, accent `#59c2ff` — the Ayu
   blue — matching `Shatur/neovim-ayu`'s ayu_dark body colours used by rnvim),
   and Omarchy generates every app's colors from it, so it remains the single
-  source of truth. The theme ships no `backgrounds/`:
-  applying it keeps the current wallpaper and warns none was found; add images
-  under `~/.config/omarchy/backgrounds/ayu-dark/` for a theme-owned one.
+  source of truth. It ships one background
+  (`backgrounds/g8dqvl-sunset-ridges.jpg`, 2560x1440), which is also the tile
+  the theme selector uses; extra images can go in
+  `~/.config/omarchy/backgrounds/ayu-dark/`.
 - Known gap: `config/herdr/.config/herdr/config.toml` still pins fixed values
   under `[theme.custom]` because herdr has no Omarchy theme integration. Treat
   it as debt: do not extend fixed values to other configs, and converge herdr
