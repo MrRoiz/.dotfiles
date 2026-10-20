@@ -20,3 +20,8 @@ o.bind("SUPER + SHIFT + H", "Swap window left", hl.dsp.window.swap({ direction =
 o.bind("SUPER + SHIFT + J", "Swap window down", hl.dsp.window.swap({ direction = "d" }))
 o.bind("SUPER + SHIFT + K", "Swap window up", hl.dsp.window.swap({ direction = "u" }))
 o.bind("SUPER + SHIFT + L", "Swap window right", hl.dsp.window.swap({ direction = "r" }))
+
+-- 60% keyboard: no PRINT key, so Omarchy's PRINT screenshot bind is out of
+-- reach. SUPER + SHIFT + C (C = capture) is free — preinstalled web-app
+-- bindings are disabled.
+o.bind("SUPER + SHIFT + C", "Screenshot", "omarchy-capture-screenshot")
