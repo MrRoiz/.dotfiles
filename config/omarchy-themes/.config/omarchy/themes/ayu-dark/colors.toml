@@ -1,4 +1,6 @@
-# Ayu Dark palette (dempfi/ayu: editor #10141c, panels #0d1017, accent #e6b450).
+# Ayu Dark palette, aligned with Shatur/neovim-ayu's ayu_dark (the nvim
+# colorscheme in this setup): bg #0b0e14, panel #0f131a, accent #e6b450. Using
+# the same bg as nvim removes the seam between nvim and its terminal.
 # Omarchy ships no Ayu theme, so this is a standalone user theme rather than an
 # overlay. It carries no backgrounds/; Omarchy keeps the current wallpaper and
 # notices none was found. Add images to ~/.config/omarchy/backgrounds/ayu-dark/
@@ -6,16 +8,16 @@
 mode = "dark"
 
 accent = "#e6b450"
-selection = "#193155"
-muted = "#5a6673"
+selection = "#1b3a5b"
+muted = "#565b66"
 
-background = "#10141c"
-dark_background = "#0d1017"
-darker_background = "#010102"
-lighter_background = "#161a24"
+background = "#0b0e14"
+dark_background = "#0f131a"
+darker_background = "#05070a"
+lighter_background = "#11151c"
 
 foreground = "#bfbdb6"
-dark_foreground = "#5a6673"
+dark_foreground = "#636a72"
 light_foreground = "#c9c7c0"
 bright_foreground = "#d9d7cf"
 
