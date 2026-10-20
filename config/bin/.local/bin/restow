@@ -4,7 +4,7 @@
 set -euo pipefail
 
 DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dotfiles}"
-DEFAULT_PACKAGES=(kitty herdr opencode mega bin starship spotify)
+DEFAULT_PACKAGES=(kitty herdr opencode mega bin starship spotify omarchy-themes)
 
 if [[ ! -d $DOTFILES_DIR/config ]]; then
   echo "restow: $DOTFILES_DIR/config not found" >&2
