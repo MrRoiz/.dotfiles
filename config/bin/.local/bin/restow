@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+# Restow the dotfiles packages from the installed checkout.
+# Usage: restow [package...]   (default: all managed packages)
+set -euo pipefail
+
+DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dotfiles}"
+DEFAULT_PACKAGES=(kitty herdr opencode mega bin)
+
+if [[ ! -d $DOTFILES_DIR/config ]]; then
+  echo "restow: $DOTFILES_DIR/config not found" >&2
+  exit 1
+fi
+
+if (( $# == 0 )); then
+  packages=("${DEFAULT_PACKAGES[@]}" hypr wireplumber)
+  # Whole-directory packages must already be stow symlinks. Missing targets
+  # are fine (stow creates them); a real directory means the installer has not
+  # run yet.
+  for pkg in "${DEFAULT_PACKAGES[@]}"; do
+    target="$HOME/.config/$pkg"
+    if [[ -e $target && ! -L $target ]]; then
+      echo "restow: $target is not a stow symlink; run scripts/omarchy.sh first" >&2
+      exit 1
+    fi
+  done
+else
+  packages=("$@")
+fi
+
+want_hypr=false
+want_wireplumber=false
+for pkg in "${packages[@]}"; do
+  [[ $pkg == hypr ]] && want_hypr=true
+  [[ $pkg == wireplumber ]] && want_wireplumber=true
+done
+
+# The partial packages own only specific files; remove those so stow can relink
+# them without wiping the rest of Omarchy's config.
+if $want_hypr; then
+  rm -f \
+    "$HOME/.config/hypr/input.lua" \
+    "$HOME/.config/hypr/looknfeel.lua" \
+    "$HOME/.config/hypr/bindings.lua" \
+    "$HOME/.config/hypr/monitors.lua"
+fi
+if $want_wireplumber; then
+  rm -f \
+    "$HOME/.local/bin/omarchy-headset-mic" \
+    "$HOME/.config/systemd/user/omarchy-headset-mic.service"
+fi
+
+cd "$DOTFILES_DIR/config"
+stow --restow -t "$HOME" "${packages[@]}"
+cd "$HOME"
+
+systemctl --user daemon-reload 2>/dev/null || true
+systemctl --user restart omarchy-headset-mic.service 2>/dev/null || true
+command -v hyprctl >/dev/null && hyprctl reload >/dev/null 2>&1 || true
+
+printf 'Restowed from %s: %s\n' "$DOTFILES_DIR" "${packages[*]}"

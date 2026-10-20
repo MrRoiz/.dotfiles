@@ -40,7 +40,7 @@ SCRIPT_DIR="$DOTFILES_DIR/scripts"
 # vicinae, waybar, wlogout, satty, sherlock) is dropped because those apps
 # are no longer installed here — Omarchy's own stack replaces them or they
 # were never omarchy-relevant.
-STOW_PACKAGES=(kitty herdr opencode mega)
+STOW_PACKAGES=(kitty herdr opencode mega bin)
 
 # =============================================================================
 # Local Helpers

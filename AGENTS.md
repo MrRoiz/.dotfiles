@@ -29,13 +29,24 @@ test/lint/CI tooling exists in this repo.
 
 ## Development checkout vs installed setup
 
-This checkout is the editing copy. The live setup runs from `~/.dotfiles`:
-stow from `~/.dotfiles/config` (or run `~/.dotfiles/scripts/omarchy.sh`).
-After changing files here, push and pull in `~/.dotfiles` before re-stowing.
+This checkout is the editing copy. The live setup runs from `~/.dotfiles`.
+Workflow after changing files here:
+
+1. Commit and push in this checkout.
+2. Bring `~/.dotfiles` up to date. That checkout has two live-only edits to
+   preserve: `zsh/setup.sh` uses `ZSH_PATH="$HOME/.dotfiles/zsh"`, and the
+   `omarchy-setup-security-sudoless-docker` call is commented out. Save those,
+   update the checkout, and reapply them.
+3. Run `restow`.
+
+`restow` stows every managed package from `~/.dotfiles/config`, including the
+partial `hypr` and `wireplumber` packages. Use
+`~/.dotfiles/scripts/omarchy.sh` for a full install.
 
 ## Commands
 
 - Install / re-run: `~/.dotfiles/scripts/omarchy.sh`
+- Restow everything: `restow` (all managed packages from `~/.dotfiles`, including `hypr` and `wireplumber`)
 - Re-stow after adding/removing files: `cd ~/.dotfiles/config && stow --restow -t "$HOME" <pkg>` (use the `STOW_PACKAGES` list from `omarchy.sh`, not `*`)
 - Omarchy bar clock format: `omarchy-bar set omarchy.clock format "<Qt format>"`
 - herdr: `herdr server reload-config` applies `config.toml` (theme/UI) to the running server; `herdr config check` validates it.

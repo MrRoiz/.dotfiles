@@ -143,6 +143,8 @@ needed.
 
 - `scripts/omarchy.sh` — the only installer; self-contained
   (does not source other scripts/setup files).
+- `config/bin/.local/bin/restow` — restow every managed package from
+  `~/.dotfiles` (main packages + `hypr` + `wireplumber`).
 - `config/hypr/.config/hypr/{looknfeel,input,bindings,monitors}.lua` —
   personal Hyprland overrides. The `hypr` package is stowed file-by-file so
   the rest of Omarchy's Hyprland config stays managed by Omarchy.
