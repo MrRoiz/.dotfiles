@@ -7,7 +7,7 @@
 # if you want the theme to own one.
 mode = "dark"
 
-accent = "#e6b450"
+accent = "#59c2ff"
 selection = "#1b3a5b"
 muted = "#565b66"
 

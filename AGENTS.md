@@ -99,10 +99,10 @@ reference the active theme's colors.
   colors.
 - `omarchy-themes` (Stow package) installs a custom **Ayu Dark** theme at
   `~/.config/omarchy/themes/ayu-dark/`, because Omarchy ships none. Its
-  `colors.toml` defines the palette (bg `#0b0e14`, accent `#e6b450`, matching
-  `Shatur/neovim-ayu`'s ayu_dark used by rnvim), and Omarchy generates every
-  app's colors from it, so it remains the single source of truth. The theme
-  ships no `backgrounds/`:
+  `colors.toml` defines the palette (bg `#0b0e14`, accent `#59c2ff` — the Ayu
+  blue — matching `Shatur/neovim-ayu`'s ayu_dark body colours used by rnvim),
+  and Omarchy generates every app's colors from it, so it remains the single
+  source of truth. The theme ships no `backgrounds/`:
   applying it keeps the current wallpaper and warns none was found; add images
   under `~/.config/omarchy/backgrounds/ayu-dark/` for a theme-owned one.
 - Known gap: `config/herdr/.config/herdr/config.toml` still pins fixed values
