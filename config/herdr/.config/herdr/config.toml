@@ -1,5 +1,11 @@
 onboarding = false
 
+[terminal]
+# Start zsh directly. Bash's exec-zsh drop-in only fires at SHLVL 1, which a
+# Herdr-spawned pane is not, so panes would otherwise run bash and lose
+# zsh-syntax-highlighting.
+default_shell = "/usr/bin/zsh"
+
 [theme]
 # Base only: every token below is overridden with the Ayu Dark palette.
 name = "catppuccin"

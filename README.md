@@ -50,10 +50,12 @@ bash ~/.dotfiles/scripts/omarchy.sh
 2. **Installs** the personal package set through omarchy commands:
    - `omarchy-pkg-add` for repo + OPR packages
    - `omarchy-install-dev-env node` / `... python` plus `mise use --global
-     terraform terragrunt` for the language toolchains — Omarchy preinstalls
+     herdr terraform terragrunt` for the toolchains — Omarchy preinstalls
      mise (`mise-bin`) and puts its shims on `PATH`, so node, python (`uv`
-     comes with it), terraform and terragrunt are all mise-managed instead of
-     Arch/AUR packages (no nvm)
+     comes with it), herdr, terraform and terragrunt are all mise-managed
+     instead of Arch/AUR packages (no nvm). The Omarchy `herdr` package is
+     dropped so the client and server always track the latest upstream
+     release.
    - `omarchy-install-browser zen` / `omarchy-install-terminal kitty` /
      `omarchy-install-dev-env rust` for the apps with dedicated installers
      (Steam, Spotify and Zed are **not** installed here — the Omarchy
@@ -158,6 +160,10 @@ needed.
 
 ## Notes
 
+- herdr is installed via mise (`mise use -g herdr@latest`) specifically so it
+  always runs the latest upstream release instead of the lagging Omarchy
+  package. Update it with `mise upgrade herdr`, not `herdr update`, so mise
+  keeps ownership of the binary; restart/reattach Herdr afterwards.
 - Monitor layout: laptop `eDP-1` on the left (`0x0`) and HDMI `HDMI-A-1` on
   the right (`1920x-300`). The HDMI sits higher; adjust the `-300` offset in
   `config/hypr/.config/hypr/monitors.lua`.

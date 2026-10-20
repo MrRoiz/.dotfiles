@@ -217,7 +217,7 @@ clean_omarchy_preinstalls() {
 # purpose (omarchy-base.packages already provides them): docker,
 # docker-compose, docker-buildx, tmux, fzf, jq, eza, btop,
 # ripgrep, imagemagick, nvim, unzip, man-db, gnome-keyring, wl-clipboard,
-# sddm, yay, mise, herdr, localsend, noto-fonts (+cjk/+emoji),
+# sddm, yay, mise, localsend, noto-fonts (+cjk/+emoji),
 # brightnessctl, bluez, starship, zoxide, nautilus.
 #
 # Also NOT installed here because the Omarchy stack replaces them:
@@ -296,9 +296,10 @@ install_omarchy_packages() {
 # tools up without nvm or an activation line in the dotfiles.
 #
 # node and python go through Omarchy's own dev-env installer (a thin wrapper
-# over `mise use --global`; the python recipe also brings uv). terraform and
-# terragrunt have no dev-env recipe, so they are declared through mise
-# directly.
+# over `mise use --global`; the python recipe also brings uv). herdr,
+# terraform and terragrunt have no dev-env recipe, so they are declared through
+# mise directly. herdr's Omarchy package is dropped first so the client and
+# server track upstream instead of the package.
 # =============================================================================
 
 install_mise_toolchains() {
@@ -316,8 +317,11 @@ install_mise_toolchains() {
 
   omarchy-install-dev-env python
 
-  print_step "Installing via mise: terraform terragrunt"
-  mise use --global terraform@latest terragrunt@latest
+  print_step "Installing via mise: herdr terraform terragrunt"
+  if omarchy-pkg-present herdr; then
+    omarchy-pkg-drop herdr
+  fi
+  mise use --global herdr@latest terraform@latest terragrunt@latest
 }
 
 setup_omarchy_docker() {

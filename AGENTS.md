@@ -63,6 +63,13 @@ partial `hypr` and `wireplumber` packages. Use
 
 ## Gotchas
 
+- herdr is installed via mise (`mise use -g herdr@latest`) so it always
+  tracks the latest upstream release; the setup drops the lagging Omarchy
+  package. Update with `mise upgrade herdr`, not `herdr update`, and
+  restart/reattach the client/server afterwards.
+- Herdr panes start zsh via `terminal.default_shell`; bash's exec-zsh drop-in
+  only fires at `SHLVL 1`, so panes would otherwise be bash and miss
+  zsh-syntax-highlighting.
 - The login shell on Omarchy is bash; zsh launches through the
   `omarchy-setup-zsh` drop-in (bash `exec`s zsh). Do not `chsh` to zsh
   — see https://github.com/omacom/omarchy/discussions/2495.
