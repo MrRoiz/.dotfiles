@@ -23,7 +23,7 @@ read_state() {
   # port alone instead of forcing the internal mic on unknown hardware.
   for control in 'Headphone Jack' 'Headset Mic Jack' 'Mic Jack' 'Front Mic Jack'; do
     state=$(amixer -c "$card" cget iface=CARD,name="$control" 2>/dev/null |
-      sed -n 's/.*values=\([a-z]*\).*/\1/p' | head -n1)
+      grep -oE 'values=(on|off)' | head -n1 | cut -d= -f2)
     [[ -n $state ]] || continue
 
     if [[ $state == on ]]; then
