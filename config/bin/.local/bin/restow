@@ -17,6 +17,8 @@ if (( $# == 0 )); then
   # are fine (stow creates them); a real directory means the installer has not
   # run yet.
   for pkg in "${DEFAULT_PACKAGES[@]}"; do
+    # Single-file packages own ~/.config/<file>, not ~/.config/<pkg>.
+    [[ $pkg == starship || $pkg == spotify ]] && continue
     target="$HOME/.config/$pkg"
     if [[ -e $target && ! -L $target ]]; then
       echo "restow: $target is not a stow symlink; run scripts/omarchy.sh first" >&2
@@ -30,10 +32,12 @@ fi
 want_hypr=false
 want_wireplumber=false
 want_starship=false
+want_spotify=false
 for pkg in "${packages[@]}"; do
   [[ $pkg == hypr ]] && want_hypr=true
   [[ $pkg == wireplumber ]] && want_wireplumber=true
   [[ $pkg == starship ]] && want_starship=true
+  [[ $pkg == spotify ]] && want_spotify=true
 done
 
 # The partial packages own only specific files; remove those so stow can relink
@@ -52,6 +56,9 @@ if $want_wireplumber; then
 fi
 if $want_starship; then
   rm -f "$HOME/.config/starship.toml"
+fi
+if $want_spotify; then
+  rm -f "$HOME/.config/spotify-flags.conf"
 fi
 
 cd "$DOTFILES_DIR/config"
