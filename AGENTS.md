@@ -38,14 +38,14 @@ Workflow after changing files here:
 3. Run `restow`.
 
 `restow` stows every managed package from `~/.dotfiles/config`, including the
-partial `hypr` and `wireplumber` packages and the single-file `starship` and
-`spotify` packages. Use
+partial `hypr` and `wireplumber` packages, the single-file `starship` and
+`spotify` packages, and the `omarchy-themes` overlay. Use
 `~/.dotfiles/scripts/omarchy.sh` for a full install.
 
 ## Commands
 
 - Install / re-run: `~/.dotfiles/scripts/omarchy.sh`
-- Restow everything: `restow` (all managed packages from `~/.dotfiles`, including `hypr`, `wireplumber`, `starship` and `spotify`)
+- Restow everything: `restow` (all managed packages from `~/.dotfiles`, including `hypr`, `wireplumber`, `starship`, `spotify` and `omarchy-themes`)
 - Re-stow after adding/removing files: `cd ~/.dotfiles/config && stow --restow -t "$HOME" <pkg>` (use the `STOW_PACKAGES` list from `omarchy.sh`, not `*`)
 - Omarchy bar clock format: `omarchy-bar set omarchy.clock format "<Qt format>"`
 - herdr: `herdr server reload-config` applies `config.toml` (theme/UI) to the running server; `herdr config check` validates it.
@@ -86,7 +86,8 @@ partial `hypr` and `wireplumber` packages and the single-file `starship` and
 ## Colors
 
 **Single source of truth: the Omarchy theme selected on the machine.** No
-palette is defined in this repo; configs reference the active theme's colors.
+palette is defined in this repo, except the theme overlay below; configs
+reference the active theme's colors.
 
 - Terminal and prompt (kitty, starship) — kitty includes
   `~/.local/state/omarchy/current/theme/kitty.conf`, the palette Omarchy
@@ -96,6 +97,12 @@ palette is defined in this repo; configs reference the active theme's colors.
 - Bar, notifications, launcher, lock screen, GTK — themed by Omarchy itself;
   this setup only sets text/format options (e.g. the bar clock format), never
   colors.
+- Theme tweak: the `omarchy-themes` Stow package overlays the stock Tokyo Night
+  theme at `~/.config/omarchy/themes/tokyo-night/` with a `colors.toml` that
+  changes only `background` (`#1a1b26` -> `#16171f`), darkening the bar and
+  terminal, which both derive from that key. Omarchy copies the stock theme
+  first and the user dir wins on top, so the rest of the palette stays stock;
+  remove the dir and re-apply the theme for the original look.
 - Known gap: `config/herdr/.config/herdr/config.toml` still pins fixed values
   under `[theme.custom]` because herdr has no Omarchy theme integration. Treat
   it as debt: do not extend fixed values to other configs, and converge herdr
