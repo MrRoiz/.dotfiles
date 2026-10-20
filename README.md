@@ -66,7 +66,7 @@ bash ~/.dotfiles/scripts/omarchy.sh
      covers history-search (up/down arrow), zsh-syntax-highlighting and
      fzf file/git/variable widgets, and its `shell/all` ships the
      omadots aliases (ls/cd/git/d/t/n/open). The git aliases in
-     `zsh/aliases.sh` fill the gap left by dropping omz's `git`
+     `zsh/aliases/git.sh` fill the gap left by dropping omz's `git`
      plugin; oh-my-zsh and p10k are intentionally not used.
    - `yay` for AUR-only packages (`ngrok`, `yaak-bin`,
      with `helium-browser-bin` commented out as a TODO to PR into OPR)
@@ -155,9 +155,9 @@ needed.
   `omarchy.sh`). The `mega` package ships the user systemd unit that
   `omarchy.sh` enables after stow; the `starship` package ships the prompt
   config as the single file `~/.config/starship.toml`.
-- `zsh/{aliases,functions,setup}.sh` — sourced by `omarchy.sh` after the
-  omarchy-zsh template. The git aliases in `aliases.sh` fill the gap
-  left by dropping omz's `git` plugin.
+- `zsh/aliases/{git,docker,tools}.sh`, `zsh/functions.sh`, `zsh/setup.sh` —
+  sourced by `omarchy.sh` after the omarchy-zsh template. The git aliases in
+  `aliases/git.sh` fill the gap left by dropping omz's `git` plugin.
 
 ## Notes
 

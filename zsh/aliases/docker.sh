@@ -1,35 +1,3 @@
-alias tf="terraform"
-alias tg="terragrunt"
-
-# oh-my-zsh's directories lib (md/rd were always available before Omarchy).
-alias md="mkdir -p"
-alias rd="rmdir"
-
-# Git aliases. omarchy-zsh's omadots provides `g`, `gcm`, `gcam`, `gcad`; the
-# rest below are the oh-my-zsh `git` plugin's aliases (minus what omadots
-# already covers), so the muscle memory transfers after dropping omz.
-alias gst="git status"
-alias gd="git diff"
-alias gds="git diff --staged"
-alias ga="git add"
-alias gaa="git add --all"
-alias gc="git commit"
-alias gca="git commit --amend"
-alias gcan="git commit --amend --no-edit"
-alias gco="git checkout"
-alias gcb="git checkout -b"
-alias gb="git branch"
-alias gba="git branch --all"
-alias gbd="git branch --delete"
-alias gp="git push"
-alias gpf="git push --force-with-lease"
-alias gpl="git pull"
-alias glog="git log --oneline --decorate --graph"
-alias gstp="git stash pop"
-alias gsta="git stash apply"
-alias gclean="git clean --force --directories -d"
-alias gcp="git cherry-pick"
-
 # oh-my-zsh `docker` plugin aliases (the pre-Omarchy plugin set).
 alias dbl='docker build'
 alias dcin='docker container inspect'
