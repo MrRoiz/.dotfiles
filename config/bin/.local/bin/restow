@@ -4,7 +4,7 @@
 set -euo pipefail
 
 DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dotfiles}"
-DEFAULT_PACKAGES=(kitty herdr opencode mega bin)
+DEFAULT_PACKAGES=(kitty herdr opencode mega bin starship)
 
 if [[ ! -d $DOTFILES_DIR/config ]]; then
   echo "restow: $DOTFILES_DIR/config not found" >&2
@@ -29,9 +29,11 @@ fi
 
 want_hypr=false
 want_wireplumber=false
+want_starship=false
 for pkg in "${packages[@]}"; do
   [[ $pkg == hypr ]] && want_hypr=true
   [[ $pkg == wireplumber ]] && want_wireplumber=true
+  [[ $pkg == starship ]] && want_starship=true
 done
 
 # The partial packages own only specific files; remove those so stow can relink
@@ -47,6 +49,9 @@ if $want_wireplumber; then
   rm -f \
     "$HOME/.local/bin/omarchy-headset-mic" \
     "$HOME/.config/systemd/user/omarchy-headset-mic.service"
+fi
+if $want_starship; then
+  rm -f "$HOME/.config/starship.toml"
 fi
 
 cd "$DOTFILES_DIR/config"

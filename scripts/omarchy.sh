@@ -40,7 +40,7 @@ SCRIPT_DIR="$DOTFILES_DIR/scripts"
 # vicinae, waybar, wlogout, satty, sherlock) is dropped because those apps
 # are no longer installed here — Omarchy's own stack replaces them or they
 # were never omarchy-relevant.
-STOW_PACKAGES=(kitty herdr opencode mega bin)
+STOW_PACKAGES=(kitty herdr opencode mega bin starship)
 
 # =============================================================================
 # Local Helpers
@@ -417,6 +417,9 @@ stow_personal_dotfiles() {
   for pkg in hyprland swaync vicinae waybar wlogout satty sherlock; do
     rm -rf "$HOME/.config/$pkg"
   done
+  # starship is a single file, not a ~/.config/<pkg> dir, so the loop above
+  # misses Omarchy's default starship.toml.
+  rm -f "$HOME/.config/starship.toml"
   # Drop the old Omarchy XCompose overrides; compose sequences are not used here.
   rm -f "$HOME/.XCompose"
 

@@ -72,7 +72,7 @@ bash ~/.dotfiles/scripts/omarchy.sh
      with `helium-browser-bin` commented out as a TODO to PR into OPR)
 3. **Configures**:
    - Stows only the packages whose apps are installed on Omarchy
-     (`kitty`, `herdr`, `opencode`, `mega`) and removes
+     (`kitty`, `herdr`, `opencode`, `mega`, `starship`) and removes
      `~/.config/<pkg>` for them and for the dropped apps
      (`hyprland`, `swaync`, `vicinae`, `waybar`, `wlogout`, `satty`,
      `sherlock`) so `stow` does not conflict. The `wireplumber` package is
@@ -146,14 +146,15 @@ needed.
 - `scripts/omarchy.sh` — the only installer; self-contained
   (does not source other scripts/setup files).
 - `config/bin/.local/bin/restow` — restow every managed package from
-  `~/.dotfiles` (main packages + `hypr` + `wireplumber`).
+  `~/.dotfiles` (main packages + `hypr` + `wireplumber` + `starship`).
 - `config/hypr/.config/hypr/{looknfeel,input,bindings,monitors}.lua` —
   personal Hyprland overrides. The `hypr` package is stowed file-by-file so
   the rest of Omarchy's Hyprland config stays managed by Omarchy.
 - `config/<app>/.config/<app>/…` — Stow packages. Only the ones whose
   apps are installed on Omarchy are stowed (see `STOW_PACKAGES` in
   `omarchy.sh`). The `mega` package ships the user systemd unit that
-  `omarchy.sh` enables after stow.
+  `omarchy.sh` enables after stow; the `starship` package ships the prompt
+  config as the single file `~/.config/starship.toml`.
 - `zsh/{aliases,functions,setup}.sh` — sourced by `omarchy.sh` after the
   omarchy-zsh template. The git aliases in `aliases.sh` fill the gap
   left by dropping omz's `git` plugin.

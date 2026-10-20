@@ -40,13 +40,14 @@ Workflow after changing files here:
 3. Run `restow`.
 
 `restow` stows every managed package from `~/.dotfiles/config`, including the
-partial `hypr` and `wireplumber` packages. Use
+partial `hypr` and `wireplumber` packages and the single-file `starship`
+package. Use
 `~/.dotfiles/scripts/omarchy.sh` for a full install.
 
 ## Commands
 
 - Install / re-run: `~/.dotfiles/scripts/omarchy.sh`
-- Restow everything: `restow` (all managed packages from `~/.dotfiles`, including `hypr` and `wireplumber`)
+- Restow everything: `restow` (all managed packages from `~/.dotfiles`, including `hypr`, `wireplumber` and `starship`)
 - Re-stow after adding/removing files: `cd ~/.dotfiles/config && stow --restow -t "$HOME" <pkg>` (use the `STOW_PACKAGES` list from `omarchy.sh`, not `*`)
 - Omarchy bar clock format: `omarchy-bar set omarchy.clock format "<Qt format>"`
 - herdr: `herdr server reload-config` applies `config.toml` (theme/UI) to the running server; `herdr config check` validates it.
