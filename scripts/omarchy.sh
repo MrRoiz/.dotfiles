@@ -8,6 +8,7 @@
 #   2. Removes preinstalled Omarchy apps we don't use (personal cleaner).
 #   3. Installs the personal package set, always through omarchy commands.
 #   4. Ports dotfiles (stow), zsh, defaults, and the status bar clock.
+#   5. Installs the wired headset microphone helper.
 #
 # Usage:
 #   Direct:  bash ~/.dotfiles/scripts/omarchy.sh
@@ -418,6 +419,23 @@ stow_personal_dotfiles() {
   print_ok "Stowed: ${STOW_PACKAGES[*]}"
 }
 
+# The analog card exposes the internal and headset mics as ports of one source,
+# so the Omarchy audio panel cannot list the headset mic separately. ACP's
+# auto-port does not restore the port after a replug on this codec, so a small
+# user service follows the headphone jack and sets the source port explicitly.
+# Install it even when the headset is unplugged: the port may only appear on
+# plug, and the service waits for it.
+setup_headset_mic() {
+  print_substep "Installing the headset-mic helper"
+  cd "$DOTFILES_DIR/config"
+  stow --restow -t "$HOME" wireplumber
+  cd "$HOME"
+
+  systemctl --user daemon-reload
+  systemctl --user enable --now omarchy-headset-mic.service
+  systemctl --user restart omarchy-headset-mic.service
+}
+
 # =============================================================================
 # Main Script Execution
 # =============================================================================
@@ -457,6 +475,7 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   # also removes the old .config entries Omarchy shipped so stow does not
   # conflict, plus the dirs for apps we no longer install here.
   stow_personal_dotfiles
+  setup_headset_mic
   # Mega's user systemd unit was just stowed into ~/.config/systemd/user;
   # enable + start it now that the file is in place.
   if command -v mega-cmd &>/dev/null; then

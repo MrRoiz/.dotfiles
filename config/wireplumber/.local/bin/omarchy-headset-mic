@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+# Select the headset microphone while the analog combo jack is plugged in.
+# The ALC256 exposes internal and headset mics as ports of one source; on this
+# codec the jack is not propagated through ACP's route state reliably, so react
+# to card events and set the source port explicitly.
+set -euo pipefail
+export PATH=/usr/local/bin:/usr/bin:/bin
+
+read_state() {
+  local source card control state
+
+  source=$(pactl --format=json list sources 2>/dev/null |
+    jq -r '.[] | select([.ports[]?.name] | index("analog-input-headset-mic")) | .name' |
+    head -n1)
+  [[ -n $source ]] || return 1
+
+  card=$(pactl --format=json list sources 2>/dev/null |
+    jq -r --arg name "$source" '.[] | select(.name == $name) | .properties["alsa.card"]' |
+    head -n1)
+  [[ -n $card ]] || return 1
+
+  # The jack control name varies by codec. If none of these exist, leave the
+  # port alone instead of forcing the internal mic on unknown hardware.
+  for control in 'Headphone Jack' 'Headset Mic Jack' 'Mic Jack' 'Front Mic Jack'; do
+    state=$(amixer -c "$card" cget iface=CARD,name="$control" 2>/dev/null |
+      sed -n 's/.*values=\([a-z]*\).*/\1/p' | head -n1)
+    [[ -n $state ]] || continue
+
+    if [[ $state == on ]]; then
+      printf '%s %s\n' "$source" analog-input-headset-mic
+    else
+      printf '%s %s\n' "$source" analog-input-internal-mic
+    fi
+    return 0
+  done
+
+  return 1
+}
+
+sync_port() {
+  local state source target active
+
+  state=$(read_state) || return 0
+  source=${state% *}
+  target=${state#* }
+
+  active=$(pactl --format=json list sources 2>/dev/null |
+    jq -r --arg name "$source" '.[] | select(.name == $name) | .active_port' |
+    head -n1)
+  [[ $active == "$target" ]] && return 0
+
+  if pactl set-source-port "$source" "$target" 2>/dev/null; then
+    logger -t omarchy-headset-mic "source $source -> $target"
+  fi
+}
+
+sync_port
+
+# Only card and sink events are used: setting the port emits a source event,
+# which would otherwise re-enter this loop. The sink's active port changes with
+# the same headphone jack, so it is a reliable trigger on this codec.
+pactl subscribe 2>/dev/null | while read -r event; do
+  case $event in
+    *"on card"*|*"on sink"*) sync_port ;;
+  esac
+done

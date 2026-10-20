@@ -1,0 +1,13 @@
+[Unit]
+Description=Select the wired headset microphone on the analog combo jack
+After=pipewire.service wireplumber.service
+Wants=pipewire.service
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/omarchy-headset-mic
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=default.target

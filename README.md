@@ -73,7 +73,10 @@ bash ~/.dotfiles/scripts/omarchy.sh
      (`kitty`, `herdr`, `opencode`, `mega`) and removes
      `~/.config/<pkg>` for them and for the dropped apps
      (`hyprland`, `swaync`, `vicinae`, `waybar`, `wlogout`, `satty`,
-     `sherlock`) so `stow` does not conflict.
+     `sherlock`) so `stow` does not conflict. The `wireplumber` package is
+     stowed separately for the headset-mic helper (see
+     [Headset microphone](#headset-microphone)) so Omarchy's own
+     WirePlumber configs are preserved.
    - Sets `omarchy-default-browser zen` and `omarchy-default-terminal
      kitty` (the same commands the Omarchy launcher's defaults menu uses).
    - `omarchy bar set omarchy.clock format "MMM dd hh:mmAP"` — matches
@@ -83,6 +86,44 @@ bash ~/.dotfiles/scripts/omarchy.sh
      `/usr/bin/zen`).
    - rnvim drops `omarchy-nvim` (the prebuilt LazyVim config Omarchy
      ships) and replaces `~/.config/nvim` with the user's rnvim setup.
+
+## Headset microphone
+
+The 3.5 mm combo jack is a single socket for both headphones and a headset
+microphone. The sound card actually exposes **two microphones behind that one
+socket**: the internal mic and the headset's mic. Linux sees them as
+two *ports* — think "input choices" — of the same microphone device.
+
+Omarchy's audio panel lists microphone **devices**, not ports, so the headset
+mic has no row to click. It also falls back to the internal mic after the
+headset is unplugged and plugged back in.
+
+A WirePlumber rule (`api.acp.auto-port`) was tried first, but it did not
+restore the headset port after a replug on the ALC256 codec.
+
+So the repo installs a tiny user service, `omarchy-headset-mic`, which watches
+the headphone jack and selects the matching input:
+
+| Jack state | Microphone used |
+| --- | --- |
+| headset plugged in | headset mic (`analog-input-headset-mic`) |
+| headset unplugged | internal mic (`analog-input-internal-mic`) |
+
+It is installed even if the headset is unplugged during setup: the headset
+mic may only appear when something is plugged in, and the service waits for
+it. On machines without that port or jack control it does nothing, and it
+never touches output, Bluetooth, or other audio devices.
+
+It runs as a per-user service. To turn it off:
+
+```bash
+systemctl --user disable --now omarchy-headset-mic.service
+```
+
+The service does **not** set input volume. On the ALC256 codec 100% adds +30 dB
+of capture gain plus +30 dB of analog boost and clips; lower the input once in
+the Omarchy audio panel. Around 40% is the highest level without the analog
+boost, and WirePlumber remembers it per port.
 
 ## Layout
 
