@@ -24,7 +24,9 @@ test/lint/CI tooling exists in this repo.
 - `zsh/` — sourced by the Omarchy setup after the omarchy-zsh template.
   `setup.sh` chains the user's aliases / functions. The prompt is
   omarchy-zsh's starship and zsh-syntax-highlighting + history-search
-  come from omarchy-zsh's zoptions; p10k and oh-my-zsh are
+  come from omarchy-zsh's zoptions; `zsh/setup.sh` adds dim history
+  autosuggestions from the `zsh-autosuggestions` package (`fg=8`, so it
+  follows the theme). p10k and oh-my-zsh are
   intentionally not used.
 
 ## Development checkout vs installed setup
