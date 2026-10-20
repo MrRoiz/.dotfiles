@@ -1,6 +1,61 @@
-# Git aliases. omarchy-zsh's omadots provides `g`, `gcm`, `gcam`, `gcad`; the
-# rest below are the oh-my-zsh `git` plugin's aliases (minus what omadots
-# already covers), so the muscle memory transfers after dropping omz.
+# Git aliases: the full oh-my-zsh `git` plugin set, minus the aliases that
+# omarchy-zsh's omadots already provides (`g`, `gcm`, `gcam`, `gcad`) and
+# minus a few dotfiles-specific overrides (`gc`, `gca`, `gcan`, `gpf`, `gpl`,
+# `gclean`, `gsta`, `glog`). Helpers from omz's lib/git.zsh and git plugin
+# are included so the aliases that need them keep working.
+
+# Helpers from oh-my-zsh (lib/git.zsh + git plugin).
+git_current_branch() {
+  local ref
+  ref=$(command git symbolic-ref --quiet HEAD 2>/dev/null)
+  local ret=$?
+  if [[ $ret != 0 ]]; then
+    [[ $ret == 128 ]] && return
+    ref=$(command git rev-parse --short HEAD 2>/dev/null) || return
+  fi
+  echo ${ref#refs/heads/}
+}
+
+git_main_branch() {
+  command git rev-parse --git-dir &>/dev/null || return
+  local ref remote
+  for ref in refs/{heads,remotes/{origin,upstream}}/{main,trunk,mainline,default,stable,master}; do
+    if command git show-ref -q --verify $ref; then
+      echo ${ref:t}
+      return 0
+    fi
+  done
+  for remote in origin upstream; do
+    ref=$(command git rev-parse --abbrev-ref $remote/HEAD 2>/dev/null)
+    if [[ $ref == $remote/* ]]; then
+      echo ${ref#"$remote/"}; return 0
+    fi
+  done
+  echo master
+  return 1
+}
+
+git_develop_branch() {
+  command git rev-parse --git-dir &>/dev/null || return
+  local branch
+  for branch in dev devel develop development; do
+    if command git show-ref -q --verify refs/heads/$branch; then
+      echo $branch
+      return 0
+    fi
+  done
+  echo develop
+  return 1
+}
+
+_git_log_prettily() {
+  if [[ -n $1 ]]; then
+    git log --pretty=$1
+  fi
+}
+if (( $+functions[compdef] )); then
+  compdef _git _git_log_prettily=git-log
+fi
 alias gst="git status"
 alias gd="git diff"
 alias gds="git diff --staged"
@@ -22,20 +77,6 @@ alias gstp="git stash pop"
 alias gsta="git stash apply"
 alias gclean="git clean --force --directories -d"
 alias gcp="git cherry-pick"
-
-# Helper from oh-my-zsh's lib/git.zsh, used by gpsup / ggpush / ggpull.
-git_current_branch() {
-  local ref
-  ref=$(command git symbolic-ref --quiet HEAD 2>/dev/null)
-  local ret=$?
-  if [[ $ret != 0 ]]; then
-    [[ $ret == 128 ]] && return
-    ref=$(command git rev-parse --short HEAD 2>/dev/null) || return
-  fi
-  echo ${ref#refs/heads/}
-}
-
-# Additional oh-my-zsh `git` plugin aliases (common set).
 alias glo='git log --oneline --decorate'
 alias gloga='git log --oneline --decorate --graph --all'
 alias glol='git log --graph --pretty="%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset"'
@@ -84,3 +125,141 @@ alias gwt='git worktree'
 alias gwta='git worktree add'
 alias gwtls='git worktree list'
 alias grt='cd "$(git rev-parse --show-toplevel || echo .)"'
+
+# Remaining oh-my-zsh `git` plugin aliases.
+alias ggpur='ggu'
+alias gav='git add --verbose'
+alias gwip='git add -A; git rm $(git ls-files --deleted) 2> /dev/null; git commit --no-verify --no-gpg-sign --message "--wip-- [skip ci]"'
+alias gam='git am'
+alias gama='git am --abort'
+alias gamc='git am --continue'
+alias gamscp='git am --show-current-patch'
+alias gams='git am --skip'
+alias gap='git apply'
+alias gapt='git apply --3way'
+alias gbs='git bisect'
+alias gbsb='git bisect bad'
+alias gbsg='git bisect good'
+alias gbsn='git bisect new'
+alias gbso='git bisect old'
+alias gbsr='git bisect reset'
+alias gbss='git bisect start'
+alias gbgd='LANG=C git branch --no-color -vv | grep ": gone\]" | cut -c 3- | awk '"'"'{print $1}'"'"' | xargs git branch -d'
+alias gbgD='LANG=C git branch --no-color -vv | grep ": gone\]" | cut -c 3- | awk '"'"'{print $1}'"'"' | xargs git branch -D'
+alias gbm='git branch --move'
+alias gbnm='git branch --no-merged'
+alias gbr='git branch --remotes'
+alias ggsup='git branch --set-upstream-to=origin/$(git_current_branch)'
+alias gbg='LANG=C git branch -vv | grep ": gone\]"'
+alias gcor='git checkout --recurse-submodules'
+alias gcB='git checkout -B'
+alias gcd='git checkout $(git_develop_branch)'
+alias gcpa='git cherry-pick --abort'
+alias gcpc='git cherry-pick --continue'
+alias gcl='git clone --recurse-submodules'
+alias gclf='git clone --recursive --shallow-submodules --filter=blob:none --also-filter-submodules'
+alias gcas='git commit --all --signoff'
+alias gcasm='git commit --all --signoff --message'
+alias gcs='git commit --gpg-sign'
+alias gcss='git commit --gpg-sign --signoff'
+alias gcssm='git commit --gpg-sign --signoff --message'
+alias gcsm='git commit --signoff --message'
+alias gcan!='git commit --verbose --all --no-edit --amend'
+alias gcans!='git commit --verbose --all --signoff --no-edit --amend'
+alias gcann!='git commit --verbose --all --date=now --no-edit --amend'
+alias gcn!='git commit --verbose --no-edit --amend'
+alias gcf='git config --list'
+alias gcfu='git commit --fixup'
+alias gdct='git describe --tags $(git rev-list --tags --max-count=1)'
+alias gdcw='git diff --cached --word-diff'
+alias gdw='git diff --word-diff'
+alias gdt='git diff-tree --no-commit-id --name-only -r'
+alias gfo='git fetch origin'
+alias gg='git gui citool'
+alias gga='git gui citool --amend'
+alias ghh='git help'
+alias glgg='git log --graph'
+alias glgga='git log --graph --decorate --all'
+alias glgm='git log --graph --max-count=10'
+alias glods='git log --graph --pretty="%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset" --date=short'
+alias glod='git log --graph --pretty="%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset"'
+alias glola='git log --graph --pretty="%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset" --all'
+alias glols='git log --graph --pretty="%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset" --stat'
+alias glolm='git log $(git_main_branch) --graph --pretty="%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset"'
+alias glom='git log --oneline --decorate --color $(git_main_branch)..'
+alias glp='_git_log_prettily'
+alias glg='git log --stat'
+alias glgp='git log --stat --patch'
+alias gignored='git ls-files -v | grep "^[[:lower:]]"'
+alias gfg='git ls-files | grep'
+alias gms="git merge --squash"
+alias gmff="git merge --ff-only"
+alias gmom='git merge origin/$(git_main_branch)'
+alias gmum='git merge upstream/$(git_main_branch)'
+alias gmtl='git mergetool --no-prompt'
+alias gmtlvim='git mergetool --no-prompt --tool=vimdiff'
+alias gl='git pull'
+alias gprv='git pull --rebase -v'
+alias gpra='git pull --rebase --autostash'
+alias gprav='git pull --rebase --autostash -v'
+alias gprom='git pull --rebase origin $(git_main_branch)'
+alias gpromi='git pull --rebase=interactive origin $(git_main_branch)'
+alias gprum='git pull --rebase upstream $(git_main_branch)'
+alias gprumi='git pull --rebase=interactive upstream $(git_main_branch)'
+alias gluc='git pull upstream $(git_current_branch)'
+alias glum='git pull upstream $(git_main_branch)'
+alias gpd='git push --dry-run'
+alias gpv='git push --verbose'
+alias gpoat='git push origin --all && git push origin --tags'
+alias gpod='git push origin --delete'
+alias gpu='git push upstream'
+alias grbo='git rebase --onto'
+alias grbd='git rebase $(git_develop_branch)'
+alias grbm='git rebase $(git_main_branch)'
+alias grbom='git rebase origin/$(git_main_branch)'
+alias grbum='git rebase upstream/$(git_main_branch)'
+alias grbmi='git rebase $(git_main_branch) --interactive'
+alias grbmia='git rebase $(git_main_branch) --interactive --autosquash'
+alias grf='git reflog'
+alias gra='git remote add'
+alias grrm='git remote remove'
+alias grmv='git remote rename'
+alias grset='git remote set-url'
+alias grup='git remote update'
+alias gru='git reset --'
+alias grhk='git reset --keep'
+alias gpristine='git reset --hard && git clean --force -dfx'
+alias groh='git reset origin/$(git_current_branch) --hard'
+alias grss='git restore --source'
+alias gunwip='git rev-list --max-count=1 --format="%s" HEAD | grep -q "\--wip--" && git reset HEAD~1'
+alias grev='git revert'
+alias greva='git revert --abort'
+alias grevc='git revert --continue'
+alias grm='git rm'
+alias grmc='git rm --cached'
+alias gcount='git shortlog --summary --numbered'
+alias gshs='git show --stat'
+alias gsps='git show --pretty=short --show-signature'
+alias gstall='git stash --all'
+alias gstaa='git stash apply'
+alias gsts='git stash show --patch'
+alias gsnut='git status --untracked-files=no'
+alias gsi='git submodule init'
+alias gsu='git submodule update'
+alias gsuri='git submodule update --recursive --init'
+alias gsd='git svn dcommit'
+alias git-svn-dcommit-push='git svn dcommit && git push github $(git_main_branch):svntrunk'
+alias gsr='git svn rebase'
+alias gswd='git switch $(git_develop_branch)'
+alias gswm='git switch $(git_main_branch)'
+alias gta='git tag --annotate'
+alias gts='git tag --sign'
+alias gtv='git tag | sort -V'
+alias gignore='git update-index --assume-unchanged'
+alias gunignore='git update-index --no-assume-unchanged'
+alias gwch='git log --patch --abbrev-commit --pretty=medium --raw'
+alias gwtmv='git worktree move'
+alias gwtrm='git worktree remove'
+alias gtl='gtl(){ git tag --sort=-v:refname -n --list "${1}*" }; noglob gtl'
+alias gk='\gitk --all --branches &!'
+alias gke='\gitk --all $(git log --walk-reflogs --pretty=%h) &!'
