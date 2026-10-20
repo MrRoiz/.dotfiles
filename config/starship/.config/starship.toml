@@ -16,7 +16,7 @@ style = "bold blue"
 [git_branch]
 format = "[$symbol$branch]($style) "
 symbol = " "
-style = "italic cyan"
+style = "italic green"
 truncation_length = 20
 truncation_symbol = "…"
 
