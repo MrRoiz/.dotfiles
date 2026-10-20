@@ -8,6 +8,10 @@ hl.config({
   },
 })
 
+-- Omarchy dims every window slightly: focused 0.985 / inactive 0.96 (browsers
+-- 1.0 / 0.985). Keep every window fully opaque instead.
+o.window(".*", { opacity = "1 1" })
+
 -- https://wiki.hypr.land/Configuring/Basics/Variables/#general
 -- hl.config({
 --   general = {
