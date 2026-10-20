@@ -33,21 +33,19 @@ This checkout is the editing copy. The live setup runs from `~/.dotfiles`.
 Workflow after changing files here:
 
 1. Commit and push in this checkout.
-2. Bring `~/.dotfiles` up to date. That checkout has two live-only edits to
-   preserve: `zsh/setup.sh` uses `ZSH_PATH="$HOME/.dotfiles/zsh"`, and the
-   `omarchy-setup-security-sudoless-docker` call is commented out. Save those,
-   update the checkout, and reapply them.
+2. Bring `~/.dotfiles` up to date (`git pull --ff-only`); both checkouts
+   track `origin/main` with no live-only edits to preserve.
 3. Run `restow`.
 
 `restow` stows every managed package from `~/.dotfiles/config`, including the
-partial `hypr` and `wireplumber` packages and the single-file `starship`
-package. Use
+partial `hypr` and `wireplumber` packages and the single-file `starship` and
+`spotify` packages. Use
 `~/.dotfiles/scripts/omarchy.sh` for a full install.
 
 ## Commands
 
 - Install / re-run: `~/.dotfiles/scripts/omarchy.sh`
-- Restow everything: `restow` (all managed packages from `~/.dotfiles`, including `hypr`, `wireplumber` and `starship`)
+- Restow everything: `restow` (all managed packages from `~/.dotfiles`, including `hypr`, `wireplumber`, `starship` and `spotify`)
 - Re-stow after adding/removing files: `cd ~/.dotfiles/config && stow --restow -t "$HOME" <pkg>` (use the `STOW_PACKAGES` list from `omarchy.sh`, not `*`)
 - Omarchy bar clock format: `omarchy-bar set omarchy.clock format "<Qt format>"`
 - herdr: `herdr server reload-config` applies `config.toml` (theme/UI) to the running server; `herdr config check` validates it.
@@ -75,6 +73,11 @@ package. Use
 - The login shell on Omarchy is bash; zsh launches through the
   `omarchy-setup-zsh` drop-in (bash `exec`s zsh). Do not `chsh` to zsh
   — see https://github.com/omacom/omarchy/discussions/2495.
+- `config/spotify/.config/spotify-flags.conf` pins `--ozone-platform=wayland`
+  because Spotify 1.3.4.258's bundled libcef pairs `EGL_PLATFORM_WAYLAND_EXT`
+  with an X11 `Display*`, segfaulting the GPU helper in
+  `dri2_initialize_wayland` on every launch. Drop the flag once Spotify ships
+  a fixed build (a native Wayland window also changes the class to `spotify`).
 - `config/opencode/.config/opencode/` — only `opencode.json` + `tui.json` are tracked. `package.json`, `package-lock.json`, `node_modules/`, `bun.lock` are **OpenCode-generated artifacts** (gitignored). Never commit them.
 - `~/.config/<app>` is usually a **symlink into the repo** (Stow). Tools that copy into `~/.config` write *through* the symlink into the repo, so re-sourcing the affected tool picks the change up.
 - `omarchy.sh`: the Arch repos and the Omarchy package repo are reached through `omarchy-pkg-add`; AUR packages are not installed by the script.
