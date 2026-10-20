@@ -351,7 +351,7 @@ setup_omarchy_docker() {
 setup_omarchy_zsh() {
   print_header "SETTING UP ZSH"
 
-  omarchy_pkg_add "omarchy-zsh"
+  omarchy_pkg_add "omarchy-zsh zsh-autosuggestions"
   omarchy-setup-zsh
 
   local zshrc="$HOME/.zshrc"
