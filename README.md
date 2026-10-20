@@ -143,9 +143,9 @@ needed.
 
 - `scripts/omarchy.sh` — the only installer; self-contained
   (does not source other scripts/setup files).
-- `config/hypr/.config/hypr/{looknfeel,input,bindings}.lua` — personal
-  Hyprland overrides. The `hypr` package is stowed file-by-file so the rest
-  of Omarchy's Hyprland config stays managed by Omarchy.
+- `config/hypr/.config/hypr/{looknfeel,input,bindings,monitors}.lua` —
+  personal Hyprland overrides. The `hypr` package is stowed file-by-file so
+  the rest of Omarchy's Hyprland config stays managed by Omarchy.
 - `config/<app>/.config/<app>/…` — Stow packages. Only the ones whose
   apps are installed on Omarchy are stowed (see `STOW_PACKAGES` in
   `omarchy.sh`). The `mega` package ships the user systemd unit that
@@ -156,6 +156,9 @@ needed.
 
 ## Notes
 
+- Monitor layout: laptop `eDP-1` on the left (`0x0`) and HDMI `HDMI-A-1` on
+  the right (`1920x-300`). The HDMI sits higher; adjust the `-300` offset in
+  `config/hypr/.config/hypr/monitors.lua`.
 - Node, Python and terraform/terragrunt are mise-managed. The global versions
   live in `~/.config/mise/config.toml` (written by `mise use --global`) and
   per-project versions come from a project `mise.toml`/`.tool-versions`; nvm
