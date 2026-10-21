@@ -17,8 +17,6 @@ style = "bold blue"
 format = "[$symbol$branch]($style) "
 symbol = " "
 style = "italic green"
-truncation_length = 20
-truncation_symbol = "…"
 
 # ANSI names only: the active Omarchy theme supplies the palette, so the
 # prompt re-themes with `omarchy-theme-set` instead of pinning hex values.
