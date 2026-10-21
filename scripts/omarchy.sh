@@ -308,13 +308,15 @@ install_mise_toolchains() {
 
   omarchy-install-dev-env node
 
-  # nvm-style version files: mise only reads .nvmrc / .node-version for the
-  # tools enabled in the global config. The global node version stays the
-  # default; a project file overrides it and the version installs on first
-  # use (auto_install defaults to true).
-  if ! mise settings get idiomatic_version_file_enable_tools 2>/dev/null | grep -qw node; then
-    mise settings add idiomatic_version_file_enable_tools node
-  fi
+  # nvm/pyenv-style version files: mise only reads .nvmrc / .node-version
+  # (node) and .python-version (python) for the tools enabled in the global
+  # config. The global versions stay the default; a project file overrides
+  # them and the version installs on first use (auto_install defaults to true).
+  for tool in node python; do
+    if ! mise settings get idiomatic_version_file_enable_tools 2>/dev/null | grep -qw "$tool"; then
+      mise settings add idiomatic_version_file_enable_tools "$tool"
+    fi
+  done
 
   omarchy-install-dev-env python
 
