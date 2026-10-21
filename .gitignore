@@ -13,3 +13,4 @@
 **/herdr/.plugins.lock
 **/herdr/session.json
 **/herdr/session-snapshots/
+**/herdr/*.log
