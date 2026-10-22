@@ -1,6 +1,6 @@
 add_newline = true
 command_timeout = 200
-format = """$directory$git_branch$git_status
+format = """$directory$git_branch$git_status$aws
 $character"""
 
 [character]
@@ -37,3 +37,11 @@ stashed    = ""
 staged     = "+${count} "
 renamed    = ""
 deleted    = "✘${count} "
+
+# AWS profile (plus region, and the remaining validity for temporary creds):
+# the p10k `aws` segment equivalent. The same env vars drive aws, terraform
+# and terragrunt, so one segment covers all three. ANSI names only, per above.
+[aws]
+format = '[$symbol$profile( \($region\))( \[$duration\])]($style) '
+symbol = "☁️  "
+style  = "bold yellow"
