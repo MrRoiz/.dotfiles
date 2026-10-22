@@ -2,10 +2,12 @@
 -- replace Omarchy's defaults.
 
 -- Omarchy's default maps Caps Lock to Compose (`compose:caps`); keep Caps
--- Lock as Caps Lock.
+-- Lock as Caps Lock. The empty option list also drops Omarchy's
+-- `shift:both_capslock_cancel`, whose lone-Shift side effect cleared Caps
+-- Lock on any single Shift press.
 hl.config({
   input = {
-    kb_options = "shift:both_capslock_cancel",
+    kb_options = "",
   },
 })
 
