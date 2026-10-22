@@ -19,4 +19,6 @@ for _zsh_alias_file in "$ZSH_PATH"/aliases/*.sh(N); do
 done
 unset _zsh_alias_file
 
+source "$ZSH_PATH/keybindings.sh"
+
 source "$ZSH_PATH/functions.sh"
