@@ -1,7 +1,8 @@
 add_newline = true
 command_timeout = 200
-format = """$directory$git_branch$git_status$aws
+format = """$directory$git_branch$git_status
 $character"""
+right_format = "$aws"
 
 [character]
 error_symbol = "[✗](bold red)"
@@ -38,10 +39,12 @@ staged     = "+${count} "
 renamed    = ""
 deleted    = "✘${count} "
 
-# AWS profile (plus region, and the remaining validity for temporary creds):
-# the p10k `aws` segment equivalent. The same env vars drive aws, terraform
-# and terragrunt, so one segment covers all three. ANSI names only, per above.
+# Right-aligned AWS profile (plus region, and the remaining validity for
+# temporary creds): the p10k `aws` segment equivalent. The same env vars drive
+# aws, terraform and terragrunt, so one segment covers all three. ANSI names
+# only, per above.
 [aws]
 format = '[$symbol$profile( \($region\))( \[$duration\])]($style) '
-symbol = "☁️  "
+# nf-fa-aws (U+F0EF): draws in the module colour, so it follows the theme.
+symbol = "  "
 style  = "bold yellow"
