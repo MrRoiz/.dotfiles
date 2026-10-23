@@ -23,9 +23,10 @@ style = "italic green"
 # prompt re-themes with `omarchy-theme-set` instead of pinning hex values.
 # Ahead/behind and unstaged edits use bright yellow (theme yellow slots can
 # be greenish, e.g. Osaka Jade), staged green, conflicts/deletions red,
-# untracked muted. Clean + synced draws nothing.
+# untracked muted, stash count green (`*2`, as in p10k's `*42` entry).
+# Clean + synced draws nothing.
 [git_status]
-format     = '[$ahead_behind](yellow)[$conflicted](red)[$deleted](red)[$renamed](blue)[$modified](yellow)[$staged](green)[$untracked](bright-black)'
+format     = '[$ahead_behind](yellow)[$stashed](green)[$conflicted](red)[$deleted](red)[$renamed](blue)[$modified](yellow)[$staged](green)[$untracked](bright-black)'
 style      = "red"
 ahead      = "⇡${count} "
 diverged   = "⇕⇡${ahead_count}⇣${behind_count} "
@@ -34,7 +35,7 @@ conflicted = "=${count} "
 up_to_date = ""
 untracked  = "?${count} "
 modified   = "!${count} "
-stashed    = ""
+stashed    = "*${count} "
 staged     = "+${count} "
 renamed    = ""
 deleted    = "✘${count} "
