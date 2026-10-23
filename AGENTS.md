@@ -29,21 +29,6 @@ test/lint/CI tooling exists in this repo.
   follows the theme). p10k and oh-my-zsh are
   intentionally not used.
 
-## Development checkout vs installed setup
-
-This checkout is the editing copy. The live setup runs from `~/.dotfiles`.
-Workflow after changing files here:
-
-1. Commit and push in this checkout.
-2. Bring `~/.dotfiles` up to date (`git pull --ff-only`); both checkouts
-   track `origin/main` with no live-only edits to preserve.
-3. Run `restow`.
-
-`restow` stows every managed package from `~/.dotfiles/config`, including the
-partial `hypr` and `wireplumber` packages, the single-file `starship` and
-`spotify` packages, and the `omarchy-themes` overlay. Use
-`~/.dotfiles/scripts/omarchy.sh` for a full install.
-
 ## Commands
 
 - Install / re-run: `~/.dotfiles/scripts/omarchy.sh`
