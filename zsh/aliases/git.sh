@@ -48,6 +48,13 @@ git_develop_branch() {
   return 1
 }
 
+# ggpur's target; omz ships it as a function so it can take an explicit branch.
+ggu() {
+  local b
+  [[ $# != 1 ]] && b="$(git_current_branch)"
+  git pull --rebase origin "${b:-$1}"
+}
+
 _git_log_prettily() {
   if [[ -n $1 ]]; then
     git log --pretty=$1
@@ -75,7 +82,7 @@ alias gpl="git pull"
 alias glog="git log --oneline --decorate --graph"
 alias gstp="git stash pop"
 alias gsta="git stash apply"
-alias gclean="git clean --force --directories -d"
+alias gclean="git clean --force -d"
 alias gcp="git cherry-pick"
 alias glo='git log --oneline --decorate'
 alias gloga='git log --oneline --decorate --graph --all'
@@ -118,7 +125,7 @@ alias gmc='git merge --continue'
 alias gstl='git stash list'
 alias gstd='git stash drop'
 alias gstc='git stash clear'
-alias gstu='gsta --include-untracked'
+alias gstu='git stash push --include-untracked'
 alias gr='git remote'
 alias grv='git remote --verbose'
 alias gwt='git worktree'
