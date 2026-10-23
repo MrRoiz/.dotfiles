@@ -273,10 +273,12 @@ install_omarchy_packages() {
   omarchy_pkg_add "veracrypt"
 
   # Devtools
-  # proton-vpn-gtk-app straight from the Arch repos. The language toolchains
-  # — node, python (+uv), terraform, terragrunt — and aws-cli, gh, just,
-  # lazydocker, lazygit, sops are mise-managed instead; see
+  # proton-vpn-gtk-app straight from the Arch repos. lazydocker and lazygit
+  # stay on Omarchy's packages (both ship in omarchy-base.packages). The
+  # language toolchains — node, python (+uv), terraform, terragrunt — and
+  # aws-cli, gh, just, sops are mise-managed instead; see
   # install_mise_toolchains.
+  omarchy_pkg_add "lazydocker lazygit"
   omarchy_pkg_add "dbeaver packer"
   omarchy_pkg_add "proton-vpn-gtk-app"
   omarchy_pkg_add "wget bind stow"
@@ -296,11 +298,12 @@ install_omarchy_packages() {
 #
 # node and python go through Omarchy's own dev-env installer (a thin wrapper
 # over `mise use --global`; the python recipe also brings uv). aws-cli,
-# herdr, gh, just, lazydocker, lazygit, sops, terraform and terragrunt have
-# no dev-env recipe, so they are declared through mise directly.
-# aws-cli-v2's, herdr's, github-cli's, just's, lazydocker's, lazygit's and
-# sops's Omarchy packages are dropped first so the tools track upstream
-# releases instead of the lagging repo packages.
+# herdr, gh, just, sops, terraform and terragrunt have no dev-env recipe, so
+# they are declared through mise directly.
+# aws-cli-v2's, herdr's, github-cli's, just's and sops's Omarchy packages are
+# dropped first so the tools track upstream releases instead of the lagging
+# repo packages. lazydocker and lazygit are not handled here: they stay on
+# Omarchy's packages (see install_omarchy_packages).
 # =============================================================================
 
 install_mise_toolchains() {
@@ -320,7 +323,7 @@ install_mise_toolchains() {
 
   omarchy-install-dev-env python
 
-  print_step "Installing via mise: aws-cli herdr gh just lazydocker lazygit sops terraform terragrunt"
+  print_step "Installing via mise: aws-cli herdr gh just sops terraform terragrunt"
   if omarchy-pkg-present aws-cli-v2; then
     omarchy-pkg-drop aws-cli-v2
   fi
@@ -333,16 +336,10 @@ install_mise_toolchains() {
   if omarchy-pkg-present just; then
     omarchy-pkg-drop just
   fi
-  if omarchy-pkg-present lazydocker; then
-    omarchy-pkg-drop lazydocker
-  fi
-  if omarchy-pkg-present lazygit; then
-    omarchy-pkg-drop lazygit
-  fi
   if omarchy-pkg-present sops; then
     omarchy-pkg-drop sops
   fi
-  mise use --global aws-cli@latest herdr@latest gh@latest just@latest lazydocker@latest lazygit@latest sops@latest terraform@latest terragrunt@latest
+  mise use --global aws-cli@latest herdr@latest gh@latest just@latest sops@latest terraform@latest terragrunt@latest
 }
 
 setup_omarchy_docker() {
