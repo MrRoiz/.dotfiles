@@ -145,6 +145,9 @@ needed.
 
 - `scripts/omarchy.sh` — the only installer; self-contained
   (does not source other scripts/setup files).
+- `KNOWN-GAPS.md` — gaps against upstream Omarchy, their local state, and what
+  removes each; validate new ones with the `validate-gap` skill and re-check
+  them with `gap-watch`.
 - `config/bin/.local/bin/restow` — restow every managed package from
   `~/.dotfiles` (main packages + `hypr` + `wireplumber` + `starship`).
 - `config/hypr/.config/hypr/{looknfeel,input,bindings,monitors}.lua` —

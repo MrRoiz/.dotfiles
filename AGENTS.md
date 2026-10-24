@@ -13,6 +13,12 @@ test/lint/CI tooling exists in this repo.
 
 **NEVER modify something there is no need to modify — it only adds noise to the diff.** Change only the lines the task actually requires. Do **not** reformat, re-align, re-indent, re-wrap, or re-order unrelated code, comments, or whitespace, and never commit whitespace-only churn (e.g. collapsing comment padding, sorting keys, "tidying" a block you did not need to touch). If you spot unrelated drift, leave it as-is and mention it — do not fold it into the change. A diff should contain only the intended edits so review stays focused.
 
+## Gaps and bugs (rule)
+
+- Known gaps against upstream Omarchy are tracked in `KNOWN-GAPS.md`; the `gap-watch` skill re-checks them and retires local workarounds once a fix lands in stable.
+- When a possible bug comes up — in conversation or while working here — use the `validate-gap` skill before calling it a bug: confirm it reproduces, rule out this repo's own overrides, and check the Omarchy repos for an existing issue or PR. If it is a real bug, add it to `KNOWN-GAPS.md` with its upstream ref and the condition that closes it; if it is caused by our config, fix it here instead.
+- Do not file an upstream issue, remove a workaround, or change a config during validation without asking first.
+
 ## How it is wired
 
 - `scripts/omarchy.sh` — the only installer. Self-contained: it does
