@@ -13,7 +13,7 @@ Snapshot 2026-10-24: installed `omarchy 4.0.6-1` (stable), latest stable
 
 | Gap | Local state | Upstream | Closes when |
 | --- | --- | --- | --- |
-| Headset microphone port | **patched** — `omarchy-headset-mic` service | no direct fix yet; #12489, #13758, #13775 are adjacent | Audio panel lists source ports as rows and keeps the headset port across replugs |
+| Headset microphone port | **patched** — `omarchy-headset-mic` service | #16529 (input ports); #12489, #13758, #13775 are adjacent | Audio panel lists source ports as rows and keeps the headset port across replugs |
 | HDMI/DP audio output | **accepted** — manual profile switch only, nothing in the dotfiles | #8789 (issue), #8820 (PR) | #8820 or equivalent ships in a stable release |
 | Caps Lock / compose key | **override** — `kb_options = ""` in `input.lua` | #14939 | Installed stable includes #14939 and its default behaves as wanted |
 
@@ -30,9 +30,10 @@ no row to click, and WirePlumber falls back to the internal mic after a replug.
 - Local patch: `config/wireplumber/.local/bin/omarchy-headset-mic` plus its
   user service. Installed by `setup_headset_mic` in `scripts/omarchy.sh`, and
   documented under "Headset microphone" in `README.md`.
-- Upstream: #12489 lists sink ports as rows (outputs only); #13758 and #13775
-  filter unplugged inputs. #10985 was closed unmerged. No issue or PR yet
-  covers selecting input ports of one source.
+- Upstream: #16529 tracks selecting input ports of one source; #12489 expands
+  sink ports only, and #13758 / #13775 filter unplugged inputs. #10985
+  implemented both sides but was closed as a duplicate of #7205, which only
+  covered sinks.
 - Closes when: the panel lists both ports of the single source, selecting the
   headset mic sticks, and a replug restores it without help.
 - Removal: disable the service first
