@@ -8,6 +8,11 @@
 hl.config({
   input = {
     kb_options = "",
+
+    -- Use natural (inverse) scrolling on the touchpad.
+    touchpad = {
+      natural_scroll = true,
+    },
   },
 })
 
