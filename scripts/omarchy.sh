@@ -40,7 +40,7 @@ SCRIPT_DIR="$DOTFILES_DIR/scripts"
 # vicinae, waybar, wlogout, satty, sherlock) is dropped because those apps
 # are no longer installed here — Omarchy's own stack replaces them or they
 # were never omarchy-relevant.
-STOW_PACKAGES=(kitty herdr opencode mega bin starship spotify omarchy-themes)
+STOW_PACKAGES=(kitty herdr opencode mega bin starship spotify omarchy-themes omarchy-menu claude)
 
 # =============================================================================
 # Local Helpers
@@ -441,10 +441,25 @@ stow_personal_dotfiles() {
   # Drop the old Omarchy XCompose overrides; compose sequences are not used here.
   rm -f "$HOME/.XCompose"
 
-  # The omarchy-themes package lives under ~/.config/omarchy, which Omarchy owns
-  # and populates. Ensure the parent is a real directory, or Stow folds it into
-  # a symlink pointing at the repo and Omarchy then writes its configs in here.
-  mkdir -p "$HOME/.config/omarchy/themes"
+  # The omarchy-themes and omarchy-menu packages live under ~/.config/omarchy,
+  # which Omarchy owns and populates. Ensure the parents are real directories,
+  # or Stow folds them into symlinks pointing at the repo and Omarchy then
+  # writes its configs in here.
+  mkdir -p "$HOME/.config/omarchy/themes" "$HOME/.config/omarchy/extensions"
+  # The checkout is canonical for the menu extension. Back up a plain user file
+  # before Stow replaces it with a symlink.
+  if [[ -f "$HOME/.config/omarchy/extensions/omarchy-menu.jsonc" \
+    && ! -L "$HOME/.config/omarchy/extensions/omarchy-menu.jsonc" ]]; then
+    mv "$HOME/.config/omarchy/extensions/omarchy-menu.jsonc" \
+      "$HOME/.config/omarchy/extensions/omarchy-menu.jsonc.bak.$(date +%s)"
+  fi
+
+  # The claude package owns ~/.claude/CLAUDE.md. Keep the parent real and back
+  # up a plain user file before Stow replaces it with a symlink.
+  mkdir -p "$HOME/.claude"
+  if [[ -f "$HOME/.claude/CLAUDE.md" && ! -L "$HOME/.claude/CLAUDE.md" ]]; then
+    mv "$HOME/.claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md.bak.$(date +%s)"
+  fi
 
   cd "$DOTFILES_DIR/config"
   stow --restow -t "$HOME" "${STOW_PACKAGES[@]}"

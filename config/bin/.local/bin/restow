@@ -4,7 +4,7 @@
 set -euo pipefail
 
 DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dotfiles}"
-DEFAULT_PACKAGES=(kitty herdr opencode mega bin starship spotify omarchy-themes)
+DEFAULT_PACKAGES=(kitty herdr opencode mega bin starship spotify omarchy-themes omarchy-menu claude)
 
 if [[ ! -d $DOTFILES_DIR/config ]]; then
   echo "restow: $DOTFILES_DIR/config not found" >&2
@@ -33,11 +33,15 @@ want_hypr=false
 want_wireplumber=false
 want_starship=false
 want_spotify=false
+want_menu=false
+want_claude=false
 for pkg in "${packages[@]}"; do
   [[ $pkg == hypr ]] && want_hypr=true
   [[ $pkg == wireplumber ]] && want_wireplumber=true
   [[ $pkg == starship ]] && want_starship=true
   [[ $pkg == spotify ]] && want_spotify=true
+  [[ $pkg == omarchy-menu ]] && want_menu=true
+  [[ $pkg == claude ]] && want_claude=true
 done
 
 # The partial packages own only specific files; remove those so stow can relink
@@ -60,10 +64,24 @@ fi
 if $want_spotify; then
   rm -f "$HOME/.config/spotify-flags.conf"
 fi
+if $want_menu; then
+  menu="$HOME/.config/omarchy/extensions/omarchy-menu.jsonc"
+  if [[ -f $menu && ! -L $menu ]]; then
+    mv "$menu" "$menu.bak.$(date +%s)"
+  fi
+fi
+if $want_claude; then
+  mkdir -p "$HOME/.claude"
+  claude_md="$HOME/.claude/CLAUDE.md"
+  if [[ -f $claude_md && ! -L $claude_md ]]; then
+    mv "$claude_md" "$claude_md.bak.$(date +%s)"
+  fi
+fi
 
-# The omarchy-themes package lives under ~/.config/omarchy, which Omarchy owns.
-# Keep the parent a real directory so Stow cannot fold it into a repo symlink.
-mkdir -p "$HOME/.config/omarchy/themes"
+# The omarchy-themes and omarchy-menu packages live under ~/.config/omarchy,
+# which Omarchy owns. Keep the parents real directories so Stow cannot fold
+# them into repo symlinks.
+mkdir -p "$HOME/.config/omarchy/themes" "$HOME/.config/omarchy/extensions"
 
 cd "$DOTFILES_DIR/config"
 stow --restow -t "$HOME" "${packages[@]}"

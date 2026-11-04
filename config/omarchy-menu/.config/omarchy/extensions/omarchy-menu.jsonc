@@ -1,0 +1,77 @@
+{
+  // Extend the Quickshell Omarchy menu with JSONC.
+  //
+  // IDs are object keys. The parent is inferred from the dotted id, so
+  // "personal.notes" appears under "personal", and "personal" appears on the
+  // root menu. Reuse an existing id to override/extend it.
+  //
+  // Fields:
+  //   icon        Nerd Font glyph shown in the icon column.
+  //   label       Visible row title.
+  //   action      Shell command to run. If omitted, the row is a submenu.
+  //   target      Existing submenu id to open. Use for links/aliases.
+  //   provider    Runtime provider function/command returning JSON rows.
+  //   aliases     alternate `omarchy menu summon <name>` routes; also searchable.
+  //   description Optional subtitle and extra search text.
+  //   when        Shell condition; hide row when it fails.
+  //   checked     Shell condition; append ✓ when it succeeds.
+  //
+  // Examples:
+  // "personal": {"icon":"","label":"Personal"},
+  // "personal.notes": {"icon":"󰎞","label":"Notes","action":"omarchy-launch-editor ~/notes"},
+  // "personal.files": {"icon":"","label":"Files","action":"uwsm-app -- nautilus ~/Documents"},
+  //
+  // Only use provider when a provider_name function or command named "name"
+  // returns JSON rows. Static submenus only need dotted ids.
+  //
+  // Example: replace the default About action by reusing the same id. Existing
+  // fields are kept unless overridden.
+  // "about": {"icon":"","label":"About","action":"omarchy-launch-or-focus-tui \"zsh -c 'fastfetch; read -k 1'\""},
+  // ntfy: send notifications to a phone through a random ntfy.sh topic.
+  "trigger.ntfy": {
+    "icon": "󰂚",
+    "label": "ntfy",
+    "description": "Send notifications to a phone through ntfy.sh",
+    "aliases": [
+      "ntfy",
+      "phone",
+      "push",
+      "notify"
+    ],
+    "when": "command -v omarchy-ntfy"
+  },
+  "trigger.ntfy.show": {
+    "icon": "󰐕",
+    "label": "Create / Show Channel",
+    "description": "Create the random channel if needed and show its id",
+    "action": "omarchy-launch-floating-terminal-with-presentation \"omarchy-ntfy show --copy\""
+  },
+  "trigger.ntfy.copy": {
+    "icon": "󰆏",
+    "label": "Copy Channel ID",
+    "description": "Copy the channel id to the clipboard",
+    "when": "omarchy-ntfy has-channel",
+    "action": "omarchy-ntfy copy --desktop"
+  },
+  "trigger.ntfy.localsend": {
+    "icon": "󰒊",
+    "label": "Send Channel ID via LocalSend",
+    "description": "Share the channel id with a nearby device",
+    "when": "omarchy-ntfy has-channel && command -v localsend",
+    "action": "omarchy-ntfy localsend --desktop"
+  },
+  "trigger.ntfy.test": {
+    "icon": "󰗠",
+    "label": "Send Test Notification",
+    "description": "Send a test message to the stored channel",
+    "when": "omarchy-ntfy has-channel",
+    "action": "omarchy-ntfy test --desktop"
+  },
+  "trigger.ntfy.rotate": {
+    "icon": "󰑓",
+    "label": "New Channel",
+    "description": "Replace the channel and unpair current devices",
+    "when": "omarchy-ntfy has-channel",
+    "action": "omarchy-launch-floating-terminal-with-presentation \"omarchy-ntfy rotate\""
+  },
+}

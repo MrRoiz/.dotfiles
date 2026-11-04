@@ -1,0 +1,558 @@
+#!/usr/bin/env bash
+# omarchy-ntfy — send notifications to a random ntfy.sh topic.
+#
+# The channel is generated once and stored outside the dotfiles repo, in
+# ${XDG_CONFIG_HOME:-$HOME/.config}/ntfy-sender/config.json (mode 0600).
+# Nothing is forwarded automatically: every message is an explicit call.
+#
+# Usage: omarchy-ntfy <command> [options]
+# Run `omarchy-ntfy --help` for the full list.
+
+set -euo pipefail
+
+umask 077
+
+CONFIG_DIR=${NTFY_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/ntfy-sender}
+CONFIG_FILE=${NTFY_CONFIG_FILE:-$CONFIG_DIR/config.json}
+DEFAULT_SERVER=${NTFY_SERVER:-https://ntfy.sh}
+
+die() {
+  printf 'omarchy-ntfy: %s\n' "$*" >&2
+  exit 1
+}
+
+usage() {
+  cat <<'USAGE'
+Usage: omarchy-ntfy <command> [options]
+
+Send notifications to a phone through a random ntfy.sh topic. The topic is
+generated once and stored locally; messages are sent only when you call this
+command.
+
+Commands:
+  init [--server URL] [--wait]       Create the channel if missing and print its id
+  show [--wait] [--copy]             Show the channel id (creates if missing)
+  channel                            Print the channel id
+  status [--wait]                    Show channel and config details
+  copy [--desktop]                   Copy the channel id to the clipboard
+  test [--desktop] [--server URL]    Send a test notification
+  send [options] <title> [body]      Send a notification
+  rotate [--yes] [--wait]            Replace the channel (unpairs devices)
+  localsend [--desktop]              Send the channel id via LocalSend
+  has-channel                        Exit 0 if a channel is configured
+
+Send options:
+  -p, --priority <min|low|default|high|max>   Notification priority (default: high)
+  -t, --tags <tag[,tag]>                      Optional ntfy tags
+  -c, --click <url>                           Optional click-through URL
+  -s, --server <url>                          Override the configured server
+  -q, --quiet                                 Suppress the success message
+  --                                          Stop option parsing
+
+Examples:
+  omarchy-ntfy init
+  omarchy-ntfy send "Build finished" "All packages restowed"
+  echo "long output" | omarchy-ntfy send "Command finished"
+  omarchy-ntfy send -p high "Battery low" "12% remaining"
+
+The topic is a public ntfy.sh topic: anyone who knows the channel id can read it. The
+random 128-bit suffix is the secret. There is no end-to-end encryption. Set
+NTFY_SERVER or edit "server" in the config file to use a different ntfy server.
+USAGE
+}
+
+usage_send() {
+  cat <<'USAGE'
+Usage: omarchy-ntfy send [options] <title> [body]
+
+Options:
+  -p, --priority <min|low|default|high|max>   Notification priority (default: high)
+  -t, --tags <tag[,tag]>
+  -c, --click <url>
+  -s, --server <url>
+  -q, --quiet
+  --                   Stop option parsing (use before a title starting with -)
+
+If body is omitted, it is read from stdin when stdin is not a terminal;
+otherwise it defaults to the title.
+USAGE
+}
+
+ensure_dir() {
+  mkdir -p "$CONFIG_DIR"
+  chmod 700 "$CONFIG_DIR" 2>/dev/null || true
+}
+
+lock_config() {
+  ensure_dir
+  command -v flock >/dev/null 2>&1 || die "flock is required"
+  exec 9>"$CONFIG_DIR/.lock"
+  flock 9
+}
+
+unlock_config() {
+  exec 9>&-
+}
+
+normalize_server() {
+  local server=${1:-}
+  [[ $server =~ ^https?:// ]] || die "invalid server URL: $server"
+  while [[ $server == */ ]]; do
+    server=${server%/}
+  done
+  printf '%s' "$server"
+}
+
+config_valid() {
+  [[ -f $CONFIG_FILE && -s $CONFIG_FILE ]] || return 1
+  jq -e '(.channel | type == "string") and (.channel | length > 0)' "$CONFIG_FILE" >/dev/null 2>&1
+}
+
+read_channel() {
+  local channel
+  channel=$(jq -r '.channel // empty' "$CONFIG_FILE" 2>/dev/null || true)
+  [[ -n $channel ]] || die "no channel in $CONFIG_FILE"
+  printf '%s' "$channel"
+}
+
+read_server() {
+  local server
+  server=$(jq -r '.server // empty' "$CONFIG_FILE" 2>/dev/null || true)
+  [[ -n $server ]] || server=$DEFAULT_SERVER
+  normalize_server "$server"
+}
+
+generate_channel() {
+  printf 'omarchy-%s' "$(openssl rand -hex 16)"
+}
+
+write_config() {
+  local channel=$1 server=$2 tmp
+  tmp=$(mktemp "$CONFIG_DIR/.config.XXXXXX")
+  jq -n --arg channel "$channel" --arg server "$server" \
+    '{channel: $channel, server: $server}' >"$tmp"
+  chmod 600 "$tmp"
+  mv -f "$tmp" "$CONFIG_FILE"
+}
+
+# init_config [server]
+# Creates the channel when missing. When server is given, it also updates the
+# persisted server without changing the channel.
+init_config() {
+  local requested=${1:-}
+  local server
+  if [[ -n $requested ]]; then
+    server=$(normalize_server "$requested")
+  else
+    server=$(normalize_server "$DEFAULT_SERVER")
+  fi
+
+  lock_config
+  if ! config_valid; then
+    if [[ -f $CONFIG_FILE && -s $CONFIG_FILE ]]; then
+      mv -f "$CONFIG_FILE" "$CONFIG_FILE.bad.$(date +%s)"
+    fi
+    write_config "$(generate_channel)" "$server"
+  elif [[ -n $requested ]]; then
+    local current
+    current=$(read_server)
+    if [[ $current != "$server" ]]; then
+      write_config "$(read_channel)" "$server"
+    fi
+  fi
+  chmod 600 "$CONFIG_FILE" 2>/dev/null || true
+  unlock_config
+}
+
+ensure_config() {
+  init_config ""
+}
+
+priority_value() {
+  case ${1,,} in
+  min | 1) printf '1' ;;
+  low | 2) printf '2' ;;
+  default | normal | 3 | "") printf '3' ;;
+  high | 4) printf '4' ;;
+  max | urgent | 5) printf '5' ;;
+  *) return 1 ;;
+  esac
+}
+
+publish() {
+  local title=$1 message=$2 priority=$3 tags=$4 click=$5
+  local server=$6 channel=$7
+  local payload response
+
+  payload=$(jq -cn \
+    --arg topic "$channel" \
+    --arg title "$title" \
+    --arg message "$message" \
+    --argjson priority "$priority" \
+    --arg tags "$tags" \
+    --arg click "$click" '
+      {topic: $topic, title: $title, message: $message, priority: $priority}
+      + (if $tags != "" then
+           {tags: ($tags | split(",") | map(select(length > 0)))}
+         else {} end)
+      + (if $click != "" then {click: $click} else {} end)
+    ')
+
+  if ! response=$(curl -fsS --max-time 15 -X POST "$server" \
+    -H 'Content-Type: application/json' \
+    --data-binary "$payload" 2>&1); then
+    printf 'omarchy-ntfy: publish failed: %s\n' "$response" >&2
+    return 1
+  fi
+}
+
+notify_desktop() {
+  local headline=$1 description=$2 urgency=${3:-normal}
+  if command -v omarchy-notification-send >/dev/null 2>&1; then
+    omarchy-notification-send --app-name ntfy -g '󰂚' -u "$urgency" \
+      "$headline" "$description" >/dev/null 2>&1 || true
+  elif command -v notify-send >/dev/null 2>&1; then
+    notify-send -a ntfy -u "$urgency" "$headline" "$description" >/dev/null 2>&1 || true
+  fi
+}
+
+copy_to_clipboard() {
+  local text=$1
+  if ! command -v wl-copy >/dev/null 2>&1; then
+    printf 'omarchy-ntfy: wl-copy is required to copy the channel id (install wl-clipboard)\n' >&2
+    return 1
+  fi
+  if ! printf '%s' "$text" | wl-copy >/dev/null 2>&1; then
+    printf 'omarchy-ntfy: could not copy to the clipboard\n' >&2
+    return 1
+  fi
+  printf 'Channel id copied to clipboard.\n'
+}
+
+wait_for_key() {
+  [[ ${1:-false} == true ]] || return 0
+  [[ -t 0 ]] || return 0
+  printf '\nPress any key to close...'
+  IFS= read -r -n 1 -s _ || true
+  printf '\n'
+}
+
+cmd_init() {
+  local server_arg="" wait=false
+  while (($#)); do
+    case $1 in
+    --server) [[ $# -ge 2 ]] || die "--server requires a URL"; server_arg=$2; shift 2 ;;
+    --server=*) server_arg=${1#*=}; shift ;;
+    --wait) wait=true; shift ;;
+    -h | --help) usage; exit 0 ;;
+    *) die "unknown init option: $1" ;;
+    esac
+  done
+
+  init_config "$server_arg"
+  printf 'Channel id: %s\n' "$(read_channel)"
+  printf 'Config: %s\n' "$CONFIG_FILE"
+  wait_for_key "$wait"
+}
+
+cmd_show() {
+  local wait=false copy=false
+  while (($#)); do
+    case $1 in
+    --wait) wait=true; shift ;;
+    --copy) copy=true; shift ;;
+    -h | --help) usage; exit 0 ;;
+    *) die "unknown show option: $1" ;;
+    esac
+  done
+
+  ensure_config
+  local channel
+  channel=$(read_channel)
+  printf 'Channel id: %s\n' "$channel"
+  if [[ $copy == true ]]; then
+    copy_to_clipboard "$channel" ||
+      printf 'Copy failed; use the id above.\n' >&2
+  fi
+  wait_for_key "$wait"
+}
+
+cmd_channel() {
+  case ${1:-} in
+  -h | --help) usage; exit 0 ;;
+  "") ;;
+  *) die "channel takes no arguments" ;;
+  esac
+  ensure_config
+  read_channel
+  printf '\n'
+}
+
+cmd_status() {
+  local wait=false
+  while (($#)); do
+    case $1 in
+    --wait) wait=true; shift ;;
+    -h | --help) usage; exit 0 ;;
+    *) die "unknown status option: $1" ;;
+    esac
+  done
+
+  if ! config_valid; then
+    printf 'No channel configured.\nRun: omarchy-ntfy init\n'
+    wait_for_key "$wait"
+    return 0
+  fi
+
+  printf 'Channel id: %s\n' "$(read_channel)"
+  printf 'Server: %s\n' "$(read_server)"
+  printf 'Config: %s\n' "$CONFIG_FILE"
+  wait_for_key "$wait"
+}
+
+cmd_copy() {
+  local desktop=false
+  while (($#)); do
+    case $1 in
+    --desktop | -d) desktop=true; shift ;;
+    -h | --help) usage; exit 0 ;;
+    *) die "unknown copy option: $1" ;;
+    esac
+  done
+
+  ensure_config
+  local channel
+  channel=$(read_channel)
+  copy_to_clipboard "$channel" || exit 1
+  if [[ $desktop == true ]]; then
+    notify_desktop "Channel id copied" "$channel"
+  fi
+}
+
+cmd_test() {
+  local desktop=false server_arg="" quiet=false
+  while (($#)); do
+    case $1 in
+    --desktop | -d) desktop=true; shift ;;
+    --server) [[ $# -ge 2 ]] || die "--server requires a URL"; server_arg=$2; shift 2 ;;
+    --server=*) server_arg=${1#*=}; shift ;;
+    -q | --quiet) quiet=true; shift ;;
+    -h | --help) usage; exit 0 ;;
+    *) die "unknown test option: $1" ;;
+    esac
+  done
+
+  ensure_config
+  local server channel title message
+  server=${server_arg:-$(read_server)}
+  server=$(normalize_server "$server")
+  channel=$(read_channel)
+  title="ntfy test"
+  message="Test notification from $(hostname) at $(date '+%Y-%m-%d %H:%M:%S')"
+
+  if publish "$title" "$message" 4 "" "" "$server" "$channel"; then
+    [[ $quiet == true ]] || printf 'Test sent to channel %s\n' "$channel"
+    if [[ $desktop == true ]]; then
+      notify_desktop "ntfy test sent" "Check your phone. If nothing arrives, open Create / Show Channel to pair it."
+    fi
+  else
+    if [[ $desktop == true ]]; then
+      notify_desktop "ntfy test failed" "The test could not be sent. Run omarchy-ntfy status."
+    fi
+    exit 1
+  fi
+}
+
+cmd_send() {
+  local title="" body="" priority_arg=high tags="" click="" server_arg=""
+  local quiet=false
+
+  while (($#)); do
+    case $1 in
+    -p | --priority) [[ $# -ge 2 ]] || die "--priority requires a value"; priority_arg=$2; shift 2 ;;
+    --priority=*) priority_arg=${1#*=}; shift ;;
+    -t | --tags) [[ $# -ge 2 ]] || die "--tags requires a value"; tags=$2; shift 2 ;;
+    --tags=*) tags=${1#*=}; shift ;;
+    -c | --click) [[ $# -ge 2 ]] || die "--click requires a URL"; click=$2; shift 2 ;;
+    --click=*) click=${1#*=}; shift ;;
+    -s | --server) [[ $# -ge 2 ]] || die "--server requires a URL"; server_arg=$2; shift 2 ;;
+    --server=*) server_arg=${1#*=}; shift ;;
+    -q | --quiet) quiet=true; shift ;;
+    --) shift; break ;;
+    -h | --help) usage_send; exit 0 ;;
+    -*) die "unknown send option: $1 (use -- before a title starting with -)" ;;
+    *) break ;;
+    esac
+  done
+
+  (($# >= 1)) || die "send requires a title"
+  title=$1
+  shift
+  if (($# >= 1)); then
+    body=$1
+    shift
+  fi
+  (($# == 0)) || die "too many arguments for send"
+
+  local priority
+  priority=$(priority_value "$priority_arg") ||
+    die "invalid priority: $priority_arg (use min, low, default, high, max, or 1-5)"
+
+  if [[ -z $body || $body == - ]]; then
+    if [[ ! -t 0 ]]; then
+      body=$(cat)
+    else
+      body=$title
+    fi
+  fi
+  [[ -n $body ]] || body=$title
+
+  ensure_config
+  local server channel
+  server=${server_arg:-$(read_server)}
+  server=$(normalize_server "$server")
+  channel=$(read_channel)
+
+  if publish "$title" "$body" "$priority" "$tags" "$click" "$server" "$channel"; then
+    [[ $quiet == true ]] || printf 'Sent to channel %s\n' "$channel"
+  else
+    exit 1
+  fi
+}
+
+cmd_rotate() {
+  local yes=false wait=false
+  while (($#)); do
+    case $1 in
+    --yes | -y) yes=true; shift ;;
+    --wait) wait=true; shift ;;
+    -h | --help) usage; exit 0 ;;
+    *) die "unknown rotate option: $1" ;;
+    esac
+  done
+
+  if ! config_valid; then
+    ensure_config
+    printf 'Channel id: %s\n' "$(read_channel)"
+    wait_for_key "$wait"
+    return 0
+  fi
+
+  local old server
+  old=$(read_channel)
+  server=$(read_server)
+
+  if [[ $yes != true ]]; then
+    [[ -t 0 ]] ||
+      die "refusing to rotate without --yes in a non-interactive shell"
+    printf 'Replace channel %s?\nDevices using it will stop receiving. [y/N] ' "$old"
+    local answer
+    read -r answer || answer=""
+    [[ $answer == [yY]* ]] || {
+      printf 'Cancelled.\n'
+      return 0
+    }
+  fi
+
+  lock_config
+  old=$(read_channel)
+  server=$(read_server)
+  local new
+  new=$(generate_channel)
+  write_config "$new" "$server"
+  chmod 600 "$CONFIG_FILE" 2>/dev/null || true
+  unlock_config
+
+  printf 'Old channel: %s\n' "$old"
+  printf 'New channel: %s\n' "$new"
+  wait_for_key "$wait"
+}
+
+cmd_localsend() {
+  local desktop=false
+  while (($#)); do
+    case $1 in
+    --desktop | -d) desktop=true; shift ;;
+    -h | --help) usage; exit 0 ;;
+    *) die "unknown localsend option: $1" ;;
+    esac
+  done
+
+  ensure_config
+  command -v localsend >/dev/null 2>&1 ||
+    die "LocalSend is not installed"
+
+  local channel runtime file
+  channel=$(read_channel)
+  runtime=${XDG_RUNTIME_DIR:-}
+  if [[ -n $runtime && -d $runtime ]]; then
+    file=$(mktemp "$runtime/ntfy-sender-channel-XXXXXX.txt")
+  else
+    file=$(mktemp "${TMPDIR:-/tmp}/ntfy-sender-channel-XXXXXX.txt")
+  fi
+  chmod 600 "$file"
+
+  {
+    printf 'ntfy channel id: %s\n\n' "$channel"
+    printf 'Paste this id into the ntfy app to subscribe.\n'
+  } >"$file"
+
+  if command -v omarchy-menu-share >/dev/null 2>&1; then
+    if ! omarchy-menu-share file "$file"; then
+      rm -f "$file"
+      die "LocalSend handoff failed"
+    fi
+  elif command -v systemd-run >/dev/null 2>&1; then
+    if ! systemd-run --user --quiet --collect localsend --headless send "$file"; then
+      rm -f "$file"
+      die "LocalSend handoff failed"
+    fi
+  else
+    rm -f "$file"
+    die "could not start LocalSend"
+  fi
+
+  printf 'Prepared %s for LocalSend.\n' "$file"
+  if [[ $desktop == true ]]; then
+    notify_desktop "Channel ready to send" "Choose your phone in LocalSend."
+  fi
+}
+
+cmd_has_channel() {
+  case ${1:-} in
+  -h | --help) usage; exit 0 ;;
+  "") ;;
+  *) die "has-channel takes no arguments" ;;
+  esac
+  if config_valid; then
+    exit 0
+  else
+    exit 1
+  fi
+}
+
+case ${1:-} in
+"" | -h | --help | help)
+  usage
+  exit 0
+  ;;
+esac
+
+command=$1
+shift || true
+
+case $command in
+init) cmd_init "$@" ;;
+show) cmd_show "$@" ;;
+channel) cmd_channel "$@" ;;
+status) cmd_status "$@" ;;
+copy) cmd_copy "$@" ;;
+test) cmd_test "$@" ;;
+send) cmd_send "$@" ;;
+rotate) cmd_rotate "$@" ;;
+localsend) cmd_localsend "$@" ;;
+has-channel) cmd_has_channel "$@" ;;
+*)
+  die "unknown command: $command (run omarchy-ntfy --help)"
+  ;;
+esac
