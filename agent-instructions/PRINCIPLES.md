@@ -25,5 +25,7 @@ which rule you followed and why.
   - Split a long call or literal one argument or field per line, and name the
     arguments when a call takes several values of the same kind.
   - Return early instead of nesting; keep each branch short enough to see whole.
-  - Explain the non-obvious: when code needs tricky syntax or a hacky
-    workaround, comment why it is there and what would let it go.
+  - Comment the hacks, not the obvious: only add a comment when code is
+    genuinely tricky or works around a real limitation, and say why it is
+    there and, for a workaround, what would let it go. Do not restate what the
+    code already says.
