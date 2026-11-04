@@ -31,10 +31,13 @@ test/lint/CI tooling exists in this repo.
 - `config/<app>/.config/<app>/…` — one **Stow package per app**; the
   omarchy setup stows only the packages whose apps it installs (see
   `STOW_PACKAGES` in `omarchy.sh`).
-- `agent-instructions/NOTIFY.md` and `agent-instructions/PRINCIPLES.md` — shared
-  agent instructions, read directly from the repo. OpenCode loads them through
-  `instructions` in `opencode.json`; Claude Code imports them from
-  `~/.claude/CLAUDE.md` (`config/claude` package).
+- `agent-instructions/` — shared agent instructions, read directly from the
+  repo: `PRINCIPLES.md` (engineering principles), `ORGANIZATION.md` (layout and
+  placement), `MODULARITY.md` (file/function size and dependencies),
+  `CONFIGURATION.md` (constants, config, secrets), and `NOTIFY.md` (phone
+  notifications). OpenCode loads them through `instructions` in
+  `opencode.json`; Claude Code imports them from `~/.claude/CLAUDE.md`
+  (`config/claude` package).
 - `zsh/` — sourced by the Omarchy setup after the omarchy-zsh template.
   `setup.sh` chains the user's aliases / functions. The prompt is
   omarchy-zsh's starship and zsh-syntax-highlighting + history-search
