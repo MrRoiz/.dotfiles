@@ -9,6 +9,10 @@ test/lint/CI tooling exists in this repo.
 
 **The whole system follows the Omarchy theme selected on the machine** — bar, notifications, terminal, launcher, lock screen, session menu, GTK, window borders, prompt, … Do **not** hardcode a palette in these dotfiles and do **not** vendor an off-theme named theme (e.g. Catppuccin): configs that draw color must reference the active theme's colors (ANSI names for terminal output, theme variables where an app offers them) so `omarchy theme set` re-themes everything with no dotfiles change. If an app only offers named themes, map it to the active theme; if a gap cannot be closed now, leave a clear note rather than pinning fixed values. Consistency with the selected Omarchy theme beats per-app cleverness.
 
+## Change boundaries (rule)
+
+**All changes must be made through this dotfiles repo.** Read-only exploration outside `~/.dotfiles` is allowed. Do **not** modify anything outside `~/.dotfiles` without explicit approval from the dev; unapproved external modifications are never allowed. Apply external changes by adding them to the repo and Stowing/installing from here, not by editing the live path directly.
+
 ## Minimal diffs (rule)
 
 **NEVER modify something there is no need to modify — it only adds noise to the diff.** Change only the lines the task actually requires. Do **not** reformat, re-align, re-indent, re-wrap, or re-order unrelated code, comments, or whitespace, and never commit whitespace-only churn (e.g. collapsing comment padding, sorting keys, "tidying" a block you did not need to touch). If you spot unrelated drift, leave it as-is and mention it — do not fold it into the change. A diff should contain only the intended edits so review stays focused.
@@ -27,6 +31,10 @@ test/lint/CI tooling exists in this repo.
 - `config/<app>/.config/<app>/…` — one **Stow package per app**; the
   omarchy setup stows only the packages whose apps it installs (see
   `STOW_PACKAGES` in `omarchy.sh`).
+- `agent-instructions/NOTIFY.md` and `agent-instructions/PRINCIPLES.md` — shared
+  agent instructions, read directly from the repo. OpenCode loads them through
+  `instructions` in `opencode.json`; Claude Code imports them from
+  `~/.claude/CLAUDE.md` (`config/claude` package).
 - `zsh/` — sourced by the Omarchy setup after the omarchy-zsh template.
   `setup.sh` chains the user's aliases / functions. The prompt is
   omarchy-zsh's starship and zsh-syntax-highlighting + history-search
@@ -38,9 +46,11 @@ test/lint/CI tooling exists in this repo.
 ## Commands
 
 - Install / re-run: `~/.dotfiles/scripts/omarchy.sh`
-- Restow everything: `restow` (all managed packages from `~/.dotfiles`, including `hypr`, `wireplumber`, `starship`, `spotify` and `omarchy-themes`)
+- Restow everything: `restow` (all managed packages from `~/.dotfiles`, including `hypr`, `wireplumber`, `starship`, `spotify`, `omarchy-themes`, `omarchy-menu` and `claude`)
 - Re-stow after adding/removing files: `cd ~/.dotfiles/config && stow --restow -t "$HOME" <pkg>` (use the `STOW_PACKAGES` list from `omarchy.sh`, not `*`)
 - Omarchy bar clock format: `omarchy-bar set omarchy.clock format "<Qt format>"`
+- Menu extension: run `omarchy menu refresh` after editing `~/.config/omarchy/extensions/omarchy-menu.jsonc` (the Stow symlink is not watched through the repo).
+- ntfy: `omarchy-ntfy show` prints the channel id; `omarchy-ntfy send "Title" "Body"` pushes a notification. The channel lives in `~/.config/ntfy-sender/config.json` (0600) and is never tracked in the repo.
 - herdr: `herdr server reload-config` applies `config.toml` (theme/UI) to the running server; `herdr config check` validates it.
 - Validate JSON/JSONC: `python3 -c "import json;json.load(open('<file>'))"`
 
@@ -73,7 +83,7 @@ test/lint/CI tooling exists in this repo.
   a fixed build (a native Wayland window also changes the class to `spotify`).
 - `config/opencode/.config/opencode/` — only `opencode.json` + `tui.json` are tracked. `package.json`, `package-lock.json`, `node_modules/`, `bun.lock` are **OpenCode-generated artifacts** (gitignored). Never commit them.
 - `~/.config/<app>` is usually a **symlink into the repo** (Stow). Tools that copy into `~/.config` write *through* the symlink into the repo, so re-sourcing the affected tool picks the change up.
-- The `omarchy-themes` package stows into `~/.config/omarchy`, which Omarchy owns. `omarchy.sh` and `restow` create `~/.config/omarchy/themes` first so Stow descends into it instead of folding the whole directory into a repo symlink (which would make Omarchy write its own configs into the repo).
+- The `omarchy-themes` and `omarchy-menu` packages stow into `~/.config/omarchy`, which Omarchy owns. `omarchy.sh` and `restow` create `~/.config/omarchy/themes` and `~/.config/omarchy/extensions` first so Stow descends into them instead of folding the whole directory into a repo symlink (which would make Omarchy write its own configs into the repo).
 - `omarchy.sh`: the Arch repos and the Omarchy package repo are reached through `omarchy-pkg-add`; AUR packages are not installed by the script.
 - Commit style is Conventional Commits (`feat:`, `fix:`, `chore:`, `refactor:`), as seen in `git log`.
 
