@@ -13,7 +13,11 @@ understandable without reading its callers.
   functions share the same state, arguments, or domain, prefer a single object
   that holds them over a flat list of loose functions. Expose only the public
   methods that make sense for that context; keep the rest private so the object
-  encapsulates its own state.
+  encapsulates its own state. Follow the project's existing pattern for such
+  objects and scope them to what they serve (a session, a request, an open
+  connection) rather than making them global. Functions that share nothing stay
+  plain functions, and one object holds one context: split it when its public
+  methods stop belonging together.
 - **Clear dependency direction.** Lower-level modules do not import
   higher-level ones; no cycles. Shared helpers live below their consumers.
 - **Narrow public surface.** Export only what consumers need; keep helpers
