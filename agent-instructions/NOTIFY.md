@@ -4,12 +4,15 @@ At the end of a task that changed files or ran commands, send me a short phone
 notification:
 
 ```bash
-omarchy-ntfy send "<project>: <task title>" "<one-line summary>"
+omarchy-ntfy send "<emoji> <project>: <task title>" "<one-line summary>"
 ```
 
-Use the project/workspace name — usually the repository or working-directory
-name — as the title prefix when one is available. Omit the prefix when it is
-not.
+Start the title with a single emoji that shows at a glance what the message is
+about, then the project/workspace name — usually the repository or
+working-directory name. Reuse the same emoji for the same kind of work, e.g.
+✨ feature, 🐛 fix, 📝 docs, 🎨 theme/UI, 🔧 config/scripts, 🔒 security,
+✅ completed task, ⚠️ needs attention. Omit the project prefix when there is
+no project.
 
 Send one notification per completed task, not after each step. Skip simple
 questions, conversational replies, and work that is still in progress. Never
