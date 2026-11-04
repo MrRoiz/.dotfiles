@@ -32,12 +32,14 @@ test/lint/CI tooling exists in this repo.
   omarchy setup stows only the packages whose apps it installs (see
   `STOW_PACKAGES` in `omarchy.sh`).
 - `agent-instructions/` — shared agent instructions, read directly from the
-  repo: `PRINCIPLES.md` (engineering principles), `ORGANIZATION.md` (layout and
-  placement), `MODULARITY.md` (file/function size and dependencies),
-  `CONFIGURATION.md` (constants, config, secrets), and `NOTIFY.md` (phone
-  notifications). OpenCode loads them through `instructions` in
-  `opencode.json`; Claude Code imports them from `~/.claude/CLAUDE.md`
-  (`config/claude` package).
+  repo, one file per concern: `PRINCIPLES.md` (what good code is: YAGNI, KISS,
+  readability), `ORGANIZATION.md` (layout, placement, conventions),
+  `MODULARITY.md` (file/function size, coupling, seams), `CONFIGURATION.md`
+  (constants, config, secrets), `CHANGES.md` (diff discipline, self-review),
+  and `NOTIFY.md` (phone notifications). OpenCode loads them through
+  `instructions` in `opencode.json`; Claude Code imports them from
+  `~/.claude/CLAUDE.md` (`config/claude` package). A rule that fits no existing
+  file gets its own instruction file and is added to both loaders.
 - `zsh/` — sourced by the Omarchy setup after the omarchy-zsh template.
   `setup.sh` chains the user's aliases / functions. The prompt is
   omarchy-zsh's starship and zsh-syntax-highlighting + history-search
