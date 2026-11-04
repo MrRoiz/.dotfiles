@@ -9,6 +9,11 @@ understandable without reading its callers.
 - **One job per function.** Split a function when its name needs "and", when it
   needs paragraphs of comments to explain, or when it nests more than a couple
   of levels. Prefer small named helpers over deep nesting.
+- **Group related functions into one context.** When a lot of standalone
+  functions share the same state, arguments, or domain, prefer a single object
+  that holds them over a flat list of loose functions. Expose only the public
+  methods that make sense for that context; keep the rest private so the object
+  encapsulates its own state.
 - **Clear dependency direction.** Lower-level modules do not import
   higher-level ones; no cycles. Shared helpers live below their consumers.
 - **Narrow public surface.** Export only what consumers need; keep helpers
