@@ -2,6 +2,9 @@
 
 **Commits are signed, and remote operations are gated by 1Password.**
 
+- Commit or push only when asked. Follow the project's commit message style
+  (e.g. Conventional Commits: `feat:`, `fix:`, `chore:`).
+
 - Every commit is SSH-signed with a key held in 1Password: git calls
   `/opt/1Password/op-ssh-sign` (`commit.gpgsign = true`, `gpg.format = ssh`),
   and SSH requests (push, pull, fetch) go through the 1Password agent at

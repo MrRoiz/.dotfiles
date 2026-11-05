@@ -16,6 +16,10 @@ loosely coupled (see `MODULARITY.md`).
 - **Flat, obvious layout.** Put new files next to the things they belong with.
   Do not invent deep folder hierarchies or extra indirection layers; a
   directory should be understandable from its listing.
+- **A file reads top-down.** Group imports the way the project does
+  (standard library, third-party, local), then constants, then public entry
+  points, then their helpers in the order they are called. Keep related code
+  next to each other so a reader never jumps around the file.
 - **Prefer extending over creating.** Reuse the existing module for an existing
   responsibility. Add a new file only for a genuinely new responsibility, in
   the directory that already owns that domain.

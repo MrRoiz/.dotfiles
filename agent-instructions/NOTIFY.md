@@ -1,7 +1,7 @@
 # Phone notifications
 
-At the end of a task that changed files or ran commands, send me a short phone
-notification:
+At the end of a task that changed files or ran commands that changed state,
+send me a short phone notification:
 
 ```bash
 omarchy-ntfy send "<emoji> <project>: <task title>" "<one-line summary>"

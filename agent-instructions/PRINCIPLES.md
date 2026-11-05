@@ -1,9 +1,15 @@
 # Engineering principles
 
 The rules here and in `ORGANIZATION.md`, `MODULARITY.md`, `CONFIGURATION.md`,
-`CHANGES.md` and `NOTIFY.md` apply to every change. A project's own instructions
-(`AGENTS.md`, `CLAUDE.md`) win where they disagree; when that happens, say
-which rule you followed and why.
+`CHANGES.md`, `GIT.md` and `NOTIFY.md` apply to every change. A project's own
+instructions (`AGENTS.md`, `CLAUDE.md`) win where they disagree; when that
+happens, say which rule you followed and why.
+
+**Agents write the code; humans review and maintain it.** Every rule here
+serves that reader: someone who did not write the code must be able to open
+any file, find their bearings quickly (where am I, what does this do, where
+does it go next), and change it with confidence. When a choice is close, pick
+the one that is easier for a human to read and navigate.
 
 - **YAGNI:** Add only what the current task needs. Do not build speculative
   abstractions, options, extension points, or compatibility layers.
@@ -15,6 +21,13 @@ which rule you followed and why.
   one pass is, and more lines are fine when they buy that readability, as long
   as the other rules still hold. Prefer a little duplication over a premature
   abstraction.
+  - Names say what, not how: functions are verbs (`load_config`), booleans
+    read as a question (`is_ready`, `has_items`), and a value with a unit
+    carries it (`timeout_ms`). Spell words out except for well-known
+    abbreviations, and make a name more descriptive the wider its scope.
+  - Name a compound condition: put it in a well-named boolean or helper
+    instead of an `if` with several `and`/`or`s, and state conditions
+    positively (`if is_valid`, not `if not is_invalid`).
   - One step per line: give an intermediate result a name instead of nesting
     calls, chaining long expressions or packing logic into one line.
   - Spell out logic: a plain loop over a dense one-line transformation, and a
@@ -22,10 +35,15 @@ which rule you followed and why.
   - Leave a blank line between the steps of a function (gather, decide, act,
     return) and between groups of related lines. Label any group whose purpose
     isn't obvious with a short comment above it, not only constants.
-  - Split a long call or literal one argument or field per line, and name the
-    arguments when a call takes several values of the same kind.
+  - Split a long call or literal one argument or field per line.
   - Return early instead of nesting; keep each branch short enough to see whole.
   - Comment the hacks, not the obvious: only add a comment when code is
     genuinely tricky or works around a real limitation, and say why it is
     there and, for a workaround, what would let it go. Do not restate what the
     code already says.
+- **Fail loudly:** Do not swallow errors. Catch an error only where you can
+  handle it or add context, and make the message say what failed and with
+  which input. Validate input at trust boundaries (user input, files, network)
+  and trust it inside the code.
+- **Delete dead code:** No commented-out code, unused parameters, imports or
+  variables, and no leftover debug output. Git keeps the history.
