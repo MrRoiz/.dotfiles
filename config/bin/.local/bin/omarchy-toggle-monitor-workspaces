@@ -5,6 +5,9 @@
 # override; see KNOWN-GAPS.md. Remove this command once #16213 ships.
 #
 # Usage: omarchy-toggle-monitor-workspaces [toggle|on|off]
+#
+# `off` also renames workspaces left on per-monitor ids (12 -> 2) so the bar
+# labels and the number keys agree with the global ids.
 
 set -euo pipefail
 
@@ -32,10 +35,6 @@ case ${1:-toggle} in
     ;;
 esac
 
-if [[ $NEW == "$ENABLED" ]]; then
-  exit 0
-fi
-
 set_mode() {
   if [[ $1 == "off" ]]; then
     mkdir -p "$(dirname "$FLAG")"
@@ -45,11 +44,41 @@ set_mode() {
   fi
 }
 
+in_use() {
+  hyprctl workspaces -j | jq -e --argjson slot "$1" 'any(.[]; .id == $slot)' >/dev/null
+}
+
+# Per-monitor mode puts a monitor's slots on ids above 10 and disabling keeps
+# them, so a workspace the bar labels "2" can still be id 12 while SUPER + 2
+# targets a global 2 that does not exist yet. Rename those workspaces back into
+# 1-10, keeping their windows and monitors.
+renumber_global() {
+  local id slot expression
+  local -a ids
+  mapfile -t ids < <(hyprctl workspaces -j | jq -r '.[] | select(.id > 10) | .id')
+
+  for id in "${ids[@]}"; do
+    slot=$(( (id - 1) % 10 + 1 ))
+    if in_use "$slot"; then
+      echo "warning: workspace $id kept; workspace $slot is already in use" >&2
+      continue
+    fi
+    expression="hl.dsp.workspace.change_id({ workspace = \"$id\", id = $slot })"
+    if ! hyprctl dispatch "$expression" >/dev/null; then
+      echo "warning: could not renumber workspace $id" >&2
+    fi
+  done
+}
+
 set_mode "$NEW"
 if ! hyprctl reload >/dev/null; then
   set_mode "$ENABLED"
   echo "Could not reload Hyprland; workspace numbering was not changed" >&2
   exit 1
+fi
+
+if [[ $NEW == "off" ]]; then
+  renumber_global
 fi
 
 omarchy-shell -q omarchy.workspaces refresh >/dev/null 2>&1 || true

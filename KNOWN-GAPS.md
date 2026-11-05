@@ -80,27 +80,35 @@ rather than global workspace 1.
   `~/.local/state/omarchy/toggles/no-monitor-workspaces` absent it loads the
   packaged module unchanged; with the flag present it restores global ids and
   removes the block map so the stock bar falls back to global numbering.
-  Disabling keeps existing ids; turning it back on resumes reconciliation,
-  which may renumber workspaces into their monitor blocks.
+  Disabling renames workspaces still on per-monitor ids into their global slot
+  (12 becomes 2), so the bar label and `Super + 2` agree; turning it back on
+  resumes reconciliation, which may renumber workspaces into their monitor
+  blocks.
 - Toggle: `config/bin/.local/bin/omarchy-toggle-monitor-workspaces [on|off]`,
   or _Setup → Workspaces → Per Monitor Workspaces_ in the menu. The `omarchy`
   dispatcher only scans its packaged bin directory, so `omarchy toggle
   monitor-workspaces` does not route until upstream ships the command; call the
   binary directly or use the menu.
 - Not ported: the PR's `Workspaces.qml` global mode. In global mode the stock
-  bar still labels by monitor block, so workspace ids above 10 show their local
-  slot (12 appears as 2). The PR's second commit, "Keep actual workspace 10
-  labels in global mode", only corrects the id-10 row, so cloning that widget
-  would not lift the limit on its own. Keep global workspaces in 1-10 for now.
+  bar labels by monitor block, so ids above 10 show their local slot (12 appears
+  as 2). The toggle avoids that by renumbering at disable time only, so a
+  workspace created above 10 afterwards mislabels again: keep global workspaces
+  in 1-10. The PR's second commit, "Keep actual workspace 10 labels in global
+  mode", only corrects the id-10 row, so cloning that widget would not lift the
+  limit on its own.
 - Upstream: #16213 adds the toggle and bar mode, last updated 2026-11-04 with
   that label fix and two-monitor feedback on `v4.5.0-rc3` confirming the
-  disabled path (global ids, no reconcile) behaves as this port does (#12978 and
-  #7615 are the wider global-mode requests; both open).
+  disabled path (global ids, no reconcile). It keeps existing ids when
+  disabling, so the renumber step here is a local addition (#12978 and #7615 are
+  the wider global-mode requests; both open).
 - Closes when: a stable release ships the toggle and both modes in the stock
   bar, verified on this machine.
 - Removal: delete the override module, the toggle command, and the two
   `setup.workspaces*` menu entries; drop this row and section; then
   `restow hypr bin omarchy-menu`, `omarchy menu refresh`, and `hyprctl reload`.
+  The renumber-on-disable step is local and goes with the command; upstream
+  keeps ids because its bar widget labels them truthfully, so do not port that
+  step into the packaged command.
 
 ## Adding a gap
 
