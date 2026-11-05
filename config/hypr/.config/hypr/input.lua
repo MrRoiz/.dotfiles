@@ -1,14 +1,8 @@
 -- Keep only your personal input overrides here. Uncommented settings below
 -- replace Omarchy's defaults.
 
--- Omarchy's default maps Caps Lock to Compose (`compose:caps`); keep Caps
--- Lock as Caps Lock. The empty option list also drops Omarchy's
--- `shift:both_capslock_cancel`, whose lone-Shift side effect cleared Caps
--- Lock on any single Shift press.
 hl.config({
   input = {
-    kb_options = "",
-
     -- Use natural (inverse) scrolling on the touchpad.
     touchpad = {
       natural_scroll = true,

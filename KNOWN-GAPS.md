@@ -8,15 +8,14 @@ ships.
 Tracked upstream is **Omarchy only**. Workarounds for other upstreams
 (Spotify's WebKit flags, herdr's fixed theme colours) live in `AGENTS.md`.
 
-Snapshot 2026-10-24: installed `omarchy 4.0.6-1` (stable), latest stable
-`v4.0.6`, latest prerelease `v4.5.0-rc1`.
+Snapshot 2026-11-05: installed `omarchy 4.5.0-3` (stable), latest stable
+`v4.5.0`, latest prerelease `v4.5.0-rc3`.
 
 | Gap | Local state | Upstream | Closes when |
 | --- | --- | --- | --- |
 | Headset microphone port | **patched** — `omarchy-headset-mic` service | #16529 (input ports); #12489, #13758, #13775 are adjacent | Audio panel lists source ports as rows and keeps the headset port across replugs |
 | HDMI/DP audio output | **accepted** — manual profile switch only, nothing in the dotfiles | #8789 (issue), #8820 (PR) | #8820 or equivalent ships in a stable release |
 | Per-monitor workspaces | **port** — #16213 toggle in Lua + CLI + menu; bar half not ported | #16213 (open) | Stable ships the per-monitor workspace toggle |
-| Caps Lock / compose key | **override** — `kb_options = ""` in `input.lua` | #14939 | Installed stable includes #14939 and its default behaves as wanted |
 
 Re-check with the `gap-watch` skill or
 `.opencode/skills/gap-watch/scripts/gap-status.sh`; do not remove a local piece
@@ -67,23 +66,6 @@ HDMI), so an attached display has no HDMI sink to select.
   selecting one activates the profile, creates the sink, and moves streams.
 - Removal: no local code to delete. Drop this row and the manual command once
   the panel handles it.
-
-## Caps Lock / compose key
-
-Omarchy 4.0 maps Caps Lock to Compose (`compose:caps`) and adds
-`shift:both_capslock_cancel`, whose lone-Shift side effect clears Caps Lock.
-`input.lua` overrides both by setting `kb_options = ""` to keep Caps Lock as
-Caps Lock.
-
-- Upstream: #14939 returns Caps Lock to normal and puts compose on
-  Shift + Caps Lock. Merged 2026-10-11, shipped in `v4.5.0-rc1`; not in the
-  installed `v4.0.6` yet.
-- Closes when: the installed stable release includes #14939, Caps Lock still
-  toggles on a single press, and Shift + Caps Lock composes.
-- Removal: delete the Caps Lock comment and the `kb_options = ""` entry from
-  the shared `hl.config` block in `config/hypr/.config/hypr/input.lua`; keep
-  the touchpad `natural_scroll` override in that block. Then `restow hypr`
-  (or `hyprctl reload`) and test both keys.
 
 ## Per-monitor workspaces
 
