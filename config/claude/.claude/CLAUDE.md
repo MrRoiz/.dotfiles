@@ -4,3 +4,4 @@
 @~/.dotfiles/agent-instructions/CHANGES.md
 @~/.dotfiles/agent-instructions/NOTIFY.md
 @~/.dotfiles/agent-instructions/PRINCIPLES.md
+@~/.dotfiles/agent-instructions/COMMUNICATION.md
