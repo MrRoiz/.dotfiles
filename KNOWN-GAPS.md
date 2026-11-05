@@ -15,6 +15,7 @@ Snapshot 2026-10-24: installed `omarchy 4.0.6-1` (stable), latest stable
 | --- | --- | --- | --- |
 | Headset microphone port | **patched** — `omarchy-headset-mic` service | #16529 (input ports); #12489, #13758, #13775 are adjacent | Audio panel lists source ports as rows and keeps the headset port across replugs |
 | HDMI/DP audio output | **accepted** — manual profile switch only, nothing in the dotfiles | #8789 (issue), #8820 (PR) | #8820 or equivalent ships in a stable release |
+| Per-monitor workspaces | **port** — #16213 toggle in Lua + CLI + menu; bar half not ported | #16213 (open) | Stable ships the per-monitor workspace toggle |
 | Caps Lock / compose key | **override** — `kb_options = ""` in `input.lua` | #14939 | Installed stable includes #14939 and its default behaves as wanted |
 
 Re-check with the `gap-watch` skill or
@@ -83,6 +84,41 @@ Caps Lock.
   the shared `hl.config` block in `config/hypr/.config/hypr/input.lua`; keep
   the touchpad `natural_scroll` override in that block. Then `restow hypr`
   (or `hyprctl reload`) and test both keys.
+
+## Per-monitor workspaces
+
+Omarchy 4.5 gives every monitor workspaces 1-10 of its own and renumbers
+workspaces into those blocks whenever monitors change. The release has no
+switch for it, so `Super + 1` means "the focused monitor's first workspace"
+rather than global workspace 1.
+
+- Local port: `config/hypr/.config/default/hypr/monitor-workspaces.lua` shadows
+  the packaged module (bootstrap puts `~/.config/?.lua` ahead of
+  `$OMARCHY_PATH/?.lua`). With
+  `~/.local/state/omarchy/toggles/no-monitor-workspaces` absent it loads the
+  packaged module unchanged; with the flag present it restores global ids and
+  removes the block map so the stock bar falls back to global numbering.
+  Disabling keeps existing ids; turning it back on resumes reconciliation,
+  which may renumber workspaces into their monitor blocks.
+- Toggle: `config/bin/.local/bin/omarchy-toggle-monitor-workspaces [on|off]`,
+  or _Setup → Workspaces → Per Monitor Workspaces_ in the menu. The `omarchy`
+  dispatcher only scans its packaged bin directory, so `omarchy toggle
+  monitor-workspaces` does not route until upstream ships the command; call the
+  binary directly or use the menu.
+- Not ported: the PR's `Workspaces.qml` global mode. In global mode the stock
+  bar still labels by monitor block, so workspace ids above 10 show their local
+  slot (12 appears as 2). The PR's second commit, "Keep actual workspace 10
+  labels in global mode", only corrects the id-10 row, so cloning that widget
+  would not lift the limit on its own. Keep global workspaces in 1-10 for now.
+- Upstream: #16213 adds the toggle and bar mode, last updated 2026-11-04 with
+  that label fix and two-monitor feedback on `v4.5.0-rc3` confirming the
+  disabled path (global ids, no reconcile) behaves as this port does (#12978 and
+  #7615 are the wider global-mode requests; both open).
+- Closes when: a stable release ships the toggle and both modes in the stock
+  bar, verified on this machine.
+- Removal: delete the override module, the toggle command, and the two
+  `setup.workspaces*` menu entries; drop this row and section; then
+  `restow hypr bin omarchy-menu`, `omarchy menu refresh`, and `hyprctl reload`.
 
 ## Adding a gap
 

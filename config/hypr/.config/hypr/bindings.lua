@@ -31,3 +31,10 @@ o.bind("SUPER + SHIFT + C", "Screenshot", "omarchy-capture-screenshot")
 -- web-app bindings (Google Maps) are disabled. Toggle stays on SUPER + S.
 hl.unbind("SUPER + ALT + S")
 o.bind("SUPER + SHIFT + S", "Move window to scratchpad", hl.dsp.window.move({ workspace = "special:scratchpad", follow = false }))
+
+-- Per-monitor workspaces are optional through the ported #16213 toggle. When
+-- they are off, "former workspace" is plain history instead of the focused
+-- monitor's history.
+if not o.workspaces.enabled then
+  o.rebind("SUPER + CTRL + TAB", "Former workspace", hl.dsp.focus({ workspace = "previous" }))
+end

@@ -150,9 +150,13 @@ needed.
   them with `gap-watch`.
 - `config/bin/.local/bin/restow` — restow every managed package from
   `~/.dotfiles` (main packages + `hypr` + `wireplumber` + `starship`).
+  `omarchy-toggle-monitor-workspaces` switches Omarchy's per-monitor
+  workspaces to global numbering (see `KNOWN-GAPS.md`).
 - `config/hypr/.config/hypr/{looknfeel,input,bindings,monitors}.lua` —
   personal Hyprland overrides. The `hypr` package is stowed file-by-file so
-  the rest of Omarchy's Hyprland config stays managed by Omarchy.
+  the rest of Omarchy's Hyprland config stays managed by Omarchy. It also
+  ships `config/hypr/.config/default/hypr/monitor-workspaces.lua`, the
+  per-monitor workspace toggle port (see `KNOWN-GAPS.md`).
 - `config/<app>/.config/<app>/…` — Stow packages. Only the ones whose
   apps are installed on Omarchy are stowed (see `STOW_PACKAGES` in
   `omarchy.sh`). The `mega` package ships the user systemd unit that

@@ -74,4 +74,17 @@
     "when": "omarchy-ntfy has-channel",
     "action": "omarchy-launch-floating-terminal-with-presentation \"omarchy-ntfy rotate\""
   },
+  // Workspace numbering: Omarchy 4.5 is per-monitor only; this row runs the
+  // ported omacom/omarchy#16213 opt-out (see KNOWN-GAPS.md).
+  "setup.workspaces": {
+    "icon": "󱂬",
+    "label": "Workspaces"
+  },
+  "setup.workspaces.per-monitor": {
+    "icon": "󰍹",
+    "label": "Per Monitor Workspaces",
+    "description": "Give each monitor its own workspaces 1–10; turn off for global numbering",
+    "checked": "[[ ! -f ${XDG_STATE_HOME:-$HOME/.local/state}/omarchy/toggles/no-monitor-workspaces ]]",
+    "action": "omarchy-toggle-monitor-workspaces"
+  },
 }

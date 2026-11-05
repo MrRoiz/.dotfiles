@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+# Toggle Omarchy's per-monitor workspaces (port of omacom/omarchy#16213).
+#
+# The opt-out is read by the local default/hypr/monitor-workspaces.lua
+# override; see KNOWN-GAPS.md. Remove this command once #16213 ships.
+#
+# Usage: omarchy-toggle-monitor-workspaces [toggle|on|off]
+
+set -euo pipefail
+
+FLAG="${XDG_STATE_HOME:-$HOME/.local/state}/omarchy/toggles/no-monitor-workspaces"
+ENABLED=on
+[[ -f $FLAG ]] && ENABLED=off
+
+if (( $# > 1 )); then
+  echo "Usage: omarchy-toggle-monitor-workspaces [toggle|on|off]" >&2
+  exit 1
+fi
+
+case ${1:-toggle} in
+  toggle)
+    if [[ $ENABLED == "on" ]]; then
+      NEW=off
+    else
+      NEW=on
+    fi
+    ;;
+  on | off) NEW=$1 ;;
+  *)
+    echo "Usage: omarchy-toggle-monitor-workspaces [toggle|on|off]" >&2
+    exit 1
+    ;;
+esac
+
+if [[ $NEW == "$ENABLED" ]]; then
+  exit 0
+fi
+
+set_mode() {
+  if [[ $1 == "off" ]]; then
+    mkdir -p "$(dirname "$FLAG")"
+    touch "$FLAG"
+  else
+    rm -f "$FLAG"
+  fi
+}
+
+set_mode "$NEW"
+if ! hyprctl reload >/dev/null; then
+  set_mode "$ENABLED"
+  echo "Could not reload Hyprland; workspace numbering was not changed" >&2
+  exit 1
+fi
+
+omarchy-shell -q omarchy.workspaces refresh >/dev/null 2>&1 || true
+
+if [[ $NEW == "on" ]]; then
+  omarchy-notification-send -g 󱂬 "Per monitor workspaces enabled"
+else
+  omarchy-notification-send -g 󱂬 "Global workspace numbering enabled"
+fi
