@@ -178,6 +178,22 @@ needed.
   any repo package. `scripts/omarchy.sh` only downloads the tarball and runs
   `pacman -U`, which adds no repo: on a machine without that entry the package
   stays foreign (`pacman -Qm`) and never updates.
+- Tailscale is installed through `omarchy-pkg-add`; the script enables
+  `tailscaled.service`, makes your user the Tailscale operator (so `tailscale`
+  needs no sudo), prints `tailscale up` — it never runs it, because that waits on
+  a browser login — and enables the bar widget with
+  `omarchy-plugin-enable omarchy.tailscale`. Omarchy's own
+  `omarchy-install-service-tailscale` additionally adds Taildrop and the admin
+  web app — run it if you want those.
+- moshi-hook is a **standalone binary, not a package**: it comes from
+  `https://getmoshi.app/install.sh`, lives in `~/.local/bin` with a systemd user
+  unit that the script starts through `moshi-hook service install`, and is
+  invisible to `pacman -Syu` and `omarchy update`. The script also runs
+  `moshi-hook install` to write the agent hooks; delivery starts after pairing
+  with the token from Moshi's _Settings → Hooks_. Update moshi-hook with
+  `moshi-hook update` (a running daemon also self-updates every six hours;
+  `moshi-hook set auto-update off` or `... ask` changes that), and pair it with
+  the token from Moshi's _Settings → Hooks_.
 - Monitor layout: laptop `eDP-1` on the left (`0x0`) and HDMI `HDMI-A-1` on
   the right (`1920x-300`). The HDMI sits higher; adjust the `-300` offset in
   `config/hypr/.config/hypr/monitors.lua`.

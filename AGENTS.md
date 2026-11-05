@@ -95,7 +95,13 @@ test/lint/CI tooling exists in this repo.
   `install_and_setup_mega` only downloads the tarball and runs `pacman -U`,
   which registers the package locally but adds no repo, so without the
   `[DEB_Arch_Extra]` entry the install is foreign and never updates.
-- `config/opencode/.config/opencode/` — only `opencode.json` + `tui.json` are tracked. `package.json`, `package-lock.json`, `node_modules/`, `bun.lock` are **OpenCode-generated artifacts** (gitignored). Never commit them.
+- `moshi-hook` is a standalone binary from `getmoshi.app`, not a package: no
+  Arch, Omarchy or mise entry exists, so `pacman -Syu` and `omarchy update`
+  never touch it. It lives in `~/.local/bin` with a systemd user service that
+  `moshi-hook service install` registers at login, and the setup script also runs
+  `moshi-hook install` to write the agent hooks (delivery needs pairing). Update
+  it with `moshi-hook update` (the daemon also self-updates every six hours).
+- `config/opencode/.config/opencode/` — only `opencode.json` + `tui.json` are tracked. `package.json`, `package-lock.json`, `node_modules/`, `bun.lock` are **OpenCode-generated artifacts** (gitignored). Never commit them. `plugins/moshi-hooks.ts` is the same: `moshi-hook install` writes it through the stow symlink, so it is gitignored too.
 - `~/.config/<app>` is usually a **symlink into the repo** (Stow). Tools that copy into `~/.config` write *through* the symlink into the repo, so re-sourcing the affected tool picks the change up.
 - The `omarchy-themes` and `omarchy-menu` packages stow into `~/.config/omarchy`, which Omarchy owns. `omarchy.sh` and `restow` create `~/.config/omarchy/themes` and `~/.config/omarchy/extensions` first so Stow descends into them instead of folding the whole directory into a repo symlink (which would make Omarchy write its own configs into the repo).
 - `omarchy.sh`: the Arch repos and the Omarchy package repo are reached through `omarchy-pkg-add`; AUR packages are not installed by the script.

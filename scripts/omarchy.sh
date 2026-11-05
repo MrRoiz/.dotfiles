@@ -6,8 +6,10 @@
 # Runs on top of an Omarchy installation:
 #   1. Updates Omarchy so its checkout and package repos are current.
 #   2. Removes preinstalled Omarchy apps we don't use (personal cleaner).
-#   3. Installs the personal package set, always through omarchy commands.
-#   4. Ports dotfiles (stow), Hyprland overrides, zsh, defaults, and the status bar clock.
+#   3. Installs the personal package set, always through omarchy commands,
+#      plus Tailscale.
+#   4. Ports dotfiles (stow), Hyprland overrides, the standalone moshi-hook
+#      binary with its agent hooks, zsh, defaults, and the status bar clock.
 #   5. Installs the wired headset microphone helper.
 #
 # Usage:
@@ -106,6 +108,63 @@ install_and_setup_mega() {
   # ~/.config/systemd/user/mega-cmd.service into place). The install above
   # has populated ~/.config/Mega; the daemon picks that up on next start.
   print_substep "Mega configured (systemd enable runs after stow)"
+}
+
+# Tailscale: the package plus the daemon, with this user as the operator so
+# tailscale commands need no sudo. Joining the tailnet is left to the user,
+# because `tailscale up` waits on a browser login; the script prints it instead
+# of running it.
+install_and_setup_tailscale() {
+  print_header "INSTALLING PACKAGES - TAILSCALE"
+
+  if command -v tailscale &>/dev/null; then
+    print_substep "Tailscale is already installed"
+  else
+    omarchy_pkg_add "tailscale"
+  fi
+
+  # tailscaled owns the TUN device, DNS and routes; the tailscale CLI only talks
+  # to it over /var/run/tailscale/tailscaled.sock, so the daemon must run before
+  # `tailscale up` can do anything. It is a privileged system unit: enable starts
+  # it at boot, --now for this session.
+  sudo systemctl enable --now tailscaled.service
+  if ! sudo tailscale set --operator="$USER"; then
+    print_substep "Run 'sudo tailscale set --operator=$USER' to manage Tailscale without sudo"
+  fi
+  print_substep "Join the tailnet with 'tailscale up'"
+
+  # Adds the Tailscale widget (status + send/receive) to the Omarchy bar.
+  omarchy-plugin-enable omarchy.tailscale
+}
+
+# moshi-hook ships only as a standalone binary from getmoshi.app — no Arch,
+# Omarchy or mise package — so system upgrades never update it. The installer
+# drops the binary and its user service, `moshi-hook update` (or the daemon's
+# own self-update) upgrades it, and pairing waits for the app's token.
+install_moshi_hook() {
+  print_header "INSTALLING MOSHI-HOOK"
+
+  if command -v moshi-hook &>/dev/null; then
+    print_substep "moshi-hook is already installed; update it with 'moshi-hook update'"
+  else
+    curl -fsSL https://getmoshi.app/install.sh |
+      MOSHI_HOOK_SKIP_FIRST_RUN=1 INSTALL_DIR="$HOME/.local/bin" sh
+  fi
+
+  # The daemon owns the agent socket and the 127.0.0.1:24543 gateway the phone
+  # reaches over SSH, so it has to keep running: upstream's `service install`
+  # registers it as a systemd user service that starts at login and survives
+  # reboots. A user unit because it needs no privileges, only this session.
+  if ! moshi-hook service install; then
+    print_substep "Could not start the daemon; check 'moshi-hook service status'"
+  fi
+
+  # Hooks are the other half: they make the agents post events to the daemon.
+  # Safe before pairing — the config is written now and starts delivering once
+  # `moshi-hook pair` has the token from the app.
+  if ! moshi-hook install; then
+    print_substep "Install the agent hooks later with 'moshi-hook install'"
+  fi
 }
 
 # Clone the dotfiles repo at $DOTFILES_DIR if it isn't there already.
@@ -527,6 +586,7 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   install_omarchy_packages
   install_mise_toolchains
   install_and_setup_mega
+  install_and_setup_tailscale
   setup_omarchy_docker
 
   # -- Configuration --
@@ -538,6 +598,10 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   # conflict, plus the dirs for apps we no longer install here.
   stow_personal_dotfiles
   stow_hypr_overrides
+  # After stow: `moshi-hook install` writes agent hooks, including
+  # ~/.config/opencode/plugins/, which must land through the stow symlink
+  # instead of creating a real config directory first.
+  install_moshi_hook
   setup_headset_mic
   # Mega's user systemd unit was just stowed into ~/.config/systemd/user;
   # enable + start it now that the file is in place.
