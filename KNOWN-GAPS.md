@@ -108,7 +108,9 @@ rather than global workspace 1.
   `restow hypr bin omarchy-menu`, `omarchy menu refresh`, and `hyprctl reload`.
   The renumber-on-disable step is local and goes with the command; upstream
   keeps ids because its bar widget labels them truthfully, so do not port that
-  step into the packaged command.
+  step into the packaged command. Before relying on the packaged command, move
+  any workspace still above 10 into 1-10 (upstream keeps ids), then `restow bin`
+  so the old copy is gone.
 
 ## Adding a gap
 
