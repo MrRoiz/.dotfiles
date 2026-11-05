@@ -189,8 +189,15 @@ needed.
   `https://getmoshi.app/install.sh`, lives in `~/.local/bin` with a systemd user
   unit that the script starts through `moshi-hook service install`, and is
   invisible to `pacman -Syu` and `omarchy update`. The script also runs
-  `moshi-hook install` to write the agent hooks; delivery starts after pairing
-  with the token from Moshi's _Settings → Hooks_. Update moshi-hook with
+  `moshi-hook install` to write the agent hooks, and installs `mosh` so
+  `moshi-hook host setup` can offer the Mosh transport: Mosh is what keeps the
+  phone's connection alive across network switches and sleep, while Herdr/tmux
+  only keep the session alive on the host — SSH alone works but reconnects.
+  Delivery starts after pairing with the token from Moshi's _Settings → Hooks_.
+  The `moshi` stow package adds a systemd drop-in pointing
+  `MOSHI_HERDR_PATH` at the mise-managed `herdr`, because the unit runs with
+  systemd's minimal PATH and would otherwise report herdr as installed but
+  undiscoverable. Update moshi-hook with
   `moshi-hook update` (a running daemon also self-updates every six hours;
   `moshi-hook set auto-update off` or `... ask` changes that), and pair it with
   the token from Moshi's _Settings → Hooks_.

@@ -4,7 +4,7 @@
 set -euo pipefail
 
 DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dotfiles}"
-DEFAULT_PACKAGES=(kitty herdr opencode mega bin starship spotify omarchy-themes omarchy-menu claude)
+DEFAULT_PACKAGES=(kitty herdr opencode mega moshi bin starship spotify omarchy-themes omarchy-menu claude)
 
 if [[ ! -d $DOTFILES_DIR/config ]]; then
   echo "restow: $DOTFILES_DIR/config not found" >&2
@@ -17,8 +17,9 @@ if (( $# == 0 )); then
   # are fine (stow creates them); a real directory means the installer has not
   # run yet.
   for pkg in "${DEFAULT_PACKAGES[@]}"; do
-    # Single-file packages own ~/.config/<file>, not ~/.config/<pkg>.
-    [[ $pkg == starship || $pkg == spotify ]] && continue
+    # Single-file packages own ~/.config/<file>, not ~/.config/<pkg>; moshi
+    # only ships a systemd drop-in for a config dir moshi owns itself.
+    [[ $pkg == starship || $pkg == spotify || $pkg == moshi ]] && continue
     target="$HOME/.config/$pkg"
     if [[ -e $target && ! -L $target ]]; then
       echo "restow: $target is not a stow symlink; run scripts/omarchy.sh first" >&2
@@ -82,6 +83,8 @@ fi
 # which Omarchy owns. Keep the parents real directories so Stow cannot fold
 # them into repo symlinks.
 mkdir -p "$HOME/.config/omarchy/themes" "$HOME/.config/omarchy/extensions"
+# systemd does not load the moshi drop-in from a stow-folded symlink.
+mkdir -p "$HOME/.config/systemd/user/moshi-hook.service.d"
 
 cd "$DOTFILES_DIR/config"
 stow --restow -t "$HOME" "${packages[@]}"
@@ -89,6 +92,7 @@ cd "$HOME"
 
 systemctl --user daemon-reload 2>/dev/null || true
 systemctl --user restart omarchy-headset-mic.service 2>/dev/null || true
+command -v moshi-hook >/dev/null && systemctl --user restart moshi-hook.service 2>/dev/null || true
 command -v hyprctl >/dev/null && hyprctl reload >/dev/null 2>&1 || true
 
 printf 'Restowed from %s: %s\n' "$DOTFILES_DIR" "${packages[*]}"

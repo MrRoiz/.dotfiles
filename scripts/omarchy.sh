@@ -9,7 +9,8 @@
 #   3. Installs the personal package set, always through omarchy commands,
 #      plus Tailscale.
 #   4. Ports dotfiles (stow), Hyprland overrides, the standalone moshi-hook
-#      binary with its agent hooks, zsh, defaults, and the status bar clock.
+#      binary with mosh and its agent hooks, zsh, defaults, and the status bar
+#      clock.
 #   5. Installs the wired headset microphone helper.
 #
 # Usage:
@@ -42,7 +43,7 @@ SCRIPT_DIR="$DOTFILES_DIR/scripts"
 # vicinae, waybar, wlogout, satty, sherlock) is dropped because those apps
 # are no longer installed here — Omarchy's own stack replaces them or they
 # were never omarchy-relevant.
-STOW_PACKAGES=(kitty herdr opencode mega bin starship spotify omarchy-themes omarchy-menu claude)
+STOW_PACKAGES=(kitty herdr opencode mega moshi bin starship spotify omarchy-themes omarchy-menu claude)
 
 # =============================================================================
 # Local Helpers
@@ -143,6 +144,17 @@ install_and_setup_tailscale() {
 # own self-update) upgrades it, and pairing waits for the app's token.
 install_moshi_hook() {
   print_header "INSTALLING MOSHI-HOOK"
+
+  # Remote shell transport for Moshi: mosh-server is the remote half, and only
+  # Mosh keeps the phone's connection alive across Wi-Fi/cellular switches and
+  # sleep, with local echo. Herdr/tmux keep the session alive on the host, so
+  # they do not replace it: SSH-only works but reconnects on every change, and
+  # `moshi-hook host setup` stops without it unless passed --force.
+  if command -v mosh-server &>/dev/null; then
+    print_substep "Mosh is already installed"
+  else
+    omarchy_pkg_add "mosh"
+  fi
 
   if command -v moshi-hook &>/dev/null; then
     print_substep "moshi-hook is already installed; update it with 'moshi-hook update'"
@@ -505,6 +517,9 @@ stow_personal_dotfiles() {
   # or Stow folds them into symlinks pointing at the repo and Omarchy then
   # writes its configs in here.
   mkdir -p "$HOME/.config/omarchy/themes" "$HOME/.config/omarchy/extensions"
+  # Same for the moshi drop-in: systemd does not load it from a stow-folded
+  # symlink, so keep the drop-in directory real and link only the file.
+  mkdir -p "$HOME/.config/systemd/user/moshi-hook.service.d"
   # The checkout is canonical for the menu extension. Back up a plain user file
   # before Stow replaces it with a symlink.
   if [[ -f "$HOME/.config/omarchy/extensions/omarchy-menu.jsonc" \

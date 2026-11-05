@@ -75,7 +75,11 @@ test/lint/CI tooling exists in this repo.
 - herdr is installed via mise (`mise use -g herdr@latest`) so it always
   tracks the latest upstream release; the setup drops the lagging Omarchy
   package. Update with `mise upgrade herdr`, not `herdr update`, and
-  restart/reattach the client/server afterwards.
+  restart/reattach the client/server afterwards. `moshi-hook`'s unit runs with
+  systemd's minimal PATH, so `config/moshi` ships a drop-in that sets
+  `MOSHI_HERDR_PATH` to the mise `installs/herdr/latest` binary; keep that
+  directory real (see `restow`), because systemd ignores a stow-folded
+  symlink there.
 - Herdr panes start zsh via `terminal.default_shell`; bash's exec-zsh drop-in
   only fires at `SHLVL 1`, so panes would otherwise be bash and miss
   zsh-syntax-highlighting.
@@ -95,6 +99,12 @@ test/lint/CI tooling exists in this repo.
   `install_and_setup_mega` only downloads the tarball and runs `pacman -U`,
   which registers the package locally but adds no repo, so without the
   `[DEB_Arch_Extra]` entry the install is foreign and never updates.
+- `mosh` is installed for Moshi's transport, not as a multiplexer: `mosh-server`
+  is the remote half, and only Mosh keeps the phone's connection alive across
+  Wi-Fi/cellular switches and sleep, with local echo. Herdr/tmux keep the
+  *session* alive on the host, so they do not replace it — SSH-only hosts work
+  but reconnect on every network change, and `moshi-hook host setup` stops
+  without `mosh-server` unless passed `--force`.
 - `moshi-hook` is a standalone binary from `getmoshi.app`, not a package: no
   Arch, Omarchy or mise entry exists, so `pacman -Syu` and `omarchy update`
   never touch it. It lives in `~/.local/bin` with a systemd user service that
