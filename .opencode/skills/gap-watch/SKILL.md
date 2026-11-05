@@ -68,7 +68,11 @@ actually present and works here.
 - Do not remove a workaround because a version number changed. Confirm the
   behaviour on this machine; a stable release can regress.
 - Keep the diff to the files the entry names. This repo values minimal diffs;
-  do not reformat or reorder unrelated lines.
+  do not reformat or reorder unrelated lines. Its "Removal" list is a starting
+  point, not a limit: grep the repo for the identifiers the entry introduced
+  (command, state flag, unit, path) and delete the leftovers the fix makes
+  redundant — stale shims, shadow modules, menu rows, services — then say what
+  you removed.
 - If you find a new gap while working — a workaround, an accepted limitation, or
   an override upstream may make unnecessary — add it to `KNOWN-GAPS.md` with its
   upstream ref and the condition that closes it.

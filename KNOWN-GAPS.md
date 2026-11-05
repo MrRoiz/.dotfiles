@@ -122,7 +122,11 @@ it.
 ## Closing a gap
 
 1. Confirm the closing behaviour on this machine, not just the version.
-2. Remove only what the entry names; keep the diff to those files.
+2. Remove only what the entry names. Its "Removal" list is a starting point,
+   not a limit: code, state flags, user services, CLI shims, menu rows and docs
+   all count. Grep the repo for every identifier the entry introduced (command,
+   flag, unit, path) and delete the leftovers the fix makes redundant; leave
+   anything unrelated alone.
 3. Update this table and any `README.md` / `AGENTS.md` references.
 4. Re-stow the affected package (for example `restow hypr` after editing
    `input.lua`, or `restow bin` after editing `restow`).
