@@ -87,6 +87,14 @@ test/lint/CI tooling exists in this repo.
   with an X11 `Display*`, segfaulting the GPU helper in
   `dri2_initialize_wayland` on every launch. Drop the flag once Spotify ships
   a fixed build (a native Wayland window also changes the class to `spotify`).
+- `megacmd` is a pacman package from MEGA's own repo `[DEB_Arch_Extra]`
+  (`https://mega.nz/linux/repo/Arch_Extra/$arch`), configured in
+  `/etc/pacman.conf` — a machine-level change this repo does not manage.
+  Because that repo provides it, `pacman -Syu` and `omarchy update` upgrade
+  megacmd with the rest of the system, and it must not appear in `pacman -Qm`.
+  `install_and_setup_mega` only downloads the tarball and runs `pacman -U`,
+  which registers the package locally but adds no repo, so without the
+  `[DEB_Arch_Extra]` entry the install is foreign and never updates.
 - `config/opencode/.config/opencode/` — only `opencode.json` + `tui.json` are tracked. `package.json`, `package-lock.json`, `node_modules/`, `bun.lock` are **OpenCode-generated artifacts** (gitignored). Never commit them.
 - `~/.config/<app>` is usually a **symlink into the repo** (Stow). Tools that copy into `~/.config` write *through* the symlink into the repo, so re-sourcing the affected tool picks the change up.
 - The `omarchy-themes` and `omarchy-menu` packages stow into `~/.config/omarchy`, which Omarchy owns. `omarchy.sh` and `restow` create `~/.config/omarchy/themes` and `~/.config/omarchy/extensions` first so Stow descends into them instead of folding the whole directory into a repo symlink (which would make Omarchy write its own configs into the repo).

@@ -172,6 +172,12 @@ needed.
   always runs the latest upstream release instead of the lagging Omarchy
   package. Update it with `mise upgrade herdr`, not `herdr update`, so mise
   keeps ownership of the binary; restart/reattach Herdr afterwards.
+- MEGAcmd comes from MEGA's own pacman repo (`[DEB_Arch_Extra]`,
+  `https://mega.nz/linux/repo/Arch_Extra/$arch`, configured in
+  `/etc/pacman.conf`), so `pacman -Syu` and `omarchy update` upgrade it like
+  any repo package. `scripts/omarchy.sh` only downloads the tarball and runs
+  `pacman -U`, which adds no repo: on a machine without that entry the package
+  stays foreign (`pacman -Qm`) and never updates.
 - Monitor layout: laptop `eDP-1` on the left (`0x0`) and HDMI `HDMI-A-1` on
   the right (`1920x-300`). The HDMI sits higher; adjust the `-300` offset in
   `config/hypr/.config/hypr/monitors.lua`.
