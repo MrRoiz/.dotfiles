@@ -36,6 +36,7 @@ test/lint/CI tooling exists in this repo.
   readability), `ORGANIZATION.md` (layout, placement, conventions),
   `MODULARITY.md` (file/function size, coupling, seams), `CONFIGURATION.md`
   (constants, config, secrets), `CHANGES.md` (diff discipline, self-review),
+  `GIT.md` (signed commits, 1Password-gated push/pull),
   `NOTIFY.md` (phone notifications), and `COMMUNICATION.md` (answer style;
   questions are not instructions). OpenCode loads them through
   `instructions` in `opencode.json`; Claude Code imports them from
