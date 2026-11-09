@@ -16,6 +16,7 @@ Snapshot 2026-11-05: installed `omarchy 4.5.0-3` (stable), latest stable
 | Headset microphone port | **patched** — `omarchy-headset-mic` service | #16529 (input ports); #12489, #13758, #13775 are adjacent | Audio panel lists source ports as rows and keeps the headset port across replugs |
 | HDMI/DP audio output | **accepted** — manual profile switch only, nothing in the dotfiles | #8789 (issue), #8820 (PR) | #8820 or equivalent ships in a stable release |
 | Per-monitor workspaces | **port** — #16213 toggle in Lua + CLI + menu; bar half not ported | #16213 (open) | Stable ships the per-monitor workspace toggle |
+| Screen-share cursor | **patched** — `cursor_mode = 2` in the `hypr` package's `xdph.conf` | #15577 (issue), #15580 (PR); #15690 closed in favour of #15580 | Stable ships `cursor_mode = 2` as the default and a browser share shows the pointer |
 
 Re-check with the `gap-watch` skill or
 `.opencode/skills/gap-watch/scripts/gap-status.sh`; do not remove a local piece
@@ -111,6 +112,32 @@ rather than global workspace 1.
   step into the packaged command. Before relying on the packaged command, move
   any workspace still above 10 into 1-10 (upstream keeps ids), then `restow bin`
   so the old copy is gone.
+
+## Screen-share cursor
+
+Omarchy's `xdph.conf` leaves `screencopy:cursor_mode` unset, so
+xdg-desktop-portal-hyprland keeps its default (hidden). Browsers and Electron
+apps ask for a metadata cursor, which the portal does not advertise
+(`AvailableCursorModes` is hidden|embedded), so they send no mode at all and
+viewers never see the pointer.
+
+- Local patch: `config/hypr/.config/hypr/xdph.conf` mirrors the shipped default
+  and adds `cursor_mode = 2`; `stow_hypr_overrides` and `restow` remove the
+  live file before stowing.
+- Upstream: #15577 (open, `bug`) reports it; the fix is
+  [#15580](https://github.com/omacom/omarchy/pull/15580) (open), which sets the
+  same default plus a migration; #15690 was closed in favour of #15580. xdph
+  1.4.1 added the option (hyprwm/xdg-desktop-portal-hyprland#373).
+- Closes when: a stable release ships `cursor_mode = 2` as the default (#15580
+  merged) and a browser share shows the pointer, verified on this machine.
+- Removal: delete the repo `xdph.conf` and its two `rm -f` entries; then
+  `rm ~/.config/hypr/xdph.conf` (the stow symlink) and
+  `omarchy refresh config hypr/xdph.conf` to restore the shipped default as a
+  real file (refresh uses `cp -f`, so the symlink must go first). Restart the
+  portal and drop this row and section.
+- Caveat: remote-desktop captures on Intel iGPUs can still hide the pointer for
+  a different reason (#16622; `cursor:no_hardware_cursors = 1` fixes that one),
+  so the cursor mode alone does not cover that path.
 
 ## Adding a gap
 
