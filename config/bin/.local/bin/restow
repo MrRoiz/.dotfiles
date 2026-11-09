@@ -52,7 +52,8 @@ if $want_hypr; then
     "$HOME/.config/hypr/input.lua" \
     "$HOME/.config/hypr/looknfeel.lua" \
     "$HOME/.config/hypr/bindings.lua" \
-    "$HOME/.config/hypr/monitors.lua"
+    "$HOME/.config/hypr/monitors.lua" \
+    "$HOME/.config/hypr/xdph.conf"
 fi
 if $want_wireplumber; then
   rm -f \
