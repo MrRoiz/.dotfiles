@@ -46,4 +46,6 @@ the one that is easier for a human to read and navigate.
   which input. Validate input at trust boundaries (user input, files, network)
   and trust it inside the code.
 - **Delete dead code:** No commented-out code, unused parameters, imports or
-  variables, and no leftover debug output. Git keeps the history.
+  variables, and no leftover debug output. Git keeps the history. When the
+  removal would swell the diff far beyond the task, follow the deprecation rule
+  in `CHANGES.md` instead.
