@@ -46,6 +46,8 @@ the one that is easier for a human to read and navigate.
   which input. Validate input at trust boundaries (user input, files, network)
   and trust it inside the code.
 - **Delete dead code:** No commented-out code, unused parameters, imports or
-  variables, and no leftover debug output. Git keeps the history. When the
-  removal would swell the diff far beyond the task, follow the deprecation rule
-  in `CHANGES.md` instead.
+  variables, and no leftover debug output. Removing a feature also removes what
+  it pulled in: drop the library or package from the manifest, refresh the
+  lockfile, and delete the config, scripts and assets that served only that
+  feature. Git keeps the history. When the removal would swell the diff far
+  beyond the task, follow the deprecation rule in `CHANGES.md` instead.
