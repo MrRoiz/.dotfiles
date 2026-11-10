@@ -31,17 +31,24 @@ test/lint/CI tooling exists in this repo.
 - `config/<app>/.config/<app>/…` — one **Stow package per app**; the
   omarchy setup stows only the packages whose apps it installs (see
   `STOW_PACKAGES` in `omarchy.sh`).
-- `agent-instructions/` — shared agent instructions, read directly from the
-  repo, one file per concern: `PRINCIPLES.md` (what good code is: YAGNI, KISS,
-  readability), `ORGANIZATION.md` (layout, placement, conventions),
-  `MODULARITY.md` (file/function size, coupling, seams), `CONFIGURATION.md`
-  (constants, config, secrets), `CHANGES.md` (diff discipline, self-review),
-  `GIT.md` (signed commits, 1Password-gated push/pull),
-  `NOTIFY.md` (phone notifications), and `COMMUNICATION.md` (answer style;
-  questions are not instructions). OpenCode loads them through
-  `instructions` in `opencode.json`; Claude Code imports them from
-  `~/.claude/CLAUDE.md` (`config/claude` package). A rule that fits no existing
-  file gets its own instruction file and is added to both loaders.
+- `agent/` — shared instructions and skills, kept once for both tools:
+  - `agent/instructions/` — shared instructions, one file per concern:
+    `PRINCIPLES.md` (what good code is: YAGNI, KISS, readability),
+    `ORGANIZATION.md` (layout, placement, conventions), `MODULARITY.md`
+    (file/function size, coupling, seams), `CONFIGURATION.md` (constants,
+    config, secrets), `CHANGES.md` (diff discipline, self-review), `GIT.md`
+    (signed commits, 1Password-gated push/pull), `NOTIFY.md` (phone
+    notifications), and `COMMUNICATION.md` (answer style; questions are not
+    instructions). OpenCode loads them through `instructions` in
+    `opencode.json`; Claude Code imports them from `~/.claude/CLAUDE.md`
+    (`config/claude` package). A rule that fits no existing file gets its own
+    instruction file and is added to both loaders.
+  - `agent/skills/` — shared skills: `polish` (quality-only cleanup of the
+    changed diff) and `commit` (atomic commits in the project's style,
+    Conventional Commits by default). OpenCode loads the directory through
+    `skills` in `opencode.json`; `config/claude` links each skill into
+    `~/.claude/skills`, the only directory skills are read from. A new skill
+    needs that link; project-only skills stay in `.opencode/skills`.
 - `zsh/` — sourced by the Omarchy setup after the omarchy-zsh template.
   `setup.sh` chains the user's aliases / functions. The prompt is
   omarchy-zsh's starship and zsh-syntax-highlighting + history-search
