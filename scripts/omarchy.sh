@@ -528,9 +528,10 @@ stow_personal_dotfiles() {
       "$HOME/.config/omarchy/extensions/omarchy-menu.jsonc.bak.$(date +%s)"
   fi
 
-  # The claude package owns ~/.claude/CLAUDE.md. Keep the parent real and back
-  # up a plain user file before Stow replaces it with a symlink.
-  mkdir -p "$HOME/.claude"
+  # The claude package links ~/.claude/CLAUDE.md and the shared skills through
+  # ~/.claude/skills. Keep both parents real, or Stow folds them into symlinks
+  # and Claude writes its own synced skills into the repo.
+  mkdir -p "$HOME/.claude/skills"
   if [[ -f "$HOME/.claude/CLAUDE.md" && ! -L "$HOME/.claude/CLAUDE.md" ]]; then
     mv "$HOME/.claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md.bak.$(date +%s)"
   fi

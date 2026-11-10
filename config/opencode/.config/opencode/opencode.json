@@ -10,6 +10,9 @@
     "~/.dotfiles/agent/instructions/NOTIFY.md",
     "~/.dotfiles/agent/instructions/COMMUNICATION.md"
   ],
+  "skills": [
+    "~/.dotfiles/agent/skills"
+  ],
   "mcp": {
     "servers": {
       "chrome": {

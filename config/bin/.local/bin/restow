@@ -73,7 +73,7 @@ if $want_menu; then
   fi
 fi
 if $want_claude; then
-  mkdir -p "$HOME/.claude"
+  mkdir -p "$HOME/.claude/skills"
   claude_md="$HOME/.claude/CLAUDE.md"
   if [[ -f $claude_md && ! -L $claude_md ]]; then
     mv "$claude_md" "$claude_md.bak.$(date +%s)"
