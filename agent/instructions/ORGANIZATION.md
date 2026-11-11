@@ -5,14 +5,15 @@ one job. Keep facts in one place (see `CONFIGURATION.md`) and units small and
 loosely coupled (see `MODULARITY.md`).
 
 - **Group by domain, not by type.** Files that change together live together.
-  Do not create `utils/` dumping grounds. When the project already splits code
-  by type (`models/`, `services/`, `handlers/`), keep that structure: when a
-  new feature or module (or a change the developer asks for) needs more than
-  one file in a type folder, give it its own one-level sub-folder inside that
-  folder (`services/reports/`) instead of loose files beside the rest. The
-  sub-folder only groups the feature's files; it is not a new top-level domain
-  and it does not hold every layer. Leave existing code where it is unless
-  asked to move it.
+  Do not create `utils/` dumping grounds. When a feature or one job of the
+  code (or a change the developer asks for) needs more than one file in a
+  folder, give it its own one-level sub-folder there (`<type>/<feature>/`,
+  `<domain>/<job>/`) instead of loose files beside the rest, whether that
+  folder splits code by type or by domain; a file the job already had moves
+  in with it. When the project splits code by type (`models/`, `services/`,
+  `handlers/`), keep that structure: the sub-folder only groups the feature's
+  files; it is not a new top-level domain and it does not hold every layer.
+  Leave unrelated code where it is unless asked to move it.
 - **Flat, obvious layout.** Put new files next to the things they belong with.
   Do not invent deep folder hierarchies or extra indirection layers; a
   directory should be understandable from its listing.
