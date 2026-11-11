@@ -44,7 +44,8 @@ actually present and works here.
    - Disable and delete any user service the workaround ships before deleting
      its files (for the headset mic,
      `systemctl --user disable --now omarchy-headset-mic.service`, then
-     `systemctl --user daemon-reload`).
+     `systemctl --user daemon-reload`). Disabling is a machine change, so it
+     waits for the approval the previous step asks for.
    - After removal, re-stow the affected package (for example `restow hypr`
      after an `input.lua` edit, or `restow bin` after editing `restow`) and
      verify again.
@@ -76,6 +77,11 @@ actually present and works here.
 - If you find a new gap while working — a workaround, an accepted limitation, or
   an override upstream may make unnecessary — add it to `KNOWN-GAPS.md` with its
   upstream ref and the condition that closes it.
+- Verification is read-only and nothing outside the repo changes except what an
+  approved removal touches. Ask before disabling a service, switching a card
+  profile or editing a live path; when an approved check does change the
+  machine, capture the initial state first, restore it afterwards, and confirm
+  the restore against that record.
 - Do not commit or push unless the user asks.
 - If a reference is closed without a merged fix (duplicate, won't fix), update
   the row's upstream reference instead of removing the local piece.

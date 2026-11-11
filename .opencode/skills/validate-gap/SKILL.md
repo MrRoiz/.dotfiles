@@ -10,6 +10,19 @@ not proof that the symptom here is the same bug, and a strange behaviour is not
 an upstream bug until this repo's own overrides are ruled out. Validate first,
 search second.
 
+Validation is read-only. Nothing outside this repo is yours to change — config,
+runtime state, services, packages or hardware — including toggles that look
+harmless, such as switching an audio card profile. When only a change can settle
+the question, stop and ask the user first, saying what you would change and what
+it would prove; they may run it themselves.
+
+If the user approves a change, capture the initial state before touching
+anything — the exact values, not the intent: the active card profile and sink
+list, the unit's state, the current contents of the file. Make the smallest
+change that answers the question, then restore that captured state, check the
+restore against the record, and say what you restored. Leave the machine in
+exactly the state you found it in.
+
 ## 1. Scope the symptom
 
 First check `KNOWN-GAPS.md`: if a row already covers the symptom, the job is to
@@ -42,9 +55,6 @@ hyprland pipewire wireplumber`, kernel, `omarchy-channel-current`). If the
 symptom disappears once the override is removed, it is local config, not a gap
 — propose the fix here.
 
-Do not change configs during validation without asking, and restore anything
-you toggle.
-
 ## 3. Reproduce and collect evidence
 
 - Get a minimal reproduction and repeat it when safe.
@@ -53,8 +63,9 @@ you toggle.
   `lspci -nnk`, and the relevant `/sys` or app log.
 - Timeline: `/var/log/pacman.log` shows when Omarchy and kernel packages last
   changed.
-- Avoid destructive tests. If a test needs a config change or a package
-  downgrade, ask first and make it reversible.
+- Avoid destructive tests. A test that needs a config change, a service toggle
+  or a package downgrade follows the rule above: ask first, record the initial
+  state, and restore it.
 
 ## 4. Decide the verdict
 
@@ -133,6 +144,9 @@ Next: <fix here | wait for stable | file issue | need more evidence>
   mechanisms, and say plainly what is unverified.
 - A failed search is not "no matching issue"; fix the query or the repo first.
 - The installed version and channel decide "fixed", not the latest release.
+- Nothing outside `~/.dotfiles` changes during validation unless the user
+  approved it and the initial state was captured first. A validation that leaves
+  a profile, service or file different from the start is not finished.
 - Do not file upstream issues, change configs, or commit without explicit
   confirmation.
 - Keep the repo's minimal-diff rule when fixing a local cause.
