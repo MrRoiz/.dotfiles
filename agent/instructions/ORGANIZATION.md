@@ -23,6 +23,17 @@ loosely coupled (see `MODULARITY.md`).
 - **Prefer extending over creating.** Reuse the existing module for an existing
   responsibility. Add a new file only for a genuinely new responsibility, in
   the directory that already owns that domain.
+- **No loose functions beside a file's responsibility.** A file holds only
+  what its one responsibility is; a function that does a different job goes
+  where it belongs, never loose beside it:
+  - used only by one unit: a private part of that unit;
+  - used only by one file, with a job of its own: a sibling file next to it,
+    named for that job;
+  - used from more than one place: one shared home in the module that owns
+    its domain, imported by every caller (see "Shared helpers live below their
+    consumers" in `MODULARITY.md`), never a `utils/` file.
+  Never import a function out of a file whose responsibility is something
+  else: move it to its shared home first.
 - **One concept, one name.** Use the same term for the same thing everywhere
   (files, symbols, config keys, docs). Rename the stray outlier rather than
   adding an alias.

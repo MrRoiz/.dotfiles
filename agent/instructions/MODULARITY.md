@@ -30,7 +30,8 @@ understandable without reading its callers.
   objects and scope them to what they serve (a session, a request, an open
   connection) rather than making them global. Functions that share nothing stay
   plain functions, and one object holds one context: split it when its public
-  methods stop belonging together.
+  methods stop belonging together. Where such functions may live is in
+  `ORGANIZATION.md` ("No loose functions beside a file's responsibility").
 - **Clear dependency direction.** Lower-level modules do not import
   higher-level ones; no cycles. Shared helpers live below their consumers.
 - **Narrow public surface.** Export only what consumers need; keep helpers
