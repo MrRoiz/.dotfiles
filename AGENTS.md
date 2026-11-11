@@ -44,8 +44,10 @@ test/lint/CI tooling exists in this repo.
     (`config/claude` package). A rule that fits no existing file gets its own
     instruction file and is added to both loaders.
   - `agent/skills/` — shared skills: `polish` (quality-only cleanup of the
-    changed diff) and `commit` (atomic commits in the project's style,
-    Conventional Commits by default). OpenCode loads the directory through
+    changed diff), `commit` (atomic commits in the project's style,
+    Conventional Commits by default) and `solve-comments` (triage the comments
+    on your PR/MR, fix only what is approved, then answer and resolve the
+    threads). OpenCode loads the directory through
     `skills` in `opencode.json`; `config/claude` links each skill into
     `~/.claude/skills`, the only directory skills are read from. A new skill
     needs that link; project-only skills stay in `.opencode/skills`.
