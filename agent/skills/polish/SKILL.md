@@ -1,13 +1,13 @@
 ---
 name: polish
-description: Review the changed code for reuse, simplification, efficiency and altitude, then apply the fixes — quality only, no bug hunting. Use when the user asks to simplify, tidy, clean up or polish the current diff or recent changes, or after finishing a change. Triggers include "simplify this", "polish the diff", "clean this up", "tidy the changes", "review my changes for quality", "make this code simpler". Not for hunting correctness bugs or reviewing a pull request.
+description: Review the changed code for reuse, simplification, dead code and dead dependencies, efficiency and altitude, then apply the fixes — quality only, no bug hunting. Use when the user asks to simplify, tidy, clean up or polish the current diff or recent changes, or after finishing a change. Triggers include "simplify this", "polish the diff", "clean this up", "tidy the changes", "review my changes for quality", "make this code simpler". Not for hunting correctness bugs or reviewing a pull request.
 ---
 
 # Polish
 
 You are improving the quality of the changed code, not hunting for bugs. Review
-it for reuse, simplification, efficiency and altitude issues, then fix what you
-find.
+it for reuse, simplification, dead code and dead dependencies, efficiency and
+altitude, then fix what you find.
 
 ## Phase 0 — Gather the diff
 
@@ -27,8 +27,9 @@ unrelated reformatting still gets exactly that.
 
 When the harness can spawn subagents, launch one per angle in a single message
 so they run concurrently, and give different angles different agent types when
-that fits better (a fast search-oriented agent for reuse, a general agent for
-altitude). The angles are independent, so no agent needs another's findings.
+that fits better (a fast search-oriented agent for reuse and dead code, a
+general agent for altitude). The angles are independent, so no agent needs
+another's findings.
 
 When no subagent tool is available, review the diff against each angle in turn
 yourself, in one pass, without skipping one for lack of fan-out.
@@ -45,10 +46,21 @@ existing helper to call instead.
 ### Simplification
 
 Flag unnecessary complexity the diff adds: redundant or derivable state,
-copy-paste with slight variation, deep nesting, dead code left behind. Flag what
-a removal orphaned too — a now-unused dependency, its lockfile entry, and the
-config, scripts or assets that served only the removed feature. Name the simpler
-form that does the same job.
+copy-paste with slight variation, deep nesting. Name the simpler form that does
+the same job.
+
+### Dead code and dead dependencies
+
+Flag what the diff leaves unreachable and what its removals orphan. For code:
+commented-out blocks, unused functions, parameters, imports, variables and
+exports, flags fixed at one value, and branches no caller can reach. For
+dependencies: a package, crate, gem or module nothing imports any more, its
+lockfile entry, and the config, scripts or assets that served only the removed
+feature.
+
+Verify a dependency before removing it: grep the whole tree for its imports and
+for the CLI or build names it provides, then remove it, refresh the lockfile,
+and run the build and tests.
 
 ### Efficiency
 
