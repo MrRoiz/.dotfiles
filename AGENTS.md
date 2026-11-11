@@ -83,11 +83,7 @@ test/lint/CI tooling exists in this repo.
 - herdr comes from the Omarchy package, so `pacman -Syu` and `omarchy update`
   upgrade it; restart/reattach the client and server afterwards. It is not
   mise-managed (unlike aws-cli, gh, just, sops, terraform and terragrunt), so
-  the client and server both run `/usr/bin/herdr`. `herdr-core` (the `hc`
-  server) is a separate Omarchy-repo package, also installed by the script,
-  and is required for the Herdr mobile app: the phone talks only to
-  herdr-core over SSH, never to the TUI's own server, so agents started in
-  the TUI do not show up on the phone.
+  the client and server both run `/usr/bin/herdr`.
 - Herdr panes start zsh via `terminal.default_shell`; bash's exec-zsh drop-in
   only fires at `SHLVL 1`, so panes would otherwise be bash and miss
   zsh-syntax-highlighting.

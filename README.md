@@ -169,11 +169,7 @@ needed.
 
 - herdr comes from the Omarchy package, so `pacman -Syu` and `omarchy update`
   upgrade it; restart/reattach the client and server afterwards. It is not
-  mise-managed: the client and server both run `/usr/bin/herdr`. `herdr-core`
-  (the `hc` server) is a separate Omarchy-repo package, also installed by
-  `omarchy.sh`, and is required for the Herdr mobile app: the phone talks
-  only to herdr-core over SSH, never to the TUI's own server, so agents
-  started in the TUI do not show up on the phone.
+  mise-managed: the client and server both run `/usr/bin/herdr`.
 - MEGAcmd comes from MEGA's own pacman repo (`[DEB_Arch_Extra]`,
   `https://mega.nz/linux/repo/Arch_Extra/$arch`, configured in
   `/etc/pacman.conf`), so `pacman -Syu` and `omarchy update` upgrade it like

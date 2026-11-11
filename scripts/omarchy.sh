@@ -303,14 +303,11 @@ install_omarchy_packages() {
 
   # Devtools
   # proton-vpn-gtk-app straight from the Arch repos. lazydocker, lazygit and
-  # herdr stay on Omarchy's packages (all ship in omarchy-base.packages);
-  # herdr-core, the `hc` server the Herdr mobile app connects to, ships in the
-  # Omarchy repo but not the base list, so it is named here. The phone talks
-  # only to herdr-core over SSH, never to the TUI's own server, so the mobile
-  # integration needs it. The language toolchains — node, python (+uv),
-  # terraform, terragrunt — and aws-cli, gh, just, sops are mise-managed
-  # instead; see install_mise_toolchains.
-  omarchy_pkg_add "lazydocker lazygit herdr herdr-core"
+  # herdr stay on Omarchy's packages (all ship in omarchy-base.packages). The
+  # language toolchains — node, python (+uv), terraform, terragrunt — and
+  # aws-cli, gh, just, sops are mise-managed instead; see
+  # install_mise_toolchains.
+  omarchy_pkg_add "lazydocker lazygit herdr"
   omarchy_pkg_add "dbeaver packer"
   omarchy_pkg_add "proton-vpn-gtk-app"
   omarchy_pkg_add "wget bind stow"
