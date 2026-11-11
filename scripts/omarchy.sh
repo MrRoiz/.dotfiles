@@ -43,7 +43,7 @@ SCRIPT_DIR="$DOTFILES_DIR/scripts"
 # vicinae, waybar, wlogout, satty, sherlock) is dropped because those apps
 # are no longer installed here — Omarchy's own stack replaces them or they
 # were never omarchy-relevant.
-STOW_PACKAGES=(kitty herdr opencode mega moshi bin starship spotify omarchy-themes omarchy-menu claude)
+STOW_PACKAGES=(kitty herdr opencode mega bin starship spotify omarchy-themes omarchy-menu claude)
 
 # =============================================================================
 # Local Helpers
@@ -344,12 +344,15 @@ install_omarchy_packages() {
   omarchy_pkg_add "veracrypt"
 
   # Devtools
-  # proton-vpn-gtk-app straight from the Arch repos. lazydocker and lazygit
-  # stay on Omarchy's packages (both ship in omarchy-base.packages). The
-  # language toolchains — node, python (+uv), terraform, terragrunt — and
-  # aws-cli, gh, just, sops are mise-managed instead; see
-  # install_mise_toolchains.
-  omarchy_pkg_add "lazydocker lazygit"
+  # proton-vpn-gtk-app straight from the Arch repos. lazydocker, lazygit and
+  # herdr stay on Omarchy's packages (all ship in omarchy-base.packages);
+  # herdr-core, the `hc` server the Herdr mobile app connects to, ships in the
+  # Omarchy repo but not the base list, so it is named here. The phone talks
+  # only to herdr-core over SSH, never to the TUI's own server, so the mobile
+  # integration needs it. The language toolchains — node, python (+uv),
+  # terraform, terragrunt — and aws-cli, gh, just, sops are mise-managed
+  # instead; see install_mise_toolchains.
+  omarchy_pkg_add "lazydocker lazygit herdr herdr-core"
   omarchy_pkg_add "dbeaver packer"
   omarchy_pkg_add "proton-vpn-gtk-app"
   omarchy_pkg_add "wget bind stow"
@@ -368,12 +371,12 @@ install_omarchy_packages() {
 # tools up without nvm or an activation line in the dotfiles.
 #
 # node and python go through Omarchy's own dev-env installer (a thin wrapper
-# over `mise use --global`; the python recipe also brings uv). aws-cli,
-# herdr, gh, just, sops, terraform and terragrunt have no dev-env recipe, so
-# they are declared through mise directly.
-# aws-cli-v2's, herdr's, github-cli's, just's and sops's Omarchy packages are
-# dropped first so the tools track upstream releases instead of the lagging
-# repo packages. lazydocker and lazygit are not handled here: they stay on
+# over `mise use --global`; the python recipe also brings uv). aws-cli, gh,
+# just, sops, terraform and terragrunt have no dev-env recipe, so they are
+# declared through mise directly.
+# aws-cli-v2's, github-cli's, just's and sops's Omarchy packages are dropped
+# first so the tools track upstream releases instead of the lagging repo
+# packages. herdr, lazydocker and lazygit are not handled here: they stay on
 # Omarchy's packages (see install_omarchy_packages).
 # =============================================================================
 
@@ -394,12 +397,9 @@ install_mise_toolchains() {
 
   omarchy-install-dev-env python
 
-  print_step "Installing via mise: aws-cli herdr gh just sops terraform terragrunt"
+  print_step "Installing via mise: aws-cli gh just sops terraform terragrunt"
   if omarchy-pkg-present aws-cli-v2; then
     omarchy-pkg-drop aws-cli-v2
-  fi
-  if omarchy-pkg-present herdr; then
-    omarchy-pkg-drop herdr
   fi
   if omarchy-pkg-present github-cli; then
     omarchy-pkg-drop github-cli
@@ -410,7 +410,7 @@ install_mise_toolchains() {
   if omarchy-pkg-present sops; then
     omarchy-pkg-drop sops
   fi
-  mise use --global aws-cli@latest herdr@latest gh@latest just@latest sops@latest terraform@latest terragrunt@latest
+  mise use --global aws-cli@latest gh@latest just@latest sops@latest terraform@latest terragrunt@latest
 }
 
 setup_omarchy_docker() {
@@ -517,9 +517,6 @@ stow_personal_dotfiles() {
   # or Stow folds them into symlinks pointing at the repo and Omarchy then
   # writes its configs in here.
   mkdir -p "$HOME/.config/omarchy/themes" "$HOME/.config/omarchy/extensions"
-  # Same for the moshi drop-in: systemd does not load it from a stow-folded
-  # symlink, so keep the drop-in directory real and link only the file.
-  mkdir -p "$HOME/.config/systemd/user/moshi-hook.service.d"
   # The checkout is canonical for the menu extension. Back up a plain user file
   # before Stow replaces it with a symlink.
   if [[ -f "$HOME/.config/omarchy/extensions/omarchy-menu.jsonc" \

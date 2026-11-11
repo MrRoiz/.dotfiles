@@ -50,12 +50,10 @@ bash ~/.dotfiles/scripts/omarchy.sh
 2. **Installs** the personal package set through omarchy commands:
    - `omarchy-pkg-add` for repo + OPR packages
    - `omarchy-install-dev-env node` / `... python` plus `mise use --global
-     herdr terraform terragrunt` for the toolchains — Omarchy preinstalls
+     terraform terragrunt` for the toolchains — Omarchy preinstalls
      mise (`mise-bin`) and puts its shims on `PATH`, so node, python (`uv`
-     comes with it), herdr, terraform and terragrunt are all mise-managed
-     instead of Arch/AUR packages (no nvm). The Omarchy `herdr` package is
-     dropped so the client and server always track the latest upstream
-     release.
+     comes with it), terraform and terragrunt are all mise-managed
+     instead of Arch/AUR packages (no nvm).
    - `omarchy-install-browser zen` / `omarchy-install-terminal kitty` /
      `omarchy-install-dev-env rust` for the apps with dedicated installers
      (Steam, Spotify and Zed are **not** installed here — the Omarchy
@@ -169,10 +167,13 @@ needed.
 
 ## Notes
 
-- herdr is installed via mise (`mise use -g herdr@latest`) specifically so it
-  always runs the latest upstream release instead of the lagging Omarchy
-  package. Update it with `mise upgrade herdr`, not `herdr update`, so mise
-  keeps ownership of the binary; restart/reattach Herdr afterwards.
+- herdr comes from the Omarchy package, so `pacman -Syu` and `omarchy update`
+  upgrade it; restart/reattach the client and server afterwards. It is not
+  mise-managed: the client and server both run `/usr/bin/herdr`. `herdr-core`
+  (the `hc` server) is a separate Omarchy-repo package, also installed by
+  `omarchy.sh`, and is required for the Herdr mobile app: the phone talks
+  only to herdr-core over SSH, never to the TUI's own server, so agents
+  started in the TUI do not show up on the phone.
 - MEGAcmd comes from MEGA's own pacman repo (`[DEB_Arch_Extra]`,
   `https://mega.nz/linux/repo/Arch_Extra/$arch`, configured in
   `/etc/pacman.conf`), so `pacman -Syu` and `omarchy update` upgrade it like

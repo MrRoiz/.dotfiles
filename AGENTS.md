@@ -80,14 +80,14 @@ test/lint/CI tooling exists in this repo.
 
 ## Gotchas
 
-- herdr is installed via mise (`mise use -g herdr@latest`) so it always
-  tracks the latest upstream release; the setup drops the lagging Omarchy
-  package. Update with `mise upgrade herdr`, not `herdr update`, and
-  restart/reattach the client/server afterwards. `moshi-hook`'s unit runs with
-  systemd's minimal PATH, so `config/moshi` ships a drop-in that sets
-  `MOSHI_HERDR_PATH` to the mise `installs/herdr/latest` binary; keep that
-  directory real (see `restow`), because systemd ignores a stow-folded
-  symlink there.
+- herdr comes from the Omarchy package, so `pacman -Syu` and `omarchy update`
+  upgrade it; restart/reattach the client and server afterwards. It is not
+  mise-managed (unlike aws-cli, gh, just, sops, terraform and terragrunt), so
+  the client and server both run `/usr/bin/herdr`. `herdr-core` (the `hc`
+  server) is a separate Omarchy-repo package, also installed by the script,
+  and is required for the Herdr mobile app: the phone talks only to
+  herdr-core over SSH, never to the TUI's own server, so agents started in
+  the TUI do not show up on the phone.
 - Herdr panes start zsh via `terminal.default_shell`; bash's exec-zsh drop-in
   only fires at `SHLVL 1`, so panes would otherwise be bash and miss
   zsh-syntax-highlighting.
