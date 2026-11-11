@@ -187,22 +187,6 @@ needed.
   `omarchy-plugin-enable omarchy.tailscale`. Omarchy's own
   `omarchy-install-service-tailscale` additionally adds Taildrop and the admin
   web app — run it if you want those.
-- moshi-hook is a **standalone binary, not a package**: it comes from
-  `https://getmoshi.app/install.sh`, lives in `~/.local/bin` with a systemd user
-  unit that the script starts through `moshi-hook service install`, and is
-  invisible to `pacman -Syu` and `omarchy update`. The script also runs
-  `moshi-hook install` to write the agent hooks, and installs `mosh` so
-  `moshi-hook host setup` can offer the Mosh transport: Mosh is what keeps the
-  phone's connection alive across network switches and sleep, while Herdr/tmux
-  only keep the session alive on the host — SSH alone works but reconnects.
-  Delivery starts after pairing with the token from Moshi's _Settings → Hooks_.
-  The `moshi` stow package adds a systemd drop-in pointing
-  `MOSHI_HERDR_PATH` at the mise-managed `herdr`, because the unit runs with
-  systemd's minimal PATH and would otherwise report herdr as installed but
-  undiscoverable. Update moshi-hook with
-  `moshi-hook update` (a running daemon also self-updates every six hours;
-  `moshi-hook set auto-update off` or `... ask` changes that), and pair it with
-  the token from Moshi's _Settings → Hooks_.
 - Monitor layout: laptop `eDP-1` on the left (`0x0`) and HDMI `HDMI-A-1` on
   the right (`1920x-300`). The HDMI sits higher; adjust the `-300` offset in
   `config/hypr/.config/hypr/monitors.lua`.

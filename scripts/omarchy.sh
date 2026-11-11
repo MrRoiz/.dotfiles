@@ -8,9 +8,8 @@
 #   2. Removes preinstalled Omarchy apps we don't use (personal cleaner).
 #   3. Installs the personal package set, always through omarchy commands,
 #      plus Tailscale.
-#   4. Ports dotfiles (stow), Hyprland overrides, the standalone moshi-hook
-#      binary with mosh and its agent hooks, zsh, defaults, and the status bar
-#      clock.
+#   4. Ports dotfiles (stow), Hyprland overrides, zsh, defaults, and the status
+#      bar clock.
 #   5. Installs the wired headset microphone helper.
 #
 # Usage:
@@ -136,47 +135,6 @@ install_and_setup_tailscale() {
 
   # Adds the Tailscale widget (status + send/receive) to the Omarchy bar.
   omarchy-plugin-enable omarchy.tailscale
-}
-
-# moshi-hook ships only as a standalone binary from getmoshi.app — no Arch,
-# Omarchy or mise package — so system upgrades never update it. The installer
-# drops the binary and its user service, `moshi-hook update` (or the daemon's
-# own self-update) upgrades it, and pairing waits for the app's token.
-install_moshi_hook() {
-  print_header "INSTALLING MOSHI-HOOK"
-
-  # Remote shell transport for Moshi: mosh-server is the remote half, and only
-  # Mosh keeps the phone's connection alive across Wi-Fi/cellular switches and
-  # sleep, with local echo. Herdr/tmux keep the session alive on the host, so
-  # they do not replace it: SSH-only works but reconnects on every change, and
-  # `moshi-hook host setup` stops without it unless passed --force.
-  if command -v mosh-server &>/dev/null; then
-    print_substep "Mosh is already installed"
-  else
-    omarchy_pkg_add "mosh"
-  fi
-
-  if command -v moshi-hook &>/dev/null; then
-    print_substep "moshi-hook is already installed; update it with 'moshi-hook update'"
-  else
-    curl -fsSL https://getmoshi.app/install.sh |
-      MOSHI_HOOK_SKIP_FIRST_RUN=1 INSTALL_DIR="$HOME/.local/bin" sh
-  fi
-
-  # The daemon owns the agent socket and the 127.0.0.1:24543 gateway the phone
-  # reaches over SSH, so it has to keep running: upstream's `service install`
-  # registers it as a systemd user service that starts at login and survives
-  # reboots. A user unit because it needs no privileges, only this session.
-  if ! moshi-hook service install; then
-    print_substep "Could not start the daemon; check 'moshi-hook service status'"
-  fi
-
-  # Hooks are the other half: they make the agents post events to the daemon.
-  # Safe before pairing — the config is written now and starts delivering once
-  # `moshi-hook pair` has the token from the app.
-  if ! moshi-hook install; then
-    print_substep "Install the agent hooks later with 'moshi-hook install'"
-  fi
 }
 
 # Clone the dotfiles repo at $DOTFILES_DIR if it isn't there already.
@@ -612,10 +570,6 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   # conflict, plus the dirs for apps we no longer install here.
   stow_personal_dotfiles
   stow_hypr_overrides
-  # After stow: `moshi-hook install` writes agent hooks, including
-  # ~/.config/opencode/plugins/, which must land through the stow symlink
-  # instead of creating a real config directory first.
-  install_moshi_hook
   setup_headset_mic
   # Mega's user systemd unit was just stowed into ~/.config/systemd/user;
   # enable + start it now that the file is in place.

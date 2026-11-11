@@ -90,7 +90,6 @@ cd "$HOME"
 
 systemctl --user daemon-reload 2>/dev/null || true
 systemctl --user restart omarchy-headset-mic.service 2>/dev/null || true
-command -v moshi-hook >/dev/null && systemctl --user restart moshi-hook.service 2>/dev/null || true
 command -v hyprctl >/dev/null && hyprctl reload >/dev/null 2>&1 || true
 
 printf 'Restowed from %s: %s\n' "$DOTFILES_DIR" "${packages[*]}"
