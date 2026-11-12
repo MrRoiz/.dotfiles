@@ -304,7 +304,7 @@ install_omarchy_packages() {
   # Devtools
   # proton-vpn-gtk-app straight from the Arch repos. lazydocker, lazygit and
   # herdr stay on Omarchy's packages (all ship in omarchy-base.packages). The
-  # language toolchains — node, python (+uv), terraform, terragrunt — and
+  # language toolchains — node, uv, terraform, terragrunt — and
   # aws-cli, gh, just, sops are mise-managed instead; see
   # install_mise_toolchains.
   omarchy_pkg_add "lazydocker lazygit herdr"
@@ -325,10 +325,11 @@ install_omarchy_packages() {
 # shims dir is on PATH from the Omarchy shell bootstrap, so zsh picks the
 # tools up without nvm or an activation line in the dotfiles.
 #
-# node and python go through Omarchy's own dev-env installer (a thin wrapper
-# over `mise use --global`; the python recipe also brings uv). aws-cli, gh,
-# just, sops, terraform and terragrunt have no dev-env recipe, so they are
-# declared through mise directly.
+# node goes through Omarchy's own dev-env installer (a thin wrapper over
+# `mise use --global`). Python is not installed globally: uv, declared through
+# mise with the rest below, downloads the interpreter each project asks for.
+# aws-cli, gh, just, sops, terraform and terragrunt have no dev-env recipe, so
+# they are declared through mise directly.
 # aws-cli-v2's, github-cli's, just's and sops's Omarchy packages are dropped
 # first so the tools track upstream releases instead of the lagging repo
 # packages. herdr, lazydocker and lazygit are not handled here: they stay on
@@ -340,19 +341,16 @@ install_mise_toolchains() {
 
   omarchy-install-dev-env node
 
-  # nvm/pyenv-style version files: mise only reads .nvmrc / .node-version
-  # (node) and .python-version (python) for the tools enabled in the global
-  # config. The global versions stay the default; a project file overrides
-  # them and the version installs on first use (auto_install defaults to true).
-  for tool in node python; do
-    if ! mise settings get idiomatic_version_file_enable_tools 2>/dev/null | grep -qw "$tool"; then
-      mise settings add idiomatic_version_file_enable_tools "$tool"
-    fi
-  done
+  # nvm-style version files: mise only reads .nvmrc / .node-version for the
+  # tools enabled in the global config. The global version stays the default; a
+  # project file overrides it and the version installs on first use
+  # (auto_install defaults to true). Python is uv's business, and uv reads a
+  # project's .python-version itself.
+  if ! mise settings get idiomatic_version_file_enable_tools 2>/dev/null | grep -qw node; then
+    mise settings add idiomatic_version_file_enable_tools node
+  fi
 
-  omarchy-install-dev-env python
-
-  print_step "Installing via mise: aws-cli gh just sops terraform terragrunt"
+  print_step "Installing via mise: aws-cli gh just sops terraform terragrunt uv"
   if omarchy-pkg-present aws-cli-v2; then
     omarchy-pkg-drop aws-cli-v2
   fi
@@ -365,7 +363,7 @@ install_mise_toolchains() {
   if omarchy-pkg-present sops; then
     omarchy-pkg-drop sops
   fi
-  mise use --global aws-cli@latest gh@latest just@latest sops@latest terraform@latest terragrunt@latest
+  mise use --global aws-cli@latest gh@latest just@latest sops@latest terraform@latest terragrunt@latest uv@latest
 }
 
 setup_omarchy_docker() {

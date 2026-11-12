@@ -1,6 +1,6 @@
 ZSH_PATH="$HOME/.dotfiles/zsh"
 
-# Node, Python, terraform and terragrunt are mise-managed (Omarchy preinstalls
+# Node, uv, terraform and terragrunt are mise-managed (Omarchy preinstalls
 # mise and its shims are on PATH from the shell bootstrap), so no nvm block or
 # version-manager activation is needed here.
 

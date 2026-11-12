@@ -48,11 +48,12 @@ bash ~/.dotfiles/scripts/omarchy.sh
    [`omarchy-remove-preinstalls`](https://github.com/omacom/omarchy/blob/quattro/bin/omarchy-remove-preinstalls).
 2. **Installs** the personal package set through omarchy commands:
    - `omarchy-pkg-add` for repo + OPR packages
-   - `omarchy-install-dev-env node` / `... python` plus `mise use --global
-     terraform terragrunt` for the toolchains — Omarchy preinstalls
-     mise (`mise-bin`) and puts its shims on `PATH`, so node, python (`uv`
-     comes with it), terraform and terragrunt are all mise-managed
-     instead of Arch/AUR packages (no nvm).
+   - `omarchy-install-dev-env node` plus `mise use --global` for `uv`,
+     terraform and terragrunt — Omarchy preinstalls mise (`mise-bin`) and
+     puts its shims on `PATH`, so node, uv, terraform and terragrunt are
+     all mise-managed instead of Arch/AUR packages (no nvm). Python itself
+     is not installed globally; uv downloads the interpreter a project
+     needs.
    - `omarchy-install-browser zen` / `omarchy-install-terminal kitty` /
      `omarchy-install-dev-env rust` for the apps with dedicated installers
      (Steam, Spotify and Zed are **not** installed here — the Omarchy
@@ -185,12 +186,14 @@ needed.
 - Monitor layout: laptop `eDP-1` on the left (`0x0`) and HDMI `HDMI-A-1` on
   the right (`1920x-300`). The HDMI sits higher; adjust the `-300` offset in
   `config/hypr/.config/hypr/monitors.lua`.
-- Node, Python and terraform/terragrunt are mise-managed. The global versions
+- Node, uv and terraform/terragrunt are mise-managed. The global versions
   live in `~/.config/mise/config.toml` (written by `mise use --global`) and
   per-project versions come from a project `mise.toml`/`.tool-versions`; nvm
   is not installed and `zsh/setup.sh` has no version-manager hook. Node also
   reads `.nvmrc`/`.node-version` (idiomatic version files are enabled for
-  `node`), installing a missing version on first use.
+  `node`), installing a missing version on first use. Python is not installed
+  globally: `uv run` / `uv python install` fetch the interpreter a project
+  pins, and uv reads the project's `.python-version` itself.
 - p10k and oh-my-zsh are not used. The prompt is `omarchy-zsh`'s
   starship; history-search, syntax-highlighting and the omadots
   aliases come from the omarchy-zsh package; nothing extra is layered on top.
