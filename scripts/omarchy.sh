@@ -308,7 +308,7 @@ install_omarchy_packages() {
   # aws-cli, gh, just, sops are mise-managed instead; see
   # install_mise_toolchains.
   omarchy_pkg_add "lazydocker lazygit herdr"
-  omarchy_pkg_add "dbeaver packer"
+  omarchy_pkg_add "dbeaver packer yaak"
   omarchy_pkg_add "proton-vpn-gtk-app"
   omarchy_pkg_add "wget bind stow"
 

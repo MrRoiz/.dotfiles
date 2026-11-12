@@ -14,7 +14,6 @@ The end goal is to package each one into
 path on Omarchy; the script falls back to `yay` only because these
 have not landed there yet).
 
-- [x] `yaak-bin` — API client (PR open: [omacom/omarchy-pkgs#1147](https://github.com/omacom/omarchy-pkgs/pull/1147))
 - [x] `ngrok` — Tunneling / reverse proxy (PR open: [omacom/omarchy-pkgs#1145](https://github.com/omacom/omarchy-pkgs/pull/1145))
 - [ ] `helium-browser-bin` — Browser (currently commented out in the
       script; would need a PR before this is usable).
@@ -66,7 +65,7 @@ bash ~/.dotfiles/scripts/omarchy.sh
      omadots aliases (ls/cd/git/d/t/n/open). The git aliases in
      `zsh/aliases/git.sh` fill the gap left by dropping omz's `git`
      plugin; oh-my-zsh and p10k are intentionally not used.
-   - `yay` for AUR-only packages (`ngrok`, `yaak-bin`,
+   - `yay` for AUR-only packages (`ngrok`,
      with `helium-browser-bin` commented out as a TODO to PR into OPR)
 3. **Configures**:
    - Stows only the packages whose apps are installed on Omarchy
