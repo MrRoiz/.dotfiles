@@ -23,6 +23,31 @@ the one that is easier for a human to read and navigate.
   - Look for the real duplication first: prefer a little duplication over a
     premature abstraction when the shared shape is only incidental (see "No
     premature abstraction" in `MODULARITY.md`).
+- **SOLID, proportionately:** Apply these where the language and the task allow
+  them (their structural side lives in `MODULARITY.md`). Do not twist an
+  existing design out of shape to satisfy one: in an established project
+  follow the conventions around you and apply them to the code the change
+  already touches.
+  - **Single responsibility:** One unit, one job, one reason to change. If you
+    cannot describe it without "and", split it.
+  - **Open/closed:** Extend behaviour by adding code, not by editing a working
+    unit into another branch. Build the seam only when the second real case
+    exists (see YAGNI).
+  - **Liskov substitution:** An implementation that stands in for another must
+    honour its whole contract — same inputs accepted, same outputs, errors and
+    side effects, no surprises for callers. A subtype that needs exceptions
+    means the abstraction hides the wrong thing.
+  - **Interface segregation:** Nobody depends on more than it uses. Give each
+    consumer the small interface it needs rather than one wide one everyone
+    shares.
+  - **Dependency inversion:** Depend on the abstraction, not the concrete
+    implementation: higher-level code owns the interface it needs, and
+    lower-level code implements it (see "Clear dependency direction" in
+    `MODULARITY.md`).
+  - New code goes all in: apply all five from the first line instead of
+    retrofitting them later, and still design the unit well rather than
+    inventing extension points for callers that do not exist (see "No
+    premature abstraction" in `MODULARITY.md`).
 - **Readability first:** Optimize for the next reader. Clear names, small
   focused units, explicit control flow, and obvious data flow matter more than
   brevity or clever tricks. Fewer lines is not the goal; code a reader gets in

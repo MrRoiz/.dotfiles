@@ -1,12 +1,13 @@
 # Modularity
 
 Keep units small, focused, and loosely coupled. A module should be
-understandable without reading its callers.
+understandable without reading its callers. This is where SOLID's structural
+rules land in practice (see `PRINCIPLES.md`).
 
-- **One responsibility per unit.** Every file, class, component and function
-  addresses one thing. Split when one mixes unrelated concerns (UI + data +
-  IO) or a file stops fitting on a screen or two. Use a one-line purpose
-  statement for each; if it needs "and", split it. When new work is a
+- **One responsibility per unit (SRP).** Every file, class, component and
+  function addresses one thing. Split when one mixes unrelated concerns
+  (UI + data + IO) or a file stops fitting on a screen or two. Use a one-line
+  purpose statement for each; if it needs "and", split it. When new work is a
   different responsibility, give it its own file, class, component or
   function instead of growing an existing one; extend an existing unit only
   when the work is the same responsibility (see `ORGANIZATION.md`).
@@ -32,11 +33,11 @@ understandable without reading its callers.
   plain functions, and one object holds one context: split it when its public
   methods stop belonging together. Where such functions may live is in
   `ORGANIZATION.md` ("No loose functions beside a file's responsibility").
-- **Clear dependency direction.** Lower-level modules do not import
+- **Clear dependency direction (DIP).** Lower-level modules do not import
   higher-level ones; no cycles. Shared helpers live below their consumers.
-- **Narrow public surface.** Export only what consumers need; keep helpers
-  private. Barrel/index files are fine when they simplify imports, never to
-  hide a tangled layout.
+- **Narrow public surface (ISP).** Export only what consumers need; keep
+  helpers private. Barrel/index files are fine when they simplify imports,
+  never to hide a tangled layout.
 - **Explicit inputs and outputs.** Pass dependencies in rather than reaching
   for globals or singletons; keep side effects at the edges of the unit.
 - **Stable seams.** Depend on the smallest interface that does the job. Do not

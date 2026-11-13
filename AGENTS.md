@@ -33,7 +33,8 @@ test/lint/CI tooling exists in this repo.
   `STOW_PACKAGES` in `omarchy.sh`).
 - `agent/` — shared instructions and skills, kept once for both tools:
   - `agent/instructions/` — shared instructions, one file per concern:
-    `PRINCIPLES.md` (what good code is: YAGNI, KISS, DRY, readability),
+    `PRINCIPLES.md` (what good code is: YAGNI, KISS, DRY, SOLID,
+    readability),
     `ORGANIZATION.md` (layout, placement, conventions), `MODULARITY.md`
     (file/function size, coupling, seams), `CONFIGURATION.md` (constants,
     config, secrets), `CHANGES.md` (diff discipline, self-review), `GIT.md`
