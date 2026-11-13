@@ -17,11 +17,14 @@ If that range is empty and the user named a target (a PR number, a branch, a
 file path), review that instead. That diff is the scope: leave untouched code
 alone, except for what the global instructions require removing with it.
 
-Before changing anything, follow the global instructions loaded for the session;
-they are normally already in context, so read only a nested instruction file for
-a changed file's directory that is not. Those rules govern this review and win
-where they disagree with it — a project that demands minimal diffs and no
-unrelated reformatting still gets exactly that.
+Before changing anything, follow the instructions that govern the session.
+Global ones come from the operator's setup, apply everywhere and are normally
+already in context. Project rules are separate: they live in the repository's
+`AGENTS.md`, `CLAUDE.md` and nested instruction files, so read the ones not in
+context for the changed files' directories. A project never replaces the global
+rules; if the global ones are missing, say so rather than guessing them. Those
+rules govern this review and win where they disagree with it — a project that
+demands minimal diffs and no unrelated reformatting still gets exactly that.
 
 ## Phase 1 — Review
 
@@ -29,7 +32,8 @@ When the harness can spawn subagents, launch one per angle in a single message
 so they run concurrently, and give different angles different agent types when
 that fits better (a fast search-oriented agent for reuse and dead code, a
 general agent for altitude). The angles are independent, so no agent needs
-another's findings.
+another's findings. Point each subagent at the governing instructions too: it
+starts with fresh context and would otherwise hold only this skill.
 
 When no subagent tool is available, review the diff against each angle in turn
 yourself, in one pass, without skipping one for lack of fan-out.
