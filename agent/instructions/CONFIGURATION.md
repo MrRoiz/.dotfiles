@@ -1,8 +1,9 @@
 # Configuration and constants
 
-**One source of truth per fact.** A constant, default, path, URL, colour,
-limit, keybinding, or config key lives in exactly one place and is imported by
-everything that needs it.
+**One source of truth per fact** — DRY applied to configuration (see
+`PRINCIPLES.md`). A constant, default, path, URL, colour, limit, keybinding, or
+config key lives in exactly one place and is imported by everything that needs
+it.
 
 - **Centralize per domain.** Keep related values in one module (`config`,
   `constants`, `settings`) per domain, not scattered through the code. Never

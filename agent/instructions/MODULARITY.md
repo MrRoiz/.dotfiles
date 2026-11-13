@@ -42,5 +42,5 @@ understandable without reading its callers.
 - **Stable seams.** Depend on the smallest interface that does the job. Do not
   couple modules through shared mutable state or by reaching into internals.
 - **No premature abstraction.** Create an interface, base class, or generic
-  when a second real caller needs it, not before (see YAGNI in
+  when a second real caller needs it, not before (see DRY and YAGNI in
   `PRINCIPLES.md`).

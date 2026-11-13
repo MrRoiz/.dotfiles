@@ -1,8 +1,8 @@
 # Organization
 
-**Centralized, but modular.** Every fact has one obvious home; every module has
-one job. Keep facts in one place (see `CONFIGURATION.md`) and units small and
-loosely coupled (see `MODULARITY.md`).
+**Centralized, but modular.** Every fact has one obvious home (DRY, see
+`PRINCIPLES.md`); every module has one job. Keep facts in one place (see
+`CONFIGURATION.md`) and units small and loosely coupled (see `MODULARITY.md`).
 
 - **Group by domain, not by type.** Files that change together live together.
   Do not create `utils/` dumping grounds. When a feature or one job of the

@@ -15,12 +15,19 @@ the one that is easier for a human to read and navigate.
   abstractions, options, extension points, or compatibility layers.
 - **KISS:** Prefer the simplest solution that works. Avoid unnecessary layers,
   indirection, cleverness, and premature optimization.
+- **DRY:** Give each piece of knowledge — a rule, formula, behaviour, value or
+  decision — exactly one home, and reuse it from there. Copies drift: change one
+  and the others quietly go stale. Reuse the existing unit instead of copying
+  it; when the same knowledge shows up a second time, extract it into the module
+  that owns its domain (see `ORGANIZATION.md` and `CONFIGURATION.md`).
+  - Look for the real duplication first: prefer a little duplication over a
+    premature abstraction when the shared shape is only incidental (see "No
+    premature abstraction" in `MODULARITY.md`).
 - **Readability first:** Optimize for the next reader. Clear names, small
   focused units, explicit control flow, and obvious data flow matter more than
   brevity or clever tricks. Fewer lines is not the goal; code a reader gets in
   one pass is, and more lines are fine when they buy that readability, as long
-  as the other rules still hold. Prefer a little duplication over a premature
-  abstraction.
+  as the other rules still hold.
   - Names say what, not how: functions are verbs (`load_config`), booleans
     read as a question (`is_ready`, `has_items`), and a value with a unit
     carries it (`timeout_ms`). Spell words out except for well-known
