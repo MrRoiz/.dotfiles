@@ -493,6 +493,20 @@ stow_personal_dotfiles() {
   print_ok "Stowed: ${STOW_PACKAGES[*]}"
 }
 
+# Point Claude Code at the stowed status line. settings.json stays untracked
+# because Claude rewrites it (model, effort, theme), so merge only this key.
+# The claude-work account links its settings.json to this one.
+setup_claude_statusline() {
+  print_substep "Enabling the Claude Code status line"
+  local settings="$HOME/.claude/settings.json"
+  local merged
+  if [[ ! -f $settings ]]; then
+    echo '{}' >"$settings"
+  fi
+  merged=$(jq '.statusLine = {"type": "command", "command": "~/.claude/statusline.sh"}' "$settings")
+  printf '%s\n' "$merged" >"$settings"
+}
+
 # The `hypr` package only carries personal overrides (looknfeel + input +
 # bindings + monitors + xdph, plus the ported per-monitor workspace toggle), so
 # stow it without wiping ~/.config/hypr: Omarchy's other Hyprland files stay
@@ -601,6 +615,7 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   # also removes the old .config entries Omarchy shipped so stow does not
   # conflict, plus the dirs for apps we no longer install here.
   stow_personal_dotfiles
+  setup_claude_statusline
   stow_hypr_overrides
   setup_headset_mic
   setup_hdmi_audio

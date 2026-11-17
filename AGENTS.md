@@ -102,6 +102,11 @@ test/lint/CI tooling exists in this repo.
   `install_and_setup_mega` only downloads the tarball and runs `pacman -U`,
   which registers the package locally but adds no repo, so without the
   `[DEB_Arch_Extra]` entry the install is foreign and never updates.
+- The Claude Code status line is `config/claude/.claude/statusline.sh`
+  (ANSI color names only). `~/.claude/settings.json` stays untracked because
+  Claude rewrites it; `setup_claude_statusline` in `omarchy.sh` merges only
+  its `statusLine` key. The plan segment reads `oauthAccount` from
+  `${CLAUDE_CONFIG_DIR:-$HOME}/.claude.json`, so `claude-work` shows its own.
 - `config/opencode/.config/opencode/` — only `opencode.json` + `tui.json` are tracked. `package.json`, `package-lock.json`, `node_modules/`, `bun.lock` are **OpenCode-generated artifacts** (gitignored). Never commit them.
 - `~/.config/<app>` is usually a **symlink into the repo** (Stow). Tools that copy into `~/.config` write *through* the symlink into the repo, so re-sourcing the affected tool picks the change up.
 - The `omarchy-themes` and `omarchy-menu` packages stow into `~/.config/omarchy`, which Omarchy owns. `omarchy.sh` and `restow` create `~/.config/omarchy/themes` and `~/.config/omarchy/extensions` first so Stow descends into them instead of folding the whole directory into a repo symlink (which would make Omarchy write its own configs into the repo).
