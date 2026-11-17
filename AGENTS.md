@@ -11,7 +11,7 @@ test/lint/CI tooling exists in this repo.
 
 ## Change boundaries (rule)
 
-**All changes must be made through this dotfiles repo.** Read-only exploration outside `~/.dotfiles` is allowed. Do **not** modify anything outside `~/.dotfiles` without explicit approval from the dev; unapproved external modifications are never allowed. Apply external changes by adding them to the repo and Stowing/installing from here, not by editing the live path directly.
+**All changes must be made through this dotfiles repo.** Read-only exploration outside `~/.dotfiles` is allowed. Do **not** modify anything outside `~/.dotfiles` without explicit approval from the dev; unapproved external modifications are never allowed. Apply external changes by adding them to the repo and Stowing/installing from here, not by editing the live path directly. When only a change to the machine can settle a question, ask first: say what you would change and what it would prove (the dev may run it themselves). Once approved, record the exact initial state (values, not intent: the active card profile and sink list, the unit's state, the file's contents), make the smallest change that answers the question, restore that state, check the restore against the record, and say what you restored. Work that leaves a profile, service or file different from how it started is not finished.
 
 ## Minimal diffs (rule)
 

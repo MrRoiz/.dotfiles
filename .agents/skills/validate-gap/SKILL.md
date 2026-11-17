@@ -1,71 +1,50 @@
 ---
 name: validate-gap
-description: Validate a suspected bug in Omarchy before treating it as a gap — reproduce it, rule out this repo's own overrides, decide whether it is an upstream bug or local config, then search the Omarchy repositories for an existing issue or PR. Use whenever the user says something looks wrong, broken, missing, or asks whether it is an Omarchy bug, should be reported, or belongs in KNOWN-GAPS.md. Triggers include "this looks wrong", "is this an Omarchy bug", "validate this gap", "should I report this", and "is there an issue for this". Not for re-checking existing register entries or removing workarounds — use gap-watch for that.
+description: Validate a suspected Omarchy bug before treating it as a gap — reproduce it, rule out this repo's overrides, decide upstream bug vs local config, and search Omarchy issues and PRs. Use when something looks wrong, broken or missing, or when asked whether it is an Omarchy bug, should be reported, has an issue, or belongs in KNOWN-GAPS.md. Not for existing register rows — use gap-watch.
 ---
 
 # Validate Gap
 
-Only real upstream gaps belong in `KNOWN-GAPS.md`. A matching GitHub issue is
-not proof that the symptom here is the same bug, and a strange behaviour is not
-an upstream bug until this repo's own overrides are ruled out. Validate first,
-search second.
-
-Validation is read-only. Nothing outside this repo is yours to change — config,
-runtime state, services, packages or hardware — including toggles that look
-harmless, such as switching an audio card profile. When only a change can settle
-the question, stop and ask the user first, saying what you would change and what
-it would prove; they may run it themselves.
-
-If the user approves a change, capture the initial state before touching
-anything — the exact values, not the intent: the active card profile and sink
-list, the unit's state, the current contents of the file. Make the smallest
-change that answers the question, then restore that captured state, check the
-restore against the record, and say what you restored. Leave the machine in
-exactly the state you found it in.
+Only real upstream gaps belong in `KNOWN-GAPS.md`. Validate first, search
+second: a matching issue title is not the same mechanism, and odd behaviour is
+not an upstream bug until this repo's overrides are ruled out. Validation is
+read-only — config, runtime state, services, packages and hardware, including
+harmless-looking toggles such as an audio card profile; any change follows
+"Change boundaries" in `AGENTS.md`.
 
 ## 1. Scope the symptom
 
-First check `KNOWN-GAPS.md`: if a row already covers the symptom, the job is to
-confirm or update it, not to add a second one.
-
-Pin down what happens versus what should happen, the steps, whether it repeats,
-and when it started (a recent Omarchy update is a strong clue). Note the
-hardware when it matters (laptop model, GPU, audio codec, display connection).
-Ask only for details that could change the verdict; otherwise proceed with what
-you have.
+If a register row already covers it, confirm or update that row. Pin down
+actual vs expected, the steps, whether it repeats, when it started (a recent
+update is a strong clue) and, when it matters, the hardware (model, GPU, audio
+codec, display link). Ask only for details that could change the verdict.
 
 ## 2. Rule out this repo
 
-Read the relevant files before testing:
+Read the overrides that touch the component before testing:
 
-- Hyprland overrides: `config/hypr/.config/hypr/{input,looknfeel,bindings,monitors}.lua`.
-- Audio: the `omarchy-headset-mic` helper in the `wireplumber` package, and the
-  headset section in `README.md`.
-- App config: `config/spotify`, `config/herdr`, `config/kitty`,
-  `config/starship.toml`, `zsh/`.
-- Stow: `~/.config/<app>` is often a symlink into this repo, so an override may
-  be what the user is seeing even if the value looks like a default.
-- Theme: `config/omarchy-themes/.../ayu-dark` changes colours and backgrounds.
+- Hyprland: `config/hypr/.config/hypr/` (`input`, `looknfeel`, `bindings`,
+  `monitors` `.lua`, `xdph.conf`).
+- Audio: the `wireplumber` (`omarchy-headset-mic`) and `alsa-card-profile`
+  packages, and the headset section in `README.md`.
+- Apps: `config/spotify`, `config/herdr`, `config/kitty`, `config/starship`,
+  `zsh/`; colours and backgrounds: `config/omarchy-themes`.
+- Patches already in `KNOWN-GAPS.md`. `~/.config/<app>` is often a symlink into
+  this repo, so a value that looks like a default may be ours.
 
-Read the installed default first: what would Omarchy do without this repo?
-Compare against `/usr/share/omarchy/default` and `/usr/share/omarchy/config`,
-and ask the running system (`hyprctl getoption`, `pactl list cards`, …). Check
-the installed package, channel and related versions (`pacman -Q omarchy
-hyprland pipewire wireplumber`, kernel, `omarchy-channel-current`). If the
-symptom disappears once the override is removed, it is local config, not a gap
-— propose the fix here.
+Then establish the stock behaviour: what Omarchy ships
+(`/usr/share/omarchy/default`, `/usr/share/omarchy/config`), what the system
+reports (`hyprctl getoption`, `pactl list cards`, …), and the versions
+(`pacman -Q omarchy hyprland pipewire wireplumber`, `uname -r`,
+`omarchy-channel-current`). If the symptom goes away without the override, it
+is local config — propose the fix here.
 
 ## 3. Reproduce and collect evidence
 
-- Get a minimal reproduction and repeat it when safe.
-- Logs and state: `journalctl -b`, `journalctl --user -u <unit>`,
-  `hyprctl monitors`/`getoption`, `wpctl status`, `pactl list`, `aplay -l`,
-  `lspci -nnk`, and the relevant `/sys` or app log.
-- Timeline: `/var/log/pacman.log` shows when Omarchy and kernel packages last
-  changed.
-- Avoid destructive tests. A test that needs a config change, a service toggle
-  or a package downgrade follows the rule above: ask first, record the initial
-  state, and restore it.
+Get a minimal reproduction and repeat it when safe; no destructive tests.
+Sources: `journalctl -b`, `journalctl --user -u <unit>`, `hyprctl monitors`,
+`wpctl status`, `pactl list`, `aplay -l`, `lspci -nnk`, `/sys` and app logs;
+`/var/log/pacman.log` dates package changes.
 
 ## 4. Decide the verdict
 
@@ -78,52 +57,45 @@ symptom disappears once the override is removed, it is local config, not a gap
 | Documented, not reproducible now | Device absent, intermittent, or needs hardware; prior logs plus a matching upstream mechanism |
 | Unclear | Evidence missing; say exactly what to collect next |
 
-Hardware and kernel problems can still be Omarchy bugs if the distro kernel or
-packaging is implicated. Otherwise name the driver or kernel tracker. For the
-documented-but-not-reproducible case, record it as `accepted` and name what is
-unverified; do not claim it was confirmed live.
+A hardware or kernel problem is still Omarchy's when its kernel or packaging is
+implicated; otherwise name the driver or kernel tracker. "Cannot reproduce now"
+is not "not a bug": record it as `accepted`, say what is unverified, and never
+claim it was confirmed live.
 
-## 5. Search the Omarchy repos
-
-From the repo root:
+## 5. Search upstream
 
 ```bash
-.agents/skills/validate-gap/scripts/search-upstream.sh <search terms>
-.agents/skills/validate-gap/scripts/search-upstream.sh --state closed <terms>
+.agents/skills/validate-gap/scripts/search-upstream.sh [--state open|closed] [--limit N] <terms>
 ```
 
-Try two or three query shapes: the visible symptom, the component, and any
-exact error text. Fix PRs often use mechanism vocabulary instead of the user's
-words ("inactive card outputs", "multi-port sink"), so if the symptom words miss,
-search the terms the code and logs use, read the links inside related threads,
-and check the relevant labels (`gh search issues --repo omacom/omarchy --label
-audio --state open`). Use `--state closed` for history, and search
-`omacom/omarchy-pkgs` (`REPO=…`) when the problem is install or update related.
-A non-zero exit from the script means the search failed, not that nothing
-matched.
+It searches issues and PRs in `omacom/omarchy` (`REPO=omacom/omarchy-pkgs` for
+install or update problems), open and closed unless `--state` narrows it. A
+non-zero exit means the search failed, not that nothing matched — fix the
+query or repo. Try two or three shapes: the symptom, the component, exact error
+text. Fix PRs use mechanism words ("inactive card outputs", "multi-port
+sink"), so also search the terms the code and logs use, follow links in
+related threads, and check labels (`gh search issues --repo omacom/omarchy
+--label audio`).
 
-For each plausible hit, read the thread rather than the title: state, milestone,
-merged fix, workaround, duplicate or won't-fix close. For a merged PR, compare
-its merge commit with the installed tag (`gh api repos/omacom/omarchy/compare/
-<sha>...<tag>`): `ahead` or `identical` means the fix is in that tag, while
-`behind` or `diverged` means it is not (a merged date alone proves nothing).
-If an open issue or PR already covers it, link it; do not file a duplicate. If
-nothing matches, draft an issue with title, system details, steps,
-expected/actual and logs — but ask before filing anything upstream.
+Read each plausible thread, not its title: state, milestone, merged fix,
+workaround, duplicate or won't-fix close. The installed version and channel
+decide "fixed", not a merge date: `gh api
+repos/omacom/omarchy/compare/<merge-sha>...<installed-tag> --jq .status` gives
+`ahead` or `identical` when the fix is in, `behind` or `diverged` when not.
+Link an existing issue or PR rather than filing a duplicate. If nothing
+matches, draft an issue (title, system details, steps, expected/actual, logs)
+and ask before filing.
 
 ## 6. Record the outcome
 
-- Check for an existing row first; update it instead of adding a duplicate.
-- Real upstream bug that changes what we do here → add or update a row in
-  `KNOWN-GAPS.md` with its local state (`patched`, `accepted`, `override`),
-  upstream refs, and the condition that closes it.
+- Upstream bug that changes what we do here → add or update a row with its
+  local state, upstream refs and closing condition: `patched` if we keep a
+  workaround, `port` for a backported fix, `accepted` while we just wait. One
+  that changes nothing here gets no row.
 - Fix already in the installed stable release → no row; say so.
-- Existing open issue/PR and we are waiting → `accepted`, unless we keep a
-  workaround, then `patched`.
-- Caused by this repo → fix it here with a minimal diff, or record it as an
-  `override` only if it is deliberate.
+- Caused by this repo → fix it here with a minimal diff, or add an `override`
+  row only if the override is deliberate.
 - Expected behaviour → no row; explain why.
-- Do not add a row for an upstream bug that does not change what we do here.
 
 ## Report
 
@@ -136,17 +108,4 @@ Register: <existing row? updated/added/none, with the row text>
 Next: <fix here | wait for stable | file issue | need more evidence>
 ```
 
-## Rules
-
-- Validate before searching. An issue title that matches the words is not proof
-  the mechanism is the same.
-- "Cannot reproduce right now" is not "not a bug". Use prior logs and matching
-  mechanisms, and say plainly what is unverified.
-- A failed search is not "no matching issue"; fix the query or the repo first.
-- The installed version and channel decide "fixed", not the latest release.
-- Nothing outside `~/.dotfiles` changes during validation unless the user
-  approved it and the initial state was captured first. A validation that leaves
-  a profile, service or file different from the start is not finished.
-- Do not file upstream issues, change configs, or commit without explicit
-  confirmation.
-- Keep the repo's minimal-diff rule when fixing a local cause.
+Never file upstream, change config or commit without explicit confirmation.
