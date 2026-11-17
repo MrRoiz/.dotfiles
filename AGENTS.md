@@ -64,7 +64,7 @@ test/lint/CI tooling exists in this repo.
 ## Commands
 
 - Install / re-run: `~/.dotfiles/scripts/omarchy.sh`
-- Restow everything: `restow` (all managed packages from `~/.dotfiles`, including `hypr`, `wireplumber`, `starship`, `spotify`, `omarchy-themes`, `omarchy-menu` and `claude`)
+- Restow everything: `restow` (all managed packages from `~/.dotfiles`, including `hypr`, `wireplumber`, `alsa-card-profile`, `starship`, `spotify`, `omarchy-themes`, `omarchy-menu` and `claude`)
 - Re-stow after adding/removing files: `cd ~/.dotfiles/config && stow --restow -t "$HOME" <pkg>` (use the `STOW_PACKAGES` list from `omarchy.sh`, not `*`)
 - Omarchy bar clock format: `omarchy-bar set omarchy.clock format "<Qt format>"`
 - Menu extension: run `omarchy menu refresh` after editing `~/.config/omarchy/extensions/omarchy-menu.jsonc` (the Stow symlink is not watched through the repo).

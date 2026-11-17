@@ -14,7 +14,7 @@ Snapshot 2026-11-05: installed `omarchy 4.5.0-3` (stable), latest stable
 | Gap | Local state | Upstream | Closes when |
 | --- | --- | --- | --- |
 | Headset microphone port | **patched** — `omarchy-headset-mic` service | #16529 (input ports); #12489, #13758, #13775 are adjacent | Audio panel lists source ports as rows and keeps the headset port across replugs |
-| HDMI/DP audio output | **accepted** — manual profile switch only, nothing in the dotfiles | #8789 (issue), #8820 (PR) | #8820 or equivalent ships in a stable release |
+| HDMI/DP audio output | **patched** — combined analog+HDMI ACP profile (`alsa-card-profile` package) | #8789 (issue), #8820 (PR) | #8820 or equivalent ships in a stable release |
 | Per-monitor workspaces | **port** — #16213 toggle in Lua + CLI + menu; bar half not ported | #16213 (open) | Stable ships the per-monitor workspace toggle |
 | Screen-share cursor | **patched** — `cursor_mode = 2` in the `hypr` package's `xdph.conf` | #15577 (issue), #15580 (PR); #15690 closed in favour of #15580 | Stable ships `cursor_mode = 2` as the default and a browser share shows the pointer |
 
@@ -51,22 +51,69 @@ no row to click, and WirePlumber falls back to the internal mic after a replug.
 
 ## HDMI/DP audio output
 
-The Intel HDA card exposes analog and HDMI as mutually exclusive profiles.
-The panel lists live sinks only, and WirePlumber does not switch the profile
-(its ALSA monitor sets `api.acp.auto-profile = false`; analog also outranks
-HDMI), so an attached display has no HDMI sink to select.
+The Intel HDA card exposes analog and HDMI as mutually exclusive profiles, so
+activating one drops the other's sink. The panel lists live sinks only and has
+no card-profile path (Quickshell 0.3.2 exposes nodes but no card or profile
+type), and WirePlumber does not switch the profile (its ALSA monitor sets
+`api.acp.auto-profile = false`; analog also outranks HDMI), so an attached
+display has no HDMI sink to select.
 
-- Local state: **accepted**. HDMI audio is not an everyday need, so there is no
-  helper. When it is needed:
-  `pactl set-card-profile alsa_card.pci-0000_00_1f.3 output:hdmi-stereo+input:analog-stereo`
-  (and back with `output:analog-stereo+input:analog-stereo`).
-- Upstream: #8789 is the open enhancement; #8820 is the open fix; #14080 was
-  closed as a duplicate of #8789, #14082 as a duplicate of #8820, and #10938
-  was closed unmerged.
+- Local patch: `config/alsa-card-profile` provides the profile set ACP reads
+  before `/usr/share` (`~/.config/alsa-card-profile/mixer/profile-sets/default.conf`).
+  It re-includes the packaged set unchanged and adds one combined profile,
+  `output:analog-stereo+output:hdmi-stereo+input:analog-stereo` (priority 7000),
+  so both sinks exist at once and the stock panel lists both the display and
+  the analog output. `setup_hdmi_audio` in `scripts/omarchy.sh` stows it,
+  restarts WirePlumber (ACP reads the set when the card is created) and selects
+  the combined profile once, because WirePlumber restores the stored analog
+  profile over the higher-priority combined one. That selection is stored, so
+  later boots restore it — confirmed live 2026-11-16: both sinks appear
+  ("Built-in Audio Analog Stereo" and "... Digital Stereo (HDMI) [SAMSUNG]")
+  and the combined profile comes back across a WirePlumber restart.
+  Unplug/replug behaviour is still unverified; by its code the panel hides an
+  output whose ports are all unavailable (`omarchy-audio-sink-availability`),
+  so the HDMI row should vanish while no display is attached.
+- Limits: the combined profile maps only the first HDMI PCM (`hdmi-output-0`,
+  `aplay -l` device 3). A display on HDMI 1–3 (e.g. USB-C/DP) still needs
+  `pactl set-card-profile <card> output:hdmi-stereo-extraN+input:analog-stereo`.
+  The `.include` uses the packaged absolute path; ACP skips a missing include
+  silently, so if PipeWire ever moves `/usr/share/alsa-card-profile`, the set
+  would hold only this profile with undefined mappings and the card would
+  likely fail to load (not tested; the path has been stable for years).
+- Upstream: #8789 is the open enhancement; #8820 is the open fix and adds two
+  `pactl`/`jq` helpers plus picker rows for inactive card outputs (Quickshell
+  has no profile API, so the panel has to shell out). #14080 was closed as a
+  duplicate of #8789, #14082 as a duplicate of #8820, and #10938 was closed
+  unmerged.
 - Closes when: a stable release's audio panel lists inactive card outputs,
   selecting one activates the profile, creates the sink, and moves streams.
-- Removal: no local code to delete. Drop this row and the manual command once
-  the panel handles it.
+- Removal: `cd ~/.dotfiles/config && stow --delete -t "$HOME"
+  alsa-card-profile`, then `systemctl --user restart wireplumber` (the stored
+  profile name disappears with the set, and WirePlumber falls back to analog;
+  `pactl set-card-profile <card> output:analog-stereo+input:analog-stereo` makes
+  it explicit). Delete the `alsa-card-profile` stow package, the
+  `setup_hdmi_audio` function, its call and the header step in
+  `scripts/omarchy.sh`, the `restow` package-list entry, the README section and
+  its installer/Layout mentions, the `AGENTS.md` restow mention, and this row
+  and section.
+- Validate removal: `pactl list cards` must no longer offer
+  `output:analog-stereo+output:hdmi-stereo+input:analog-stereo`, and
+  `~/.local/state/wireplumber/default-profile` must not name it — run
+  `pactl set-card-profile <card> output:analog-stereo+input:analog-stereo` once
+  if it does, or pick any profile in the panel, which rewrites the entry.
+  `~/.local/state/wireplumber/default-routes` keeps a
+  `<card>:profile:output:analog-stereo+output:hdmi-stereo+input:analog-stereo`
+  routes entry that no command rewrites; it is runtime state, not a workaround,
+  and WirePlumber ignores routes for a profile that no longer exists. Then
+  `grep -rn "alsa-card-profile\|alsa_card_profile\|hdmi_audio\|hdmi-audio\|analog + HDMI\|analog-stereo+output:hdmi-stereo" ~/.dotfiles`
+  must return nothing: no leftover command, profile name, package, `restow`
+  entry, installer function, call or header step, README link or doc line.
+  (While this section still exists it matches itself, so run the grep after
+  deleting it.)
+  Verified live 2026-11-16: `stow --delete` plus a WirePlumber restart drops
+  the profile and lands back on `output:analog-stereo+input:analog-stereo`
+  with no other command; the dangling state entry is ignored, and restowing
+  restores both sinks.
 
 ## Per-monitor workspaces
 

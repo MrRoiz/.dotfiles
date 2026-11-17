@@ -76,7 +76,9 @@ bash ~/.dotfiles/scripts/omarchy.sh
      `sherlock`) so `stow` does not conflict. The `wireplumber` package is
      stowed separately for the headset-mic helper (see
      [Headset microphone](#headset-microphone)) so Omarchy's own
-     WirePlumber configs are preserved.
+     WirePlumber configs are preserved. The `alsa-card-profile` package is
+     stowed separately for the combined analog + HDMI profile (see
+     [HDMI audio](#hdmi-audio)).
    - Sets `omarchy-default-browser zen` and `omarchy-default-terminal
      kitty` (the same commands the Omarchy launcher's defaults menu uses).
    - `omarchy bar set omarchy.clock format "MMM dd hh:mmAP"` — matches
@@ -124,6 +126,43 @@ of capture gain plus +30 dB of analog boost and clips; lower the input once in
 the Omarchy audio panel. Around 40% is the highest level without the analog
 boost, and WirePlumber remembers it per port.
 
+## HDMI audio
+
+The sound card offers analog and HDMI as two **mutually exclusive** profiles:
+one active profile, one set of outputs. Omarchy's audio panel lists playback
+devices, not profiles, so with the analog profile active an attached display
+has no HDMI output to click — the TV is detected by ALSA and still has no sink.
+
+Switching profiles by hand made the other output disappear, so the repo
+instead adds one **combined** profile. The `alsa-card-profile` package ships a
+user-level copy of the card's profile set that re-includes the packaged one and
+appends a profile carrying both output mappings:
+
+```ini
+[Profile output:analog-stereo+output:hdmi-stereo+input:analog-stereo]
+description = Analog Stereo + HDMI Stereo
+output-mappings = analog-stereo hdmi-stereo
+input-mappings = analog-stereo
+priority = 7000
+```
+
+Both outputs then exist at the same time and the normal audio panel lists both
+(the display appears under its name, e.g. "SAMSUNG"), so you just pick one. No
+helper, no keybinding and no switching profiles by hand.
+
+`omarchy.sh` stows the profile set, restarts WirePlumber (ACP only reads the set
+when the card is created) and selects the combined profile once; WirePlumber
+then remembers it. On a machine whose card does not offer that profile, it
+leaves the card's profile as it is. After editing the profile set, run
+`systemctl --user restart wireplumber`; `restow` does not restart it.
+
+To turn it off:
+
+```bash
+cd ~/.dotfiles/config && stow --delete -t "$HOME" alsa-card-profile
+systemctl --user restart wireplumber
+```
+
 ## Window focus with HJKL
 
 `SUPER + H/J/K/L` focuses windows and `SUPER + SHIFT + H/J/K/L` swaps them.
@@ -147,7 +186,8 @@ needed.
   removes each; validate new ones with the `validate-gap` skill and re-check
   them with `gap-watch`.
 - `config/bin/.local/bin/restow` — restow every managed package from
-  `~/.dotfiles` (main packages + `hypr` + `wireplumber` + `starship`).
+  `~/.dotfiles` (main packages + `hypr` + `wireplumber` + `alsa-card-profile` +
+  `starship`).
   `omarchy-toggle-monitor-workspaces` switches Omarchy's per-monitor
   workspaces to global numbering (see `KNOWN-GAPS.md`).
 - `config/hypr/.config/hypr/{looknfeel,input,bindings,monitors}.lua` —
@@ -160,7 +200,10 @@ needed.
   apps are installed on Omarchy are stowed (see `STOW_PACKAGES` in
   `omarchy.sh`). The `mega` package ships the user systemd unit that
   `omarchy.sh` enables after stow; the `starship` package ships the prompt
-  config as the single file `~/.config/starship.toml`.
+  config as the single file `~/.config/starship.toml`; the `alsa-card-profile`
+  package ships `~/.config/alsa-card-profile/mixer/profile-sets/default.conf`,
+  which adds the combined analog + HDMI profile (see
+  [HDMI audio](#hdmi-audio)).
 - `zsh/aliases/{git,docker,tools}.sh`, `zsh/functions.sh`, `zsh/setup.sh` —
   sourced by `omarchy.sh` after the omarchy-zsh template. The git aliases in
   `aliases/git.sh` fill the gap left by dropping omz's `git` plugin.

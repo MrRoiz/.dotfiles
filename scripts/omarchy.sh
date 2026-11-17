@@ -11,6 +11,7 @@
 #   4. Ports dotfiles (stow), Hyprland overrides, zsh, defaults, and the status
 #      bar clock.
 #   5. Installs the wired headset microphone helper.
+#   6. Installs the combined analog + HDMI audio profile.
 #
 # Usage:
 #   Direct:  bash ~/.dotfiles/scripts/omarchy.sh
@@ -524,6 +525,42 @@ setup_headset_mic() {
   systemctl --user restart omarchy-headset-mic.service
 }
 
+# The Intel HDA card offers analog and HDMI as mutually exclusive profiles, so
+# an attached display has no sink for the Omarchy audio panel to list. The
+# `alsa-card-profile` package adds a combined profile to the card's profile set;
+# ACP reads that set when the card is created and WirePlumber restores the
+# stored analog profile over the higher-priority combined one, so restart
+# WirePlumber and select the combined profile once. That choice is stored, so it
+# is restored on later boots.
+setup_hdmi_audio() {
+  print_substep "Installing the combined analog + HDMI audio profile"
+  cd "$DOTFILES_DIR/config"
+  stow --restow -t "$HOME" alsa-card-profile
+  cd "$HOME"
+
+  systemctl --user restart wireplumber
+
+  local card combined
+  combined="output:analog-stereo+output:hdmi-stereo+input:analog-stereo"
+  for _ in {1..20}; do
+    card=$(pactl --format=json list cards 2>/dev/null |
+      jq -r --arg profile "$combined" \
+        '.[] | select(.profiles[$profile].available == true) | .name' |
+      head -n1) || true
+    if [[ -n $card ]]; then
+      break
+    fi
+    sleep 0.5
+  done
+
+  if [[ -z $card ]]; then
+    print_substep "Combined profile not available now; profiles left as they are"
+    return 0
+  fi
+
+  pactl set-card-profile "$card" "$combined"
+}
+
 # =============================================================================
 # Main Script Execution
 # =============================================================================
@@ -566,6 +603,7 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   stow_personal_dotfiles
   stow_hypr_overrides
   setup_headset_mic
+  setup_hdmi_audio
   # Mega's user systemd unit was just stowed into ~/.config/systemd/user;
   # enable + start it now that the file is in place.
   if command -v mega-cmd &>/dev/null; then
