@@ -19,7 +19,7 @@ Snapshot 2026-11-05: installed `omarchy 4.5.0-3` (stable), latest stable
 | Screen-share cursor | **patched** — `cursor_mode = 2` in the `hypr` package's `xdph.conf` | #15577 (issue), #15580 (PR); #15690 closed in favour of #15580 | Stable ships `cursor_mode = 2` as the default and a browser share shows the pointer |
 
 Re-check with the `gap-watch` skill or
-`.opencode/skills/gap-watch/scripts/gap-status.sh`; do not remove a local piece
+`.agents/skills/gap-watch/scripts/gap-status.sh`; do not remove a local piece
 on a version number alone — verify the behaviour on this machine first.
 
 ## Headset microphone port

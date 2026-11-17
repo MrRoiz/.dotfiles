@@ -88,8 +88,8 @@ unverified; do not claim it was confirmed live.
 From the repo root:
 
 ```bash
-.opencode/skills/validate-gap/scripts/search-upstream.sh <search terms>
-.opencode/skills/validate-gap/scripts/search-upstream.sh --state closed <terms>
+.agents/skills/validate-gap/scripts/search-upstream.sh <search terms>
+.agents/skills/validate-gap/scripts/search-upstream.sh --state closed <terms>
 ```
 
 Try two or three query shapes: the visible symptom, the component, and any

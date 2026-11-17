@@ -51,7 +51,8 @@ test/lint/CI tooling exists in this repo.
     threads). OpenCode loads the directory through
     `skills` in `opencode.json`; `config/claude` links each skill into
     `~/.claude/skills`, the only directory skills are read from. A new skill
-    needs that link; project-only skills stay in `.opencode/skills`.
+    needs that link; project-only skills stay in `.agents/skills`, which Claude
+    Code reads through the `.claude/skills` symlink.
 - `zsh/` — sourced by the Omarchy setup after the omarchy-zsh template.
   `setup.sh` chains the user's aliases / functions. The prompt is
   omarchy-zsh's starship and zsh-syntax-highlighting + history-search

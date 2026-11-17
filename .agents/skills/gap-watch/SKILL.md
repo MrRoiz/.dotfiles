@@ -17,7 +17,7 @@ actually present and works here.
    through git, so the working directory only affects how you spell the path):
 
    ```bash
-   .opencode/skills/gap-watch/scripts/gap-status.sh
+   .agents/skills/gap-watch/scripts/gap-status.sh
    ```
 
    It prints the installed Omarchy package and channel, the latest stable and
