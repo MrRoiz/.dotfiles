@@ -32,23 +32,18 @@ test/lint/CI tooling exists in this repo.
   omarchy setup stows only the packages whose apps it installs (see
   `STOW_PACKAGES` in `omarchy.sh`).
 - `agent/` — shared instructions and skills, kept once for both tools:
-  - `agent/instructions/` — shared instructions, one file per concern:
-    `PRINCIPLES.md` (what good code is: YAGNI, KISS, DRY, SOLID,
-    readability),
-    `ORGANIZATION.md` (layout, placement, conventions), `MODULARITY.md`
-    (file/function size, coupling, seams), `CONFIGURATION.md` (constants,
-    config, secrets), `CHANGES.md` (diff discipline, self-review), `GIT.md`
-    (signed commits, 1Password-gated push/pull), `NOTIFY.md` (phone
-    notifications), and `COMMUNICATION.md` (answer style; questions are not
-    instructions). OpenCode loads them through `instructions` in
-    `opencode.json`; Claude Code imports them from `~/.claude/CLAUDE.md`
-    (`config/claude` package). A rule that fits no existing file gets its own
-    instruction file and is added to both loaders.
-  - `agent/skills/` — shared skills: `polish` (quality-only cleanup of the
-    changed diff), `commit` (atomic commits in the project's style,
-    Conventional Commits by default) and `solve-comments` (triage the comments
-    on your PR/MR, fix only what is approved, then answer and resolve the
-    threads). OpenCode loads the directory through
+  - `agent/instructions/` — global instructions loaded into every session,
+    one file per concern: `PRINCIPLES.md`, `ORGANIZATION.md`, `MODULARITY.md`,
+    `CONFIGURATION.md`, `CHANGES.md`, `GIT.md` (signing, 1Password),
+    `NOTIFY.md` and `COMMUNICATION.md`. OpenCode loads them through
+    `instructions` in `opencode.json`; Claude Code imports them from
+    `~/.claude/CLAUDE.md` (`config/claude` package). A rule that fits no file
+    gets its own, added to both loaders. Keep them terse: each rule lives in
+    one file and no other file restates it.
+  - `agent/skills/` — shared skills: `polish`, `commit` and `solve-comments`.
+    A skill relies on the global instructions instead of repeating them, and
+    keeps its `description` short, since descriptions load every session.
+    OpenCode loads the directory through
     `skills` in `opencode.json`; `config/claude` links each skill into
     `~/.claude/skills`, the only directory skills are read from. A new skill
     needs that link; project-only skills stay in `.agents/skills`, which Claude
