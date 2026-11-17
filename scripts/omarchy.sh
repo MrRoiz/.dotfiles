@@ -315,7 +315,9 @@ install_omarchy_packages() {
 
   # Apps installed through their dedicated Omarchy app installer. Zen
   # stays because it doesn't auto-launch.
+  print_step "Installing via omarchy-install-browser: zen"
   omarchy-install-browser zen         # installs zen-browser-bin + chromium policies
+  print_step "Installing via omarchy-install-dev-env: rust"
   omarchy-install-dev-env rust        # rustup toolchain
 }
 
@@ -340,6 +342,7 @@ install_omarchy_packages() {
 install_mise_toolchains() {
   print_header "INSTALLING TOOLCHAINS (MISE)"
 
+  print_step "Installing via omarchy-install-dev-env: node"
   omarchy-install-dev-env node
 
   # nvm-style version files: mise only reads .nvmrc / .node-version for the
@@ -631,6 +634,7 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   install_rnvim
   # Install kitty as the Omarchy default terminal; runs after stow so the
   # stowed kitty.conf wins over Omarchy's default one.
+  print_step "Installing via omarchy-install-terminal: kitty"
   omarchy-install-terminal kitty
   # swaync and the battery-warning timer are not used here: Omarchy handles
   # notifications and low-battery warnings with its own shell.
