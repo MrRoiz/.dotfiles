@@ -16,6 +16,8 @@ readonly BLUE=$'\e[34m'
 readonly MAGENTA=$'\e[35m'
 readonly CYAN=$'\e[36m'
 readonly SEPARATOR="${DIM} │ ${RESET}"
+# Nerd Font git branch glyph, the same one the starship prompt uses.
+readonly BRANCH_ICON=""
 
 main() {
   local session
@@ -29,7 +31,7 @@ main() {
   effort=$(read_field "$session" '.effort.level')
   plan=$(read_plan)
 
-  local line="${BLUE}${project_dir##*/}${RESET}${branch:+ ${GREEN}${branch}${RESET}}"
+  local line="${BLUE}${project_dir##*/}${RESET}${branch:+ ${GREEN}${BRANCH_ICON} ${branch}${RESET}}"
   line+="${SEPARATOR}${CYAN}${model}${RESET}${effort:+ ${DIM}${effort}${RESET}}"
   if [[ -n $plan ]]; then
     line+="${SEPARATOR}${MAGENTA}${plan}${RESET}"
