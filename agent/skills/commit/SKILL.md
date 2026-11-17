@@ -1,58 +1,28 @@
 ---
 name: commit
-description: Split the working tree into atomic commits that follow the project's own commit rules, falling back to Conventional Commits when it defines none. Use when the user asks to commit, to make atomic or separate commits, to split the staged changes, or to turn the current diff into reviewable commits. Triggers include "commit this", "make atomic commits", "split these changes", "commit the working tree", "group these into commits". Not for pushing, opening a pull request, or reviewing code quality.
+description: Split the working tree into atomic commits in the project's commit style (Conventional Commits by default). Use when asked to commit, or to split or group the working tree or staged changes into commits. Not for pushing, PRs or code review.
 ---
 
 # Commit
 
-Turn the current changes into atomic commits: one logical change per commit,
-with messages the project's own rules prescribe.
-
-## Phase 0 — Learn the rules
-
-Read the global instructions loaded for the session and anything the project
-says about commits: contributing guides, commit templates, release tooling.
-Then run `git log --oneline -20`: the existing history is the strongest signal
-of the style actually used, including which prefixes and scopes are accepted.
-
-When nothing defines a style, use Conventional Commits: `type(scope): summary`
-with `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`,
-`chore` or `revert`. Keep the subject imperative, lowercase, without a trailing
-period, and under about 72 characters. Put the reason for the change, and any
-breaking change, in the body.
-
-Project rules also cover tooling: keep signing and hooks as configured. A failed
-signature or hook is a prompt or an error to surface, never something to bypass
-with `--no-verify` or `--no-gpg-sign`.
-
-## Phase 1 — Group the changes
-
-List what changed and why (`git status`, `git diff`, `git diff --cached`), then
-group it by intent. A behaviour change travels with its tests and its docs; an
-unrelated refactor, rename or formatting pass is its own commit.
-
-Split a mixed working tree with `git add -p` and per-path staging rather than
-staging everything at once. Stage only the paths each group needs, and leave
-ignored files and generated output out.
-
-Each commit must stand on its own: it builds and its tests pass at that point.
-When a change cannot be split without breaking that, keep it whole and say why.
-
-## Phase 2 — Commit
-
-For each group, in dependency order:
-
-1. Stage exactly its hunks and paths.
-2. Run the project's formatter, linter and tests on what will be committed, as
-   its instructions prescribe. Report a failure instead of committing around
-   it.
-3. Write the message decided in Phase 0. The body explains why the change is
-   made, not what the diff already shows, and references the issues it closes.
-
-Do not amend, rebase or rewrite commits that are already pushed unless the user
-asks for it.
-
-## Phase 3 — Report
-
-Show the commits you created (`git log --oneline -n <count>`), and list anything
-still uncommitted with the reason it was left out. Do not push unless asked.
+1. **Learn the style** from the project's commit rules (contributing guide,
+   commit template, release tooling) and `git log --oneline -20`, the best
+   evidence of the prefixes and scopes in use. Default: Conventional Commits —
+   `type(scope): summary` with `feat`, `fix`, `docs`, `style`, `refactor`,
+   `perf`, `test`, `build`, `ci`, `chore` or `revert`; imperative, lowercase,
+   no trailing period, about 72 characters at most; the body holds the reason
+   and any breaking change.
+2. **Group by intent** from `git status`, `git diff` and `git diff --cached`. A
+   behaviour change travels with its tests and docs; an unrelated refactor,
+   rename or formatting pass is its own commit. Every commit must build and
+   pass its tests on its own; if a change can't be split that way, keep it
+   whole and say why.
+3. **Commit each group in dependency order.** Stage exactly its paths and hunks
+   (`git add -p`, per-path) — never everything at once, never ignored or
+   generated files. Run the project's checks on what will be committed and
+   report a failure instead of committing around it. The body says why, not
+   what the diff shows, and references the issues it closes. Surface a failed
+   signature or hook; never bypass it (`--no-verify`, `--no-gpg-sign`). Don't
+   amend, rebase or rewrite pushed commits unless asked.
+4. **Report** the new commits (`git log --oneline -n <count>`) and what stays
+   uncommitted, with why. Don't push unless asked.

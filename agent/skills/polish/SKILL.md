@@ -1,96 +1,55 @@
 ---
 name: polish
-description: Review the changed code for reuse, simplification, dead code and dead dependencies, efficiency and altitude, then apply the fixes — quality only, no bug hunting. Use when the user asks to simplify, tidy, clean up or polish the current diff or recent changes, or after finishing a change. Triggers include "simplify this", "polish the diff", "clean this up", "tidy the changes", "review my changes for quality", "make this code simpler". Not for hunting correctness bugs or reviewing a pull request.
+description: Quality pass on the changed code — reuse, simplification, dead code and dependencies, efficiency, altitude — then apply the fixes; no bug hunting. Use when asked to polish, simplify, tidy or clean up the diff or recent changes, to review changes for quality, or after finishing a change. Not for correctness bugs or PR review.
 ---
 
 # Polish
 
-You are improving the quality of the changed code, not hunting for bugs. Review
-it for reuse, simplification, dead code and dead dependencies, efficiency and
-altitude, then fix what you find.
+## 1. Scope and rules
 
-## Phase 0 — Gather the diff
+Review the branch's changes plus the working tree
+(`git diff $(git merge-base HEAD <default-branch>)`); on the default branch,
+the uncommitted changes (`git diff HEAD`), or the last commit when there are
+none. If the user named a PR, branch or path, review that instead. Leave code
+outside the diff alone, except what the global instructions require removing
+with it.
 
-Run `git diff @{upstream}` (or `git diff main` / `git diff HEAD~1` when there is
-no upstream) for the unified diff under review, working-tree changes included.
-If that range is empty and the user named a target (a PR number, a branch, a
-file path), review that instead. That diff is the scope: leave untouched code
-alone, except for what the global instructions require removing with it.
+The global instructions (normally in context; if missing, say so rather than
+guessing them) and the project's `AGENTS.md`/`CLAUDE.md`, including nested
+ones for the changed directories, govern this review and override it. Project
+rules add to the global ones, never replace them.
 
-Before changing anything, follow the instructions that govern the session.
-Global ones come from the operator's setup, apply everywhere and are normally
-already in context. Project rules are separate: they live in the repository's
-`AGENTS.md`, `CLAUDE.md` and nested instruction files, so read the ones not in
-context for the changed files' directories. A project never replaces the global
-rules; if the global ones are missing, say so rather than guessing them. Those
-rules govern this review and win where they disagree with it — a project that
-demands minimal diffs and no unrelated reformatting still gets exactly that.
+## 2. Review
 
-## Phase 1 — Review
+With subagents, launch one per angle in a single message — a search agent for
+reuse and dead code, a general one for altitude — each told to read the
+governing instructions, which it starts without. The angles are independent.
+Without subagents, cover every angle yourself in one pass.
 
-When the harness can spawn subagents, launch one per angle in a single message
-so they run concurrently, and give different angles different agent types when
-that fits better (a fast search-oriented agent for reuse and dead code, a
-general agent for altitude). The angles are independent, so no agent needs
-another's findings. Point each subagent at the governing instructions too: it
-starts with fresh context and would otherwise hold only this skill.
+Report each finding as `file:line`, a one-line summary and its concrete cost.
 
-When no subagent tool is available, review the diff against each angle in turn
-yourself, in one pass, without skipping one for lack of fan-out.
+- **Reuse:** new code duplicating something the codebase has — grep shared
+  modules and neighbouring files; name the helper to call.
+- **Simplification:** redundant or derivable state, near-copies, deep nesting;
+  name the simpler form.
+- **Dead code and dependencies:** what the diff leaves unreachable or orphans —
+  commented-out blocks; unused functions, parameters, imports, variables and
+  exports; flags fixed at one value; unreachable branches; packages nothing
+  imports any more, with their lockfile entries and the config, scripts and
+  assets only they served. Before dropping a dependency, grep the tree for its
+  imports and the CLI or build names it provides; afterwards refresh the
+  lockfile and run the build and tests.
+- **Efficiency:** repeated computation or I/O, independent work run serially,
+  blocking work on startup or hot paths, long-lived closures pinning a large
+  scope (prefer a class or struct holding only the fields it needs); name the
+  cheaper form.
+- **Altitude:** a symptom patched instead of the root cause, or special cases
+  stacked on shared infrastructure; name the deeper, more general fix.
 
-Each angle yields findings with `file`, `line`, a one-line `summary`, and the
-concrete cost: what is duplicated, wasted, or harder to maintain.
+## 3. Apply
 
-### Reuse
-
-Flag new code that re-implements something the codebase already has. Grep the
-shared and utility modules and the files adjacent to the change, and name the
-existing helper to call instead.
-
-### Simplification
-
-Flag unnecessary complexity the diff adds: redundant or derivable state,
-copy-paste with slight variation, deep nesting. Name the simpler form that does
-the same job.
-
-### Dead code and dead dependencies
-
-Flag what the diff leaves unreachable and what its removals orphan. For code:
-commented-out blocks, unused functions, parameters, imports, variables and
-exports, flags fixed at one value, and branches no caller can reach. For
-dependencies: a package, crate, gem or module nothing imports any more, its
-lockfile entry, and the config, scripts or assets that served only the removed
-feature.
-
-Verify a dependency before removing it: grep the whole tree for its imports and
-for the CLI or build names it provides, then remove it, refresh the lockfile,
-and run the build and tests.
-
-### Efficiency
-
-Flag wasted work the diff introduces: redundant computation or repeated I/O,
-independent operations run sequentially, blocking work added to startup or hot
-paths. Also flag long-lived objects built from closures or captured
-environments — they keep the entire enclosing scope alive for the object's
-lifetime (a memory leak when that scope holds large values); prefer a
-class/struct that copies only the fields it needs. Name the cheaper alternative.
-
-### Altitude
-
-Check that each change fixes the root cause at the right depth instead of
-patching a symptom with a fragile bandaid. Special cases layered on shared
-infrastructure are a sign the fix is not deep enough — prefer the simpler, more
-general change to the underlying mechanism, and name that change.
-
-## Phase 2 — Apply the fixes
-
-Dedup findings that point at the same line or mechanism, then fix each remaining
-one directly. Skip a finding when its fix would change intended behaviour, when
-it needs changes well outside the reviewed diff that the global instructions do
-not require, or when you judge it a false positive; note the skip instead of
-arguing with it.
-
-Verify what you changed with the project's own formatter, linter and tests, as
-its instructions prescribe. Finish with a brief summary of what was fixed and
-what was skipped, or confirm the code was already clean, and say whether the
-review fanned out or ran as a single inline pass.
+Merge findings on the same line or mechanism, then fix each. Skip, and note,
+any that would change intended behaviour, reach well outside the diff without
+a global-instruction reason, or are false positives. Verify with the project's
+formatter, linter and tests. Report what was fixed and skipped (or that the
+code was clean) and whether the review fanned out or ran inline.

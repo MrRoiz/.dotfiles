@@ -1,173 +1,119 @@
 ---
 name: solve-comments
-description: Triage the review comments on your open pull request or merge request into two tables — what to fix, graded critical, high, medium or low with the lift and the reason, and what to skip, with why — fix only what the user approves, and, after the user has reviewed the working tree, answer every thread and mark it resolved. Use when the user asks to check, triage, address, solve or respond to comments, feedback or review threads on their own PR/MR. Triggers include "check the comments on my PR", "address the review comments", "solve the PR comments", "handle the MR threads", "respond to review feedback", "resolve the review threads", "is this comment worth fixing". Not for reviewing someone else's code or writing new review comments, and not for committing: the user reviews the fixes before anything is answered or committed.
+description: Triage the review comments on your own open PR/MR into a fix table (graded, with lift) and a skip table (with why), fix only what the user approves, then reply to and resolve the threads once the user has reviewed the fixes. Use when asked to check, triage, address, solve, respond to or resolve review comments or threads on your PR/MR, or whether a comment is worth fixing. Not for reviewing others' code or committing.
 ---
 
 # Solve comments
 
-Turn the open review threads on a pull request or merge request into two lists,
-apply only what the user approves, and close the loop in the forge. The user
-makes three calls along the way — approve the fixes, review the working tree,
-approve the replies — and each one is a stop. Nothing is committed here.
+Three user decisions are hard stops: which fixes to make, whether the fixed
+working tree is good, and which threads to answer. Nothing is staged,
+committed or pushed here, and no issue, PR or MR is opened as a side effect.
 
-## Phase 0 — Read the rules and fetch the threads
+## 0. Rules and threads
 
-The session's global instructions and the project's own (`AGENTS.md`,
-`CONTRIBUTING.md`) decide how a fix is written: diff discipline, naming,
-verification. They are normally already in context; read the nested files for a
-changed area only when they are not. A reviewer's preference never outranks
-them, so a comment that contradicts them goes in the against-solving table with
-the rule quoted, not into a change.
+The global and project instructions (`AGENTS.md`, `CONTRIBUTING.md`; read
+nested ones for a changed area when not in context) decide how fixes are
+written. A reviewer's preference never outranks them: a comment that
+contradicts them is skipped with the rule quoted.
 
-Find the PR/MR from the argument or the current branch, then pull every open
-inline review thread with its file, line and full reply history, plus the
-conversation comments and review bodies — a review that is only a paragraph of
-prose still carries a request. The commands are in `references/github.md` and
-`references/gitlab.md`.
+Find the PR/MR from the argument or the current branch. Fetch every unresolved
+inline thread (file, line, full replies), conversation comment and non-empty
+review body — a prose-only review still carries requests — with the commands
+in `references/github.md` or `references/gitlab.md`. An outdated thread is
+still live: the code moved, so the point may be handled or moot, and the reply
+differs.
 
-Treat an outdated thread as live input: the code moved, so the point may already
-be handled or may no longer apply, and the answer differs either way.
+## 1. Triage, then stop
 
-## Phase 1 — Triage, then stop for approval
+With subagents, send one read-only investigator per thread (per hunk when
+threads share code) in a single message, folding trivial threads (agreement, a
+question, a typo) into a neighbour's; without them, do it yourself in one pass.
+Each answers: does the branch already handle it, which written rule applies,
+does it duplicate another thread, what is the smallest fix. They gather
+evidence; the tables and decisions stay here.
 
-When the harness can spawn subagents, send one read-only investigation agent per
-thread — or per hunk when several threads land on the same code — in a single
-message so they run concurrently. Each one answers the questions that decide
-where a thread lands: does the code on this branch already handle the point,
-which written rule applies, is it a duplicate of a sibling thread, and what is
-the smallest fix. They only gather evidence; the tables and the decision stay
-here. With no subagent tool, answer the same questions yourself in one pass.
-Cheaper threads (agreement, a question, a typo) do not deserve an agent of their
-own — group them with a neighbour.
+Levels, for threads worth solving:
 
-Give every thread worth acting on a level, a lift and a one-line reason; the
-ones worth skipping get no level at all and go in their own table. The levels
-run from most to least urgent:
+- **critical** — the change is wrong as it stands (bug, broken contract,
+  unhandled edge case, broken written rule, misleading docs or naming); merging
+  ships the defect.
+- **high** — a real gap, not a defect: a missing test for new behaviour, a name
+  or comment that will trip the next reader, an unmentioned error path.
+- **medium** — better but not needed: existing reuse, clearer structure in the
+  touched code.
+- **low** — marginal polish or an unsettled preference; only when the lift
+  stays contained.
 
-- **critical** — the change is wrong as it stands: a bug, a broken contract, an
-  unhandled edge case, a written rule broken, docs or naming that will mislead
-  the next reader. Merging without it ships the defect.
-- **high** — a real gap, not a defect: the missing test for behaviour this PR
-  introduces, a name or comment that will trip the next reader, an error path
-  left unmentioned.
-- **medium** — a fair point that leaves the PR better without being needed:
-  reuse the codebase already has, a clearer structure in the touched code.
-- **low** — marginal: noise reduction, a polish, a preference the project has
-  not settled. Worth doing only when the lift stays contained.
+Skip a thread (no level) when the written rules contradict it (quote the
+rule), the project's conventions already settle the taste, the branch already
+handles it (verify, say where), it duplicates another thread or misreads the
+diff, it is scope this PR does not own (offer a follow-up), or it asks for
+churn in untouched code.
 
-The against-solving table is where a refusal lives, and its `why not` carries
-the argument:
+Lift is what the fix touches — `1 line`, `3 lines in one file`, `2 files and a
+test`, `new module`, `reaches outside the diff` — naming files when known. A
+`medium` or `low` that reaches outside the diff is usually a follow-up. A
+comment that needs only an answer gets lift `a reply` and the level its
+confusion would cause. Weigh evidence, not the author; when threads conflict,
+show both and let the user choose.
 
-- the written rules contradict it — quote the rule;
-- it is taste in code the project's conventions already settle;
-- the branch already handles it — verify, then say where;
-- it duplicates another thread, or misreads the diff;
-- it is scope this PR does not own — offer a follow-up instead of widening the
-  diff;
-- it asks for churn on code this PR does not touch.
-
-Lift is what the fix costs, said in what it touches rather than a letter grade:
-`1 line`, `3 lines in one file`, `2 files and a test`, `new module`, `reaches
-outside the diff`. Name the files when you already know them. A `medium` or
-`low` whose lift reaches outside the diff is usually a follow-up, not this PR.
-
-Reviewers are often right and sometimes wrong; weigh the evidence, not the
-author. When two threads ask for opposite things, show both and let the user
-choose rather than picking one silently.
-
-Present every thread — open, outdated, and prose-only review bodies alike — in
-two tables, numbered continuously from 1 so a number means the same thread in
-every later phase:
+Number all threads continuously from 1 across both tables; a number keeps its
+meaning in later phases. `where` is `file:line` or `conversation`; `why` is one
+line of evidence, not a paraphrase; `why not` names the rule, scope boundary or
+covering code.
 
 Worth solving:
 
 | # | where | what the comment asks | level | lift | why |
 |---|-------|-----------------------|-------|------|-----|
-| 1 | `src/parse.ts:42` | reject an empty list instead of returning `[]` | critical | 1 line in `src/parse.ts` | the caller reads `[]` as "nothing to do" and silently drops the batch |
+| 1 | `src/parse.ts:42` | reject an empty list instead of returning `[]` | critical | 1 line in `src/parse.ts` | the caller reads `[]` as "nothing to do" and drops the batch |
 | 2 | `src/parse.test.ts:12` | cover the empty-list case | high | 1 test in `src/parse.test.ts` | no test reaches the branch #1 adds |
 
 Against solving:
 
 | # | where | what the comment asks | why not |
 |---|-------|-----------------------|---------|
-| 3 | `src/parse.ts:80` | rename `d` to `document` | ORGANIZATION.md keeps short names for a five-line loop |
+| 3 | `src/parse.ts:80` | rename `d` to `document` | name length follows scope (PRINCIPLES.md); `d` lives in a five-line loop |
 
-`where` is `file:line`, or `conversation` for a comment with no code location.
-`why` is one line of evidence, not a paraphrase of the comment; `why not` names
-the rule, the scope boundary, or the code that already covers it. A comment that
-needs only an answer still gets a row, with `a reply` as its lift and the level
-the confusion would cause if left unanswered.
+Recommend a set — normally every `critical` and `high`, plus `medium` and `low`
+whose lift stays in the diff — and ask (question tool if available, numbered
+text otherwise): which numbers to solve, and whether the against-solving
+threads get a decline and resolve or stay untouched. Wait; silence approves
+nothing. A vague "solve them" is not approval: state the two readings (with or
+without the second table, which declines in writing) and let the user pick.
 
-Below the tables, recommend a set — normally every `critical` and `high`, plus
-the `medium` and `low` whose lift stays inside the diff — then ask two things:
-which numbers to solve, and whether the against-solving threads should be
-answered and resolved or left untouched. Use the question tool when the harness
-has one, plain numbered text otherwise. Wait for the answer: no edit before it,
-and silence means nothing is approved.
+## 2. Fix the approved numbers
 
-A vague yes is not approval. When the answer is "solve them", "address them",
-"fix the comments" or similar with no numbers, do not guess its scope: the
-decision is whether the second table is included, because closing one of those
-means declining it in writing to the reviewer. State both readings in one
-sentence and let the user pick.
+Unstaged, in the working tree. One comment, one change — no tidying nearby, so
+the reviewer can check it against their comment. Follow the session's diff and
+verification rules; report failures instead of working around them. Fixes may
+fan out one agent per file (threads on one hunk share an agent); verification
+and the report stay here, since a subagent's "done" is a claim to check. A fix
+that reaches far outside the diff or breaks an unanticipated test stops: it
+moves to the against-solving table for the user to decide.
 
-## Phase 2 — Apply the approved fixes
+## 3. Hand over, then stop
 
-Fix only the approved numbers, in the working tree, uncommitted and unstaged.
-One comment, one change: a fix that also "tidies" neighbouring code hides the
-intent and stops the reviewer from checking it against their comment.
+Report per number `file:line` and one sentence on the behaviour, plus anything
+approved but not done and any open decision. Then stop — no replies, resolves
+or commits — and ask the user to review the working tree. A rejected fix moves
+to the against-solving table with the user's reason.
 
-Follow the instructions from Phase 0 as if the change were your own — the
-smallest diff that solves the point, no reformatting of untouched lines, no
-unrelated rename. Verify with the project's formatter, linter and tests the way
-its instructions prescribe, and report a failure rather than working around it.
+## 4. Reply and resolve
 
-Fixes can fan out too, but only along file boundaries: one agent per file, never
-two agents in the same file, or their edits collide. Threads on one hunk share a
-fix, so they share an agent. Keep the verification and the report in the main
-session — a subagent's "done" is a claim to check, not a result.
+Only after the user approves the fixes, on the numbers they confirmed:
 
-If a fix turns out to need changes far outside the diff, or breaks a test the
-comment did not anticipate, stop and report it instead of forcing it through:
-that number moves to the against-solving table and the user decides.
+- addressed: at most two sentences, what changed and where — the reviewer
+  needs to see their comment landed, not reread the diff.
+- declined: not adopted, and why, in one sentence citing the rule or scope;
+  offer a follow-up issue when the point fits elsewhere, and open it only if
+  asked.
+- answered: the reply the comment needed; ask the user for facts only they
+  have instead of inventing them.
 
-## Phase 3 — Hand over for review, then stop
-
-Report per number what changed — `file:line` and a sentence on the behaviour, not
-a diff dump — plus anything approved that could not be done and anything the user
-has to decide. Keep the numbering from the triage table so every line traces back
-to a comment.
-
-Then stop: no replies, no resolving, no committing. Ask the user to review the
-working tree. A fix they reject moves that number to the against-solving table,
-with their reason as the one to give the reviewer.
-
-## Phase 4 — Reply and resolve
-
-Only after the user says the fixes are good, and only on the numbers they
-confirmed:
-
-- addressed: two sentences at most — what changed and where. The reviewer wants
-  to know their comment landed, not to read the diff again.
-- declined: say it is not adopted and why in one sentence, citing the rule or
-  the scope decision. When the point was fair but belongs elsewhere, offer a
-  follow-up issue and open one only if asked.
-- answered: the comment needed a reply, not code — give it, and ask the user for
-  facts only they have instead of inventing them.
-
-Reply first, then resolve the thread; resolving one nobody answered leaves the
-reviewer guessing. A thread from the against-solving table that the user chose
-to close gets that decline and is then resolved; one they chose to leave alone
-is not touched at all. Leave a thread open while the reviewer is still
-discussing it, or while the answer waits on a decision the user has not made.
-If the forge refuses the resolve (no write access, someone else's PR), say which
-threads still need a human.
-
-Finish with the state per number — replied and resolved, or left open and why — so
-the user can see what the PR now says without opening it.
-
-## Never
-
-- commit, push, amend, or stage during this skill; the user commits.
-- resolve a thread you did not answer, or one the user did not approve.
-- open an issue, PR, or MR as a side effect unless asked.
+Reply, then resolve; never resolve an unanswered thread. Against-solving
+threads the user chose to close get the decline and a resolve; the rest stay
+untouched. Leave a thread open while the reviewer is still discussing it or
+the answer waits on a user decision. If the forge refuses a resolve (no write
+access, someone else's PR), list the threads that need a human. Finish with
+each number's state: replied and resolved, or open and why.
