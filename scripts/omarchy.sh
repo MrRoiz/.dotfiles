@@ -493,17 +493,19 @@ stow_personal_dotfiles() {
   print_ok "Stowed: ${STOW_PACKAGES[*]}"
 }
 
-# Point Claude Code at the stowed status line. settings.json stays untracked
-# because Claude rewrites it (model, effort, theme), so merge only this key.
+# Merge the tracked templates/claude/settings.json into Claude Code's
+# settings.json, which stays untracked because Claude rewrites it (model,
+# effort, theme): only the template's keys are set, and the template wins.
 # The claude-work account links its settings.json to this one.
-setup_claude_statusline() {
-  print_substep "Enabling the Claude Code status line"
+setup_claude_settings() {
+  print_substep "Merging the Claude Code settings template"
+  local template="$DOTFILES_DIR/templates/claude/settings.json"
   local settings="$HOME/.claude/settings.json"
   local merged
   if [[ ! -f $settings ]]; then
     echo '{}' >"$settings"
   fi
-  merged=$(jq '.statusLine = {"type": "command", "command": "~/.claude/statusline.sh"}' "$settings")
+  merged=$(jq --slurp '.[0] * .[1]' "$settings" "$template")
   printf '%s\n' "$merged" >"$settings"
 }
 
@@ -615,7 +617,7 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   # also removes the old .config entries Omarchy shipped so stow does not
   # conflict, plus the dirs for apps we no longer install here.
   stow_personal_dotfiles
-  setup_claude_statusline
+  setup_claude_settings
   stow_hypr_overrides
   setup_headset_mic
   setup_hdmi_audio
