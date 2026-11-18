@@ -17,6 +17,7 @@ Snapshot 2026-11-05: installed `omarchy 4.5.0-3` (stable), latest stable
 | HDMI/DP audio output | **patched** — combined analog+HDMI ACP profile (`alsa-card-profile` package) | #8789 (issue), #8820 (PR) | #8820 or equivalent ships in a stable release |
 | Per-monitor workspaces | **port** — #16213 toggle in Lua + CLI + menu; bar half not ported | #16213 (open) | Stable ships the per-monitor workspace toggle |
 | Screen-share cursor | **patched** — `cursor_mode = 2` in the `hypr` package's `xdph.conf` | #15577 (issue), #15580 (PR); #15690 closed in favour of #15580 | Stable ships `cursor_mode = 2` as the default and a browser share shows the pointer |
+| FocalTech fingerprint reader | **accepted** — no local code; fingerprint setup unavailable | #11384 (issue), #11387 (PR); #14089, #8800, #16228 are adjacent | Stable's `omarchy-hw-fingerprint` detects `2808:a99a` and `omarchy setup security fingerprint` enrolls it |
 
 Re-check with the `gap-watch` skill or
 `.agents/skills/gap-watch/scripts/gap-status.sh`; do not remove a local piece
@@ -188,6 +189,37 @@ viewers never see the pointer.
 - Caveat: remote-desktop captures on Intel iGPUs can still hide the pointer for
   a different reason (#16622; `cursor:no_hardware_cursors = 1` fixes that one),
   so the cursor mode alone does not cover that path.
+
+## FocalTech fingerprint reader
+
+The laptop (ASUS Vivobook X1605VA) has a FocalTech FT9349 ESS match-on-chip
+reader, USB `2808:a99a`, with no kernel driver bound — the shape of a
+libusb reader. `omarchy-hw-fingerprint` exits 1 for it: `2808` is not in
+`fingerprint_vendors`, and the product string matches none of its name
+patterns. So `omarchy setup security fingerprint` stops with "No fingerprint
+sensor detected" before installing `fprintd`/`libfprint-git`, and the
+post-update invitation never appears. The driver is not the gap: the
+`libfprint-git` Omarchy pins (`1.94.100.r10.g6f9479c`) lists `2808:a99a` in
+`focaltech_moc`. Confirmed 2026-11-18.
+
+- Local state: none. Installing `fprintd` and `libfprint-git` by hand would
+  bypass the wizard's PAM setup, so we wait for the detector fix.
+- Upstream: #11384 reports the false negative for `2808:*` readers; #11387
+  (open, `verified`, `ready`) adds vendor `2808` to the detector while keeping
+  the existing driver check, which rules out FocalTech touchpads (this
+  laptop's `2808:0212` binds `i2c-hid`). #14089 (`2808:a97a`) and #8800
+  (`2808:a658`) are other FocalTech readers; #16228 matches one
+  vendor:product only; #11884 and #15586 were closed unmerged.
+- Checked 2026-11-18: the PR's `omarchy-hw-fingerprint` (head `e550879`, the
+  only change is adding `2808` to `fingerprint_vendors`) exits 0 against this
+  laptop's sysfs through the vendor path (reader `1-7`, interface `1-7:1.0`
+  driverless), while the installed one exits 1. Enrollment with this reader
+  is unverified: it needs `fprintd`, `libfprint-git` and the wizard's PAM
+  changes.
+- Closes when: `omarchy-hw-fingerprint` exits 0 on this laptop in a stable
+  release, and `omarchy setup security fingerprint` enrolls a finger that
+  `sudo` accepts.
+- Removal: drop this row and section.
 
 ## Adding a gap
 
