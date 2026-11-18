@@ -74,6 +74,41 @@
     "when": "omarchy-ntfy has-channel",
     "action": "omarchy-launch-floating-terminal-with-presentation \"omarchy-ntfy rotate\""
   },
+  // Media: the same shell IPC calls Omarchy binds to the media keys.
+  "trigger.media": {
+    "icon": "󰝚",
+    "label": "Media",
+    "description": "Control the active media player",
+    "aliases": [
+      "media",
+      "music",
+      "player"
+    ]
+  },
+  "trigger.media.play-pause": {
+    "icon": "󰐎",
+    "label": "Play / Pause",
+    "action": "omarchy-shell media playPause"
+  },
+  "trigger.media.next": {
+    "icon": "󰒭",
+    "label": "Next Track",
+    "action": "omarchy-shell media next"
+  },
+  "trigger.media.previous": {
+    "icon": "󰒮",
+    "label": "Previous Track",
+    "action": "omarchy-shell media previous"
+  },
+  // MPRIS has no like, so send Spotify's own Like shortcut (Alt+Shift+B) to its
+  // window; it toggles, so a liked song gets unliked.
+  "trigger.media.like": {
+    "icon": "󰋑",
+    "label": "Toggle Like",
+    "description": "Like or unlike Spotify's current song",
+    "when": "pgrep -x spotify",
+    "action": "hyprctl dispatch 'hl.dsp.send_shortcut({ mods = \"ALT SHIFT\", key = \"B\", window = \"class:^(spotify)$\" })'"
+  },
   // Workspace numbering: Omarchy 4.5 is per-monitor only; this row runs the
   // ported omacom/omarchy#16213 opt-out (see KNOWN-GAPS.md).
   "setup.workspaces": {
