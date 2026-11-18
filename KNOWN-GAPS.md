@@ -13,7 +13,7 @@ Snapshot 2026-11-05: installed `omarchy 4.5.0-3` (stable), latest stable
 
 | Gap | Local state | Upstream | Closes when |
 | --- | --- | --- | --- |
-| Headset microphone port | **patched** — `omarchy-headset-mic` service | #16529 (input ports); #12489, #13758, #13775 are adjacent | Audio panel lists source ports as rows and keeps the headset port across replugs |
+| Headset microphone port | **patched** — `omarchy-headset-mic` service | #16529 (issue), #16633 (PR); #12489, #13758, #13775, #18725 are adjacent | Audio panel lists source ports as rows and keeps the headset port across replugs |
 | HDMI/DP audio output | **patched** — combined analog+HDMI ACP profile (`alsa-card-profile` package) | #8789 (issue), #8820 (PR) | #8820 or equivalent ships in a stable release |
 | Per-monitor workspaces | **port** — #16213 toggle in Lua + CLI + menu; bar half not ported | #16213 (open) | Stable ships the per-monitor workspace toggle |
 | Screen-share cursor | **patched** — `cursor_mode = 2` in the `hypr` package's `xdph.conf` | #15577 (issue), #15580 (PR); #15690 closed in favour of #15580 | Stable ships `cursor_mode = 2` as the default and a browser share shows the pointer |
@@ -31,10 +31,13 @@ no row to click, and WirePlumber falls back to the internal mic after a replug.
 - Local patch: `config/wireplumber/.local/bin/omarchy-headset-mic` plus its
   user service. Installed by `setup_headset_mic` in `scripts/omarchy.sh`, and
   documented under "Headset microphone" in `README.md`.
-- Upstream: #16529 tracks selecting input ports of one source; #12489 expands
-  sink ports only, and #13758 / #13775 filter unplugged inputs. #10985
-  implemented both sides but was closed as a duplicate of #7205, which only
-  covered sinks.
+- Upstream: #16529 tracks selecting input ports of one source; #16633 (open)
+  is the fix: it lists source ports as rows and switches the port before
+  setting the default, but its description says jack persistence across
+  replugs is still untested. #12489 expands sink ports only, and #13758 asks
+  to filter unplugged inputs; #13775 was closed, and #18725 (open) now does
+  that filtering without adding port selection. #10985 implemented both sides
+  but was closed as a duplicate of #7205, which only covered sinks.
 - Closes when: the panel lists both ports of the single source, selecting the
   headset mic sticks, and a replug restores it without help.
 - Removal: disable the service first
