@@ -1,6 +1,7 @@
 @~/.dotfiles/agent/instructions/PRINCIPLES.md
 @~/.dotfiles/agent/instructions/ORGANIZATION.md
 @~/.dotfiles/agent/instructions/MODULARITY.md
+@~/.dotfiles/agent/instructions/PATTERNS.md
 @~/.dotfiles/agent/instructions/CONFIGURATION.md
 @~/.dotfiles/agent/instructions/CHANGES.md
 @~/.dotfiles/agent/instructions/GIT.md

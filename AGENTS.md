@@ -34,7 +34,7 @@ test/lint/CI tooling exists in this repo.
 - `agent/` — shared instructions and skills, kept once for both tools:
   - `agent/instructions/` — global instructions loaded into every session,
     one file per concern: `PRINCIPLES.md`, `ORGANIZATION.md`, `MODULARITY.md`,
-    `CONFIGURATION.md`, `CHANGES.md`, `GIT.md` (signing, 1Password),
+    `PATTERNS.md`, `CONFIGURATION.md`, `CHANGES.md`, `GIT.md` (signing, 1Password),
     `NOTIFY.md` and `COMMUNICATION.md`. OpenCode loads them through
     `instructions` in `opencode.json`; Claude Code imports them from
     `~/.claude/CLAUDE.md` (`config/claude` package). A rule that fits no file

@@ -46,7 +46,8 @@ is easier to read and navigate.
     isn't obvious.
   - Long calls and literals: one argument or field per line.
   - Return early instead of nesting; keep each branch short enough to see whole.
-  - Comment only tricky code and workarounds: say why and, for a workaround,
+  - Comment only tricky code, workarounds and a file's design pattern
+    (`PATTERNS.md`): say why and, for a workaround,
     what would let it go. Never restate the code.
 - **Fail loudly:** Never swallow errors. Catch only to handle one or add
   context, and say what failed with which input. Validate at trust boundaries
