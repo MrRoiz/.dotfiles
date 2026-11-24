@@ -5,9 +5,11 @@
 # them.
 set -euo pipefail
 
-# Claude keeps the account profile in ~/.claude.json unless CLAUDE_CONFIG_DIR
-# moves it (the claude-work alias does).
-readonly ACCOUNT_FILE="${CLAUDE_CONFIG_DIR:-$HOME}/.claude.json"
+# The session's login lives in ~/.claude/.credentials.json unless
+# CLAUDE_CONFIG_DIR moves it (the claude-work alias does). The plan comes from
+# here, not from oauthAccount in .claude.json: one person in several orgs gets
+# the same cached profile for every login, whatever plan the token is for.
+readonly CREDENTIALS_FILE="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.credentials.json"
 
 readonly RESET=$'\e[0m'
 readonly DIM=$'\e[2m'
@@ -54,25 +56,25 @@ read_branch() {
   git --no-optional-locks -C "$directory" branch --show-current 2>/dev/null || true
 }
 
-# Prints the plan from the account profile, e.g. "Pro" or "Team · Max 5x".
-# Prints nothing for API-key logins, which have no profile.
+# Prints the plan of the session's login, e.g. "Pro" or "Team · Max 5x".
+# Reads only the plan fields, never the tokens. Prints nothing for API-key
+# logins, which have no OAuth credentials.
 read_plan() {
-  if [[ ! -r $ACCOUNT_FILE ]]; then
+  if [[ ! -r $CREDENTIALS_FILE ]]; then
     return 0
   fi
 
   jq -r '
-    .oauthAccount // {}
+    .claudeAiOauth // {}
     | [
-        (.organizationType // empty
-          | sub("^claude_"; "")
+        (.subscriptionType // empty
           | (.[0:1] | ascii_upcase) + .[1:]),
-        (.userRateLimitTier // empty
+        (.rateLimitTier // empty
           | capture("max_(?<multiplier>[0-9]+x)")
           | "Max \(.multiplier)")
       ]
     | join(" · ")
-  ' "$ACCOUNT_FILE"
+  ' "$CREDENTIALS_FILE"
 }
 
 main
