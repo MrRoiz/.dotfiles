@@ -18,6 +18,7 @@ Snapshot 2026-11-05: installed `omarchy 4.5.0-3` (stable), latest stable
 | Per-monitor workspaces | **port** — #16213 toggle in Lua + CLI + menu; bar half not ported | #16213 (open) | Stable ships the per-monitor workspace toggle |
 | Screen-share cursor | **patched** — `cursor_mode = 2` in the `hypr` package's `xdph.conf` | #15577 (issue), #15580 (PR); #15690 closed in favour of #15580 | Stable ships `cursor_mode = 2` as the default and a browser share shows the pointer |
 | FocalTech fingerprint reader | **accepted** — no local code; fingerprint setup unavailable | #11384 (issue), #11387 (PR); #14089, #8800, #16228 are adjacent | Stable's `omarchy-hw-fingerprint` detects `2808:a99a` and `omarchy setup security fingerprint` enrolls it |
+| Weather bar widget hidden | **accepted** — no local code; widget missing while a location is saved | #19820 (issue), #19133 (fix on `quattro`), #19357 (backport PR); #17404, #20035, #19348 are adjacent | Stable sends a User-Agent to Open-Meteo and the weather pill shows with a saved location |
 
 Re-check with the `gap-watch` skill or
 `.agents/skills/gap-watch/scripts/gap-status.sh`; do not remove a local piece
@@ -219,6 +220,30 @@ post-update invitation never appears. The driver is not the gap: the
 - Closes when: `omarchy-hw-fingerprint` exits 0 on this laptop in a stable
   release, and `omarchy setup security fingerprint` enrolls a finger that
   `sudo` accepts.
+- Removal: drop this row and section.
+
+## Weather bar widget hidden
+
+With a location saved (`~/.local/state/omarchy/settings/weather.json`), the
+`omarchy.weather` bar icon comes only from the Open-Meteo forecast request in
+`shell/plugins/panels/weather/Panel.qml`. 4.5.0-3 sends it with curl's default
+User-Agent, and Open-Meteo answers that full request with 403 Forbidden, so
+the label stays empty and the widget hides itself. Confirmed 2026-11-24: the
+widget's exact URL returns 403 three times out of three as `curl/8.23.0` and 200
+as `Mozilla/5.0` or `omarchy`; smaller requests return 200 with the default
+agent, and wttr.in and `omarchy-weather-status` work.
+
+- Local state: none. `omarchy weather location --clear` would bring the pill
+  back through IP auto-location and the wttr.in icon, at the cost of the saved
+  location, so we keep the location and wait.
+- Upstream: #19820 (open) is this bug. #19133 adds an identifying User-Agent
+  to both Open-Meteo requests on `quattro` (`f12dc43`, `diverged` from
+  `v4.5.0`); #19357 (open) backports it to 4.5, and #19198 (open) proposes the
+  same plus a wttr.in fallback. #17404 tracks the missing fallback when
+  Open-Meteo fails; #20035 and #19348 report the same symptom.
+- Closes when: the installed stable `Panel.qml` passes `-A` to the Open-Meteo
+  curl call, and the weather pill shows after a shell restart with the location
+  still saved.
 - Removal: drop this row and section.
 
 ## Adding a gap
