@@ -19,6 +19,7 @@ Snapshot 2026-11-05: installed `omarchy 4.5.0-3` (stable), latest stable
 | Screen-share cursor | **patched** — `cursor_mode = 2` in the `hypr` package's `xdph.conf` | #15577 (issue), #15580 (PR); #15690 closed in favour of #15580 | Stable ships `cursor_mode = 2` as the default and a browser share shows the pointer |
 | FocalTech fingerprint reader | **accepted** — no local code; fingerprint setup unavailable | #11384 (issue), #11387 (PR); #14089, #8800, #16228 are adjacent | Stable's `omarchy-hw-fingerprint` detects `2808:a99a` and `omarchy setup security fingerprint` enrolls it |
 | Weather bar widget hidden | **accepted** — no local code; widget missing while a location is saved | #19820 (issue), #19133 (fix on `quattro`), #19357 (backport PR); #17404, #20035, #19348 are adjacent | Stable sends a User-Agent to Open-Meteo and the weather pill shows with a saved location |
+| Claude accounts share limits | **accepted** — no local code; agents panel shows one account's limits on both Claude rows | #15981 (issue), #16144 and #18681 (open PRs) | Stable keys each Claude account's limits by more than `accountUuid` and the two rows show their own numbers |
 
 Re-check with the `gap-watch` skill or
 `.agents/skills/gap-watch/scripts/gap-status.sh`; do not remove a local piece
@@ -244,6 +245,33 @@ agent, and wttr.in and `omarchy-weather-status` work.
 - Closes when: the installed stable `Panel.qml` passes `-A` to the Open-Meteo
   curl call, and the weather pill shows after a shell restart with the location
   still saved.
+- Removal: drop this row and section.
+
+## Claude accounts share limits
+
+The agents panel (`omarchy.agents`) lists both Claude logins — Main
+(`~/.claude`, Pro) and `oscar.ruiz` (the `claude-work` home, Team) — but shows
+the same Session and Weekly limits on both, switching to whichever login
+started a session last. `account_limits()` in `omarchy-agent-usage-claude`
+names each account's limits cache after `oauthAccount.accountUuid`, and both
+homes carry the same one (`ca6ee0a5…`), so both read and write
+`~/.cache/omarchy/agent-usage/claude-limits-ca6ee0a5….json`. Confirmed
+2026-11-25 on 4.5.0-3: the two homes hold different tokens and subscriptions
+(`pro` / `default_claude_ai` and `team` / `default_claude_max_5x` in
+`.credentials.json`) yet only that one cache file is written.
+
+- Local state: none. The registry
+  (`~/.local/state/omarchy/agents/accounts/claude.json`) also records the same
+  `accountId` for both accounts.
+- Upstream: #15981 (open) names this cache collision alongside the
+  registration refusal. #16144 and its rebase #18681 (both open) key a Claude
+  account by `accountUuid` plus `organizationUuid`. Unverified here: both
+  homes' `.claude.json` also report the same `organizationUuid` (the stale
+  shared profile `AGENTS.md` notes for the status line), so that key may not
+  separate these two logins until the profile is refreshed.
+- Closes when: the installed stable release writes a separate limits cache
+  per Claude login, and the two panel rows show different numbers after both
+  logins run a session.
 - Removal: drop this row and section.
 
 ## Adding a gap
