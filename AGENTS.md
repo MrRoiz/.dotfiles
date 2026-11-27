@@ -15,7 +15,7 @@ test/lint/CI tooling exists in this repo.
 
 ## Minimal diffs (rule)
 
-**NEVER modify something there is no need to modify — it only adds noise to the diff.** Change only the lines the task actually requires. Do **not** reformat, re-align, re-indent, re-wrap, or re-order unrelated code, comments, or whitespace, and never commit whitespace-only churn (e.g. collapsing comment padding, sorting keys, "tidying" a block you did not need to touch). If you spot unrelated drift, leave it as-is and mention it — do not fold it into the change. A diff should contain only the intended edits so review stays focused.
+Change only the lines the task requires; anything else is noise that slows review. Don't reformat, re-align, re-indent, re-wrap or re-order unrelated code, comments or whitespace, and don't commit whitespace-only churn (e.g. collapsing comment padding, sorting keys, "tidying" a block you did not need to touch). If you spot unrelated drift, leave it as-is and mention it.
 
 ## Gaps and bugs (rule)
 
