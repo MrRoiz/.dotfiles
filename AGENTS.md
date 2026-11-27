@@ -2,7 +2,7 @@
 
 Personal Omarchy dotfiles for `MrRoiz`, branched from a plain Arch + Hyprland
 repo and now trimmed to the Omarchy setup only. Managed with **GNU Stow**,
-pushed to `github.com:MrRoiz/.dotfiles` (`feat/omarchy-setup`). No
+pushed to `github.com:MrRoiz/.dotfiles` (`main`). No
 test/lint/CI tooling exists in this repo.
 
 ## Project-wide look and feel (rule)
@@ -26,8 +26,7 @@ test/lint/CI tooling exists in this repo.
 ## How it is wired
 
 - `scripts/omarchy.sh` — the only installer. Self-contained: it does
-  not source other scripts/setup files (those were the non-omarchy
-  installer modules, now removed).
+  not source other scripts.
 - `config/<app>/.config/<app>/…` — one **Stow package per app**; the
   omarchy setup stows only the packages whose apps it installs (see
   `STOW_PACKAGES` in `omarchy.sh`).
@@ -61,8 +60,7 @@ test/lint/CI tooling exists in this repo.
 ## Commands
 
 - Install / re-run: `~/.dotfiles/scripts/omarchy.sh`
-- Restow everything: `restow` (all managed packages from `~/.dotfiles`, including `hypr`, `wireplumber`, `alsa-card-profile`, `starship`, `spotify`, `omarchy-themes`, `omarchy-menu` and `claude`)
-- Re-stow after adding/removing files: `cd ~/.dotfiles/config && stow --restow -t "$HOME" <pkg>` (use the `STOW_PACKAGES` list from `omarchy.sh`, not `*`)
+- Restow: `restow` for all managed packages (including `hypr`, `wireplumber`, `alsa-card-profile`, `starship`, `spotify`, `omarchy-themes`, `omarchy-menu` and `claude`), or `restow <pkg>...` for some, e.g. after adding or removing files. Use it instead of a bare `stow --restow`: it clears the live files the partial packages own and keeps `~/.config/omarchy/themes` and `extensions` real directories.
 - Omarchy bar clock format: `omarchy-bar set omarchy.clock format "<Qt format>"`
 - Menu extension: run `omarchy menu refresh` after editing `~/.config/omarchy/extensions/omarchy-menu.jsonc` (the Stow symlink is not watched through the repo).
 - ntfy: `omarchy-ntfy show` prints the channel id; `omarchy-ntfy send "Title" "Body"` pushes a notification. The channel lives in `~/.config/ntfy-sender/config.json` (0600) and is never tracked in the repo.
