@@ -10,31 +10,8 @@ it so the next agent extends the design instead of working around it.
   the same thing. If no pattern fits the problem, don't force one; SOLID
   (`PRINCIPLES.md`) and the object rules in `MODULARITY.md` still shape the
   code.
-  - *Creational:* Factory Method — a subclass or caller picks which product to
-    create; Abstract Factory — families of related objects that must match;
-    Builder — step-by-step construction of an object with many optional parts;
-    Prototype — copy configured objects instead of rebuilding them; Singleton —
-    almost never: pass the shared instance in instead (`MODULARITY.md`).
-  - *Structural:* Adapter — wrap a third-party or legacy interface into the
-    one your code expects; Bridge — two dimensions that vary independently
-    (shape × renderer) instead of a subclass for every combination; Composite —
-    tree structures treated uniformly (files and folders); Decorator — layer
-    caching, retries or logging onto a unit without changing it; Facade — one
-    simple entry point to a subsystem callers use only one way; Flyweight —
-    share immutable state across huge numbers of objects, only once memory is
-    measured as the problem; Proxy — stand in for an object to add lazy
-    loading, access control or remote calls.
-  - *Behavioral:* Chain of Responsibility — a request passes through handlers
-    until one takes it (middleware); Command — actions that are queued, undone,
-    retried or logged; Iterator — walk a collection without exposing its
-    layout; Mediator — many components talking through one coordinator instead
-    of to each other; Memento — snapshot and restore state (undo) without
-    exposing internals; Observer — producers must not know their consumers;
-    State — behaviour depends on a lifecycle stage, instead of flags checked
-    everywhere; Strategy — swappable behaviour instead of a growing
-    `if`/`switch`; Template Method — a fixed algorithm with overridable steps;
-    Visitor — add operations over a stable set of types without editing them.
-  - *Outside the catalog:* Repository — between domain logic and storage.
+  Flyweight only once memory is measured as the problem.
+  Outside the catalog, Repository sits between domain logic and storage.
 - **Prefer the language's idiom** for the pattern: a function value over a
   one-method Strategy or Command class, a dict of handlers over a Factory
   hierarchy, a generator over an Iterator class, language decorators or
