@@ -3,5 +3,33 @@
     "type": "command",
     "command": "~/.claude/statusline.sh"
   },
-  "outputStyle": "Concise"
+  "outputStyle": "Concise",
+  "permissions": {
+    "deny": [
+      "Read(**/.env)",
+      "Edit(**/.env)",
+      "Read(**/.env.*)",
+      "Edit(**/.env.*)",
+      "Read(**/*.pem)",
+      "Edit(**/*.pem)",
+      "Read(**/*.key)",
+      "Edit(**/*.key)",
+      "Read(~/.ssh/**)",
+      "Edit(~/.ssh/**)",
+      "Read(~/.aws/credentials)",
+      "Edit(~/.aws/credentials)",
+      "Read(~/.config/gh/hosts.yml)",
+      "Edit(~/.config/gh/hosts.yml)",
+      "Read(~/.config/github-copilot/**)",
+      "Edit(~/.config/github-copilot/**)",
+      "Read(~/.config/ntfy-sender/config.json)",
+      "Edit(~/.config/ntfy-sender/config.json)",
+      "Read(~/.claude/.credentials.json)",
+      "Edit(~/.claude/.credentials.json)",
+      "Read(~/.local/share/keyrings/**)",
+      "Edit(~/.local/share/keyrings/**)",
+      "Read(~/.megaCmd/**)",
+      "Edit(~/.megaCmd/**)"
+    ]
+  }
 }

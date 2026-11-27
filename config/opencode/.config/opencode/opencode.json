@@ -14,6 +14,32 @@
   "skills": [
     "~/.dotfiles/agent/skills"
   ],
+  "permissions": [
+    { "action": "read", "resource": "*.env", "effect": "deny" },
+    { "action": "edit", "resource": "*.env", "effect": "deny" },
+    { "action": "read", "resource": "*.env.*", "effect": "deny" },
+    { "action": "edit", "resource": "*.env.*", "effect": "deny" },
+    { "action": "read", "resource": "*.pem", "effect": "deny" },
+    { "action": "edit", "resource": "*.pem", "effect": "deny" },
+    { "action": "read", "resource": "*.key", "effect": "deny" },
+    { "action": "edit", "resource": "*.key", "effect": "deny" },
+    { "action": "read", "resource": "~/.ssh/*", "effect": "deny" },
+    { "action": "edit", "resource": "~/.ssh/*", "effect": "deny" },
+    { "action": "read", "resource": "~/.aws/credentials", "effect": "deny" },
+    { "action": "edit", "resource": "~/.aws/credentials", "effect": "deny" },
+    { "action": "read", "resource": "~/.config/gh/hosts.yml", "effect": "deny" },
+    { "action": "edit", "resource": "~/.config/gh/hosts.yml", "effect": "deny" },
+    { "action": "read", "resource": "~/.config/github-copilot/*", "effect": "deny" },
+    { "action": "edit", "resource": "~/.config/github-copilot/*", "effect": "deny" },
+    { "action": "read", "resource": "~/.config/ntfy-sender/config.json", "effect": "deny" },
+    { "action": "edit", "resource": "~/.config/ntfy-sender/config.json", "effect": "deny" },
+    { "action": "read", "resource": "~/.claude/.credentials.json", "effect": "deny" },
+    { "action": "edit", "resource": "~/.claude/.credentials.json", "effect": "deny" },
+    { "action": "read", "resource": "~/.local/share/keyrings/*", "effect": "deny" },
+    { "action": "edit", "resource": "~/.local/share/keyrings/*", "effect": "deny" },
+    { "action": "read", "resource": "~/.megaCmd/*", "effect": "deny" },
+    { "action": "edit", "resource": "~/.megaCmd/*", "effect": "deny" }
+  ],
   "mcp": {
     "servers": {
       "chrome": {

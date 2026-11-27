@@ -106,7 +106,10 @@ Change only the lines the task requires; anything else is noise that slows revie
   (ANSI color names only). `~/.claude/settings.json` stays untracked because
   Claude rewrites it; `setup_claude_settings` in `omarchy.sh` merges
   `templates/claude/settings.json` into it (status line,
-  Concise output style), so add managed keys there. The plan segment reads
+  Concise output style, secret-path deny list), so add managed keys there.
+  The merge replaces arrays, so the template's `permissions.deny` is the whole
+  list. OpenCode's `permissions` in `opencode.json` mirrors the same secret
+  paths in its own format: change both together. The plan segment reads
   the login's plan from `${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.credentials.json`,
   so `claude-work` shows its own; `oauthAccount` in `.claude.json` is not
   used because both logins share one person, so it caches the same profile.
